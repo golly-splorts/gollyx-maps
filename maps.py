@@ -1,3 +1,5 @@
+import json
+import os
 import random
 from .patterns import get_pattern_size, get_grid_pattern, pattern_union
 from .utils import pattern2url
@@ -18,7 +20,7 @@ def get_patterns_map():
         'eightpi': eightpi_twocolor,
         'twomultum': twomultum_twocolor
     }
-    return mapsmap
+    return patterns_map
 
 
 def get_patterns():
@@ -50,10 +52,11 @@ def get_map(patternname, rows=100, cols=120):
     mapdat = get_map_data(patternname)
 
     # Get the initial conditions for this map
-    s1, s2 = get_map_by_name(patternname, cols, rows)
+    s1, s2 = get_pattern_by_name(patternname, cols, rows)
     url = f"?s1={s1}&s2={s2}"
     mapdat['initialConditions1'] = s1
     mapdat['initialConditions2'] = s2
+    mapdat['url'] = url
 
     # Geometry
     mapdat['rows'] = rows
@@ -68,7 +71,7 @@ def get_map(patternname, rows=100, cols=120):
 
 
 def get_map_data(patternname):
-    map_data_file = os.path.join(os.path.abspath(os.path.dir(__file__)), 'data', 'maps.json')
+    map_data_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', 'maps.json')
     with open(map_data_file, 'r') as f:
         mapdat = json.load(f)
     for m in mapdat:
@@ -77,6 +80,7 @@ def get_map_data(patternname):
 
 
 def get_pattern_by_name(patternname, rows, cols):
+    patterns_map = get_patterns_map()
     f = patterns_map[patternname]
     return f(rows,cols)
 
@@ -199,24 +203,30 @@ def timebomb_oscillators_twocolor(rows, cols, seed=None):
 
     centerx1a = cols//2 + cols//4
     centerx1b = cols//4
+    centerx1c = cols//2
+
     centery1a = rows//4
     centery1b = centery1a
+    centery1c = centery1a
 
-    centerx1a += random.randint(-10, 10)
-    centerx1b += random.randint(-10, 10)
-    centery1a += random.randint(-10, 10)
-    centery1b += random.randint(-10, 10)
+    centerx1a += random.randint(-8, 8)
+    centerx1b += random.randint(-8, 8)
+    centerx1c += random.randint(-4, 4)
+    centery1a += random.randint(-8, 8)
+    centery1b += random.randint(-8, 8)
+    centery1c += random.randint(-4, 4) 
 
     osc1a = get_grid_pattern('quadrupleburloaferimeter', rows, cols, xoffset=centerx1a, yoffset=centery1a)
     osc1b = get_grid_pattern('quadrupleburloaferimeter', rows, cols, xoffset=centerx1b, yoffset=centery1b)
+    osc1c = get_grid_pattern('quadrupleburloaferimeter', rows, cols, xoffset=centerx1c, yoffset=centery1c)
 
-    osc_pattern = pattern_union([osc1a, osc1b])
+    osc_pattern = pattern_union([osc1a, osc1b, osc1c])
 
     centerx2 = cols//2
-    centery2 = rows//2 + rows//4
+    centery2 = 2*rows//3
 
-    centerx2 += random.randint(-5, 5)
-    centery2 += random.randint(-5, 5)
+    centerx2 += random.randint(-8, 8)
+    centery2 += random.randint(-8, 8)
 
     timebomb = get_grid_pattern('timebomb', rows, cols, xoffset=centerx2, yoffset=centery2)
 
