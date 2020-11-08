@@ -1,6 +1,6 @@
 import random
-from patterns import get_pattern_size, get_grid_pattern, pattern_union
-from utils import pattern2url
+from .patterns import get_pattern_size, get_grid_pattern, pattern_union
+from .utils import pattern2url
 
 
 def random_twocolor(rows, cols):

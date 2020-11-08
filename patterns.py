@@ -1,5 +1,5 @@
 import os
-from geom import (
+from .geom import (
     hflip_pattern,
     vflip_pattern,
     rot_pattern
