@@ -3,6 +3,84 @@ from .patterns import get_pattern_size, get_grid_pattern, pattern_union
 from .utils import pattern2url
 
 
+#####################################################
+# Map patterns API
+
+
+def get_patterns_map():
+    patterns_map = {
+        'random': random_twocolor,
+        'twoacorn': twoacorn_twocolor,
+        'timebomb': timebomb_oscillators_twocolor,
+        'fourrabbits': fourrabbits_twocolor,
+        'twospaceshipgenerators': twospaceshipgenerators_twocolor,
+        'eightr': eightr_twocolor,
+        'eightpi': eightpi_twocolor,
+        'twomultum': twomultum_twocolor
+    }
+    return mapsmap
+
+
+def get_patterns():
+    return list(get_patterns_map().keys())
+
+
+def get_map(patternname, rows=100, cols=120):
+    """.
+    Return a JSON dict with map name, zone names, and initial conditions.
+    Use a default map size of 120 cols x 100 rows.
+    Returns:
+    {
+        "patternId": x,
+        "patternName": y,
+        "mapName": z,
+        "mapZone1Name": a,
+        "mapZone2Name": b,
+        "mapZone3Name": c,
+        "mapZone4Name": d,
+        "url": e,
+        "initialConditions1": f,
+        "initialConditions2": g,
+        "rows": i,
+        "columns": j,
+        "cellSize:" k
+    }
+    """
+    # Get map data (pattern, name, zone names)
+    mapdat = get_map_data(patternname)
+
+    # Get the initial conditions for this map
+    s1, s2 = get_map_by_name(patternname, cols, rows)
+    url = f"?s1={s1}&s2={s2}"
+    mapdat['initialConditions1'] = s1
+    mapdat['initialConditions2'] = s2
+
+    # Geometry
+    mapdat['rows'] = rows
+    mapdat['cols'] = cols
+    mapdat['cellSize'] = 7
+
+    return mapdat
+
+
+#####################################################
+# Map patterns
+
+
+def get_map_data(patternname):
+    map_data_file = os.path.join(os.path.abspath(os.path.dir(__file__)), 'data', 'maps.json')
+    with open(map_data_file, 'r') as f:
+        mapdat = json.load(f)
+    for m in mapdat:
+        if m['patternName']==patternname:
+            return m
+
+
+def get_pattern_by_name(patternname, rows, cols):
+    f = patterns_map[patternname]
+    return f(rows,cols)
+
+
 def random_twocolor(rows, cols):
     """
     Generate a random two-color list life initialization.
@@ -434,6 +512,4 @@ def twomultum_twocolor(rows, cols):
     pattern2_url = pattern2url(p2)
 
     return pattern1_url, pattern2_url
-
-
 

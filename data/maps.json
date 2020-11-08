@@ -1,0 +1,74 @@
+[
+    {
+        "patternId": 1,
+        "patternName": "random",
+        "mapName": "East Hellmouth",
+        "mapZone1Name": "Containment Zone 1",
+        "mapZone2Name": "Containment Zone 2",
+        "mapZone3Name": "Containment Zone 3",
+        "mapZone4Name": "Containment Zone 4"
+    },
+    {
+        "patternId": 2,
+        "patternName": "twoacorn",
+        "mapName": "The Quad",
+        "mapZone1Name": "Quadrant I",
+        "mapZone2Name": "Quadrant II",
+        "mapZone3Name": "Quadrant III",
+        "mapZone4Name": "Quadrant IV"
+    },
+    {
+        "patternId": 3,
+        "patternName": "timebomb",
+        "mapName": "HCC Superfund Site",
+        "mapZone1Name": "Hot Rock Piles",
+        "mapZone2Name": "Colorful Ponds",
+        "mapZone3Name": "Slag Heap",
+        "mapZone4Name": "Bottomless Hole"
+    },
+    {
+        "patternId": 4,
+        "patternName": "fourrabbits",
+        "mapName": "Food Court",
+        "mapZone1Name": "Sandwich Zone",
+        "mapZone2Name": "Beans Zone",
+        "mapZone3Name": "Freezer Zone",
+        "mapZone4Name": "Kitchen Zone"
+    },
+    {
+        "patternId": 5,
+        "patternName": "twospaceshipgenerators",
+        "mapName": "Spacetime Complex",
+        "mapZone1Name": "spacetime",
+        "mapZone2Name": "spaceyo",
+        "mapZone3Name": "froyo",
+        "mapZone4Name": "frotime"
+    },
+    {
+        "patternId": 6,
+        "patternName": "eightr",
+        "mapName": "Site 500",
+        "mapZone1Name": "Gammatron Accelerator",
+        "mapZone2Name": "Radiobaric Chamber",
+        "mapZone3Name": "Cryogenics Facility",
+        "mapZone4Name": "Mysterious Landing Pad"
+    },
+    {
+        "patternId": 7,
+        "patternName": "eightpi",
+        "mapName": "Abandoned Lab Space",
+        "mapZone1Name": "Biohazard Lab",
+        "mapZone2Name": "Cryptobiology Lab",
+        "mapZone3Name": "Electronics Lab",
+        "mapZone4Name": "Chemistry Lab"
+    },
+    {
+        "patternId": 8,
+        "patternName": "twomultum",
+        "mapName": "Underground Cave Complex",
+        "mapZone1Name": "Haunted Cave",
+        "mapZone2Name": "Rainbow Cave",
+        "mapZone3Name": "Spider Cave",
+        "mapZone4Name": "Underwater Cave"
+    }
+]
