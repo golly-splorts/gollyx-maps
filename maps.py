@@ -60,7 +60,7 @@ def get_map(patternname, rows=100, cols=120):
 
     # Geometry
     mapdat['rows'] = rows
-    mapdat['cols'] = cols
+    mapdat['columns'] = cols
     mapdat['cellSize'] = 7
 
     return mapdat
