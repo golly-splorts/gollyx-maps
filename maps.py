@@ -52,7 +52,7 @@ def get_map(patternname, rows=100, cols=120):
     mapdat = get_map_data(patternname)
 
     # Get the initial conditions for this map
-    s1, s2 = get_pattern_by_name(patternname, cols, rows)
+    s1, s2 = get_pattern_by_name(patternname, rows, cols)
     url = f"?s1={s1}&s2={s2}"
     mapdat['initialConditions1'] = s1
     mapdat['initialConditions2'] = s2
