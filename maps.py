@@ -69,10 +69,15 @@ def get_map(patternname, rows=100, cols=120):
 # Map patterns
 
 
-def get_map_data(patternname):
+def get_all_map_data():
     map_data_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', 'maps.json')
     with open(map_data_file, 'r') as f:
         mapdat = json.load(f)
+    return mapdat
+
+
+def get_map_data(patternname):
+    mapdat = get_all_map_data()
     for m in mapdat:
         if m['patternName']==patternname:
             return m
