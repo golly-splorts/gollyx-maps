@@ -33,7 +33,6 @@ def get_map(patternname, rows=100, cols=120):
     Use a default map size of 120 cols x 100 rows.
     Returns:
     {
-        "patternId": x,
         "patternName": y,
         "mapName": z,
         "mapZone1Name": a,
