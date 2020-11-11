@@ -17,7 +17,7 @@
     },
     {
         "patternName": "timebomb",
-        "mapName": "HCC Superfund Site",
+        "mapName": "West Hellmouth",
         "mapZone1Name": "Hot Rock Piles",
         "mapZone2Name": "Colorful Ponds",
         "mapZone3Name": "Slag Heap",
@@ -25,11 +25,11 @@
     },
     {
         "patternName": "fourrabbits",
-        "mapName": "Food Court",
-        "mapZone1Name": "Sandwich Zone",
-        "mapZone2Name": "Beans Zone",
-        "mapZone3Name": "Freezer Zone",
-        "mapZone4Name": "Kitchen Zone"
+        "mapName": "Parking Garage",
+        "mapZone1Name": "Level 2A",
+        "mapZone2Name": "Level 2B",
+        "mapZone3Name": "Level 1B",
+        "mapZone4Name": "Level 1A"
     },
     {
         "patternName": "twospaceshipgenerators",
@@ -41,19 +41,19 @@
     },
     {
         "patternName": "eightr",
-        "mapName": "Site 500",
-        "mapZone1Name": "Gammatron Accelerator",
-        "mapZone2Name": "Radiobaric Chamber",
-        "mapZone3Name": "Cryogenics Facility",
-        "mapZone4Name": "Mysterious Landing Pad"
+        "mapName": "Sunbeam Moondog",
+        "mapZone1Name": "sunbeam",
+        "mapZone2Name": "moonbeam",
+        "mapZone3Name": "moondog",
+        "mapZone4Name": "sundog"
     },
     {
         "patternName": "eightpi",
-        "mapName": "Abandoned Lab Space",
-        "mapZone1Name": "Biohazard Lab",
-        "mapZone2Name": "Cryptobiology Lab",
-        "mapZone3Name": "Electronics Lab",
-        "mapZone4Name": "Chemistry Lab"
+        "mapName": "The Zoo",
+        "mapZone1Name": "land birds",
+        "mapZone2Name": "air birds",
+        "mapZone3Name": "air reptiles",
+        "mapZone4Name": "land reptiles"
     },
     {
         "patternName": "twomultum",
