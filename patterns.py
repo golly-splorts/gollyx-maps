@@ -1,9 +1,24 @@
 import os
+from glob import glob
 from .geom import (
     hflip_pattern,
     vflip_pattern,
     rot_pattern
 )
+from .utils import pattern2url
+
+
+def get_patterns():
+    patternfiles = glob(
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'patterns',
+            '*.txt'
+        )
+    )
+    # trim extension
+    patternfiles = [p[:-4] for p in patternfiles]
+    return patternfiles
 
 
 def get_pattern(pattern_name, hflip=False, vflip=False, rotdeg=0):
