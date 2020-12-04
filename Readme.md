@@ -13,6 +13,13 @@ git submodule add git@github.com:golly-splorts/golly-maps.git gollymaps
 git submodule update --init
 ```
 
+Note you can also:
+* Vendor a copy of this repo by copying its contents into your own repo
+* Do a git clone of this repo into your repo, cloning it to gollymaps as above,
+  so that it can be imported as a submodule, but without adding it to your repo.
+
+Whatever you want to do.
+
 Now you will be able to import the gollymaps submodule from Python and start using it.
 For example, to import the maps submodule:
 
@@ -113,3 +120,8 @@ rabbit = get_pattern('rabbit', rotdeg=90)
 * unidimensionalinfinitegrowth
 * unidimensionalsixgliders
 * x66
+
+# Todo
+
+Need to fix up nomenclature - maps, patterns, pattern-mappings, it is very confusing.
+
