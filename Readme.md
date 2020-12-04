@@ -2,29 +2,20 @@
 
 Code for turning Game of Life patterns into Golly maps (ListLife arrays).
 
-How to use golly-maps as a submodule:
-
-From the repo of interest, add the golly-maps repo as a submodule named "gollymaps"
-(no dash to make it simpler to import):
+To use golly-maps, install it directly from the git repo by adding the following
+to your `requirements.txt` file:
 
 ```
-cd my-repo
-git submodule add git@github.com:golly-splorts/golly-maps.git gollymaps
-git submodule update --init
+git+git://github.com/golly-splorts/golly-maps@develop#egg=golly_maps
 ```
 
-Note you can also:
-* Vendor a copy of this repo by copying its contents into your own repo
-* Do a git clone of this repo into your repo, cloning it to gollymaps as above,
-  so that it can be imported as a submodule, but without adding it to your repo.
+(replace `develop` with the appropriate branch name.)
 
-Whatever you want to do.
-
-Now you will be able to import the gollymaps submodule from Python and start using it.
-For example, to import the maps submodule:
+Once you have the `golly-maps` package installed into your Python environment,
+you can start using it like this:
 
 ```
-from gollymaps import maps
+from golly_maps import maps
 
 s1, s2 = maps.twocolor_randommap(100,100)
 print(s1)
@@ -43,7 +34,7 @@ pattern will place four rabbits on the board, but the
 exact placement is random each time.
 
 ```
-from gollymaps import maps
+from golly_maps import maps
 
 s1, s2 = maps.twocolor_randommap(100,100)
 print(s1)
@@ -73,7 +64,7 @@ For example, here is how we would get a rabbit pattern and
 place it in the middle of a 20 x 20 grid:
 
 ```
-from gollymaps import patterns
+from golly_maps import patterns
 
 grid = get_grid_pattern('rabbit', 20, 20, xoffset=10, yoffset=10, rotdeg=90)
 url = pattern2url(grid)
@@ -83,7 +74,7 @@ print(url)
 Dot diagrams
 
 ```
-from gollymaps import patterns
+from golly_maps import patterns
 print(patterns.get_patterns())
 rabbit = get_pattern('rabbit', rotdeg=90)
 ```
