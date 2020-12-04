@@ -4,6 +4,8 @@ import os
 
 with open('requirements.txt') as f:
     required = [x for x in f.read().splitlines() if not x.startswith("#")]
+with open('requirements-dev.txt') as f:
+    required_dev = [x for x in f.read().splitlines() if not x.startswith("#")]
 
 # read the contents of your README file
 from os import path
