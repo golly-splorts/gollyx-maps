@@ -8,7 +8,7 @@ COLS = 120
 
 def onepattern_onecolor(seed=None):
     """
-    Generate a one-color map containing a heavyweight spaceship at the center.
+    Generate a one-color map containing a pattern at the center.
     """
     rows = ROWS
     cols = COLS
@@ -19,7 +19,13 @@ def onepattern_onecolor(seed=None):
     centerx = cols//2
     centery = rows//2
 
-    pattern1 = get_grid_pattern('heavyweightspaceship', rows, cols, xoffset=centerx, yoffset=centery)
+    #pattern1 = get_grid_pattern('heavyweightspaceship', rows, cols, xoffset=centerx, yoffset=centery)
+    #pattern1 = get_grid_pattern('spaceshipgrower', rows, cols, xoffset=centerx, yoffset=centery)
+    #pattern1 = get_grid_pattern('switchengine', rows, cols, xoffset=centerx, yoffset=centery)
+    #pattern1 = get_grid_pattern('unidimensionalsixgliders', rows, cols, xoffset=centerx, yoffset=centery)
+
+    pattern1 = get_grid_pattern('unidimensionalinfinitegrowth', rows, cols, xoffset=centerx, yoffset=centery)
+    #pattern1 = get_grid_pattern('justyna', rows, cols, xoffset=centerx, yoffset=centery)
 
     s1 = pattern2url(pattern1)
     url = f"?s1={s1}"
