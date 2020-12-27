@@ -8,6 +8,38 @@
         "mapZone4Name": "Containment Zone 4"
     },
     {
+        "patternName": "randompartition",
+        "mapName": "East Hellmouth's Revenge",
+        "mapZone1Name": "Evacuation Zone 1",
+        "mapZone2Name": "Evacuation Zone 2",
+        "mapZone3Name": "Evacuation Zone 3",
+        "mapZone4Name": "Evacuation Zone 4"
+    },
+    {
+        "patternName": "quadjustyna",
+        "mapName": "Justyna",
+        "mapZone1Name": "No Sugar No Cream",
+        "mapZone2Name": "Sugar No Cream",
+        "mapZone3Name": "Cream and Sugar",
+        "mapZone4Name": "Cream No Sugar"
+    },
+    {
+        "patternName": "spaceshipcrash",
+        "mapName": "Crash and Burn",
+        "mapZone1Name": "overflow error",
+        "mapZone2Name": "syntax error",
+        "mapZone3Name": "compiler error",
+        "mapZone4Name": "buffer error"
+    },
+    {
+        "patternName": "spaceshipcluster",
+        "mapName": "Charlie Foxtrot",
+        "mapZone1Name": "snafu",
+        "mapZone2Name": "fubar",
+        "mapZone3Name": "dilligaf",
+        "mapZone4Name": "tarfu"
+    },
+    {
         "patternName": "twoacorn",
         "mapName": "The Quad",
         "mapZone1Name": "Quadrant I",
