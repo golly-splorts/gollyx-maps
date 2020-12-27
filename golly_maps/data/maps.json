@@ -1,5 +1,37 @@
 [
     {
+        "patternName": "eightpi",
+        "mapName": "The Zoo",
+        "mapZone1Name": "land birds",
+        "mapZone2Name": "air birds",
+        "mapZone3Name": "air reptiles",
+        "mapZone4Name": "land reptiles"
+    },
+    {
+        "patternName": "eightr",
+        "mapName": "Sunbeam Moondog",
+        "mapZone1Name": "sunbeam",
+        "mapZone2Name": "moonbeam",
+        "mapZone3Name": "moondog",
+        "mapZone4Name": "sundog"
+    },
+    {
+        "patternName": "fourrabbits",
+        "mapName": "Parking Garage",
+        "mapZone1Name": "Level 2A",
+        "mapZone2Name": "Level 2B",
+        "mapZone3Name": "Level 1B",
+        "mapZone4Name": "Level 1A"
+    },
+    {
+        "patternName": "quadjustyna",
+        "mapName": "Justyna",
+        "mapZone1Name": "No Sugar No Cream",
+        "mapZone2Name": "Sugar No Cream",
+        "mapZone3Name": "Cream and Sugar",
+        "mapZone4Name": "Cream No Sugar"
+    },
+    {
         "patternName": "random",
         "mapName": "East Hellmouth",
         "mapZone1Name": "Containment Zone 1",
@@ -16,12 +48,12 @@
         "mapZone4Name": "Evacuation Zone 4"
     },
     {
-        "patternName": "quadjustyna",
-        "mapName": "Justyna",
-        "mapZone1Name": "No Sugar No Cream",
-        "mapZone2Name": "Sugar No Cream",
-        "mapZone3Name": "Cream and Sugar",
-        "mapZone4Name": "Cream No Sugar"
+        "patternName": "spaceshipcluster",
+        "mapName": "Charlie Foxtrot",
+        "mapZone1Name": "snafu",
+        "mapZone2Name": "fubar",
+        "mapZone3Name": "dilligaf",
+        "mapZone4Name": "tarfu"
     },
     {
         "patternName": "spaceshipcrash",
@@ -32,12 +64,12 @@
         "mapZone4Name": "buffer error"
     },
     {
-        "patternName": "spaceshipcluster",
-        "mapName": "Charlie Foxtrot",
-        "mapZone1Name": "snafu",
-        "mapZone2Name": "fubar",
-        "mapZone3Name": "dilligaf",
-        "mapZone4Name": "tarfu"
+        "patternName": "timebomb",
+        "mapName": "West Hellmouth",
+        "mapZone1Name": "Hot Rock Piles",
+        "mapZone2Name": "Colorful Ponds",
+        "mapZone3Name": "Slag Heap",
+        "mapZone4Name": "Bottomless Hole"
     },
     {
         "patternName": "twoacorn",
@@ -48,20 +80,12 @@
         "mapZone4Name": "Quadrant IV"
     },
     {
-        "patternName": "timebomb",
-        "mapName": "West Hellmouth",
-        "mapZone1Name": "Hot Rock Piles",
-        "mapZone2Name": "Colorful Ponds",
-        "mapZone3Name": "Slag Heap",
-        "mapZone4Name": "Bottomless Hole"
-    },
-    {
-        "patternName": "fourrabbits",
-        "mapName": "Parking Garage",
-        "mapZone1Name": "Level 2A",
-        "mapZone2Name": "Level 2B",
-        "mapZone3Name": "Level 1B",
-        "mapZone4Name": "Level 1A"
+        "patternName": "twomultum",
+        "mapName": "Underground Cave Complex",
+        "mapZone1Name": "Haunted Cave",
+        "mapZone2Name": "Rainbow Cave",
+        "mapZone3Name": "Spider Cave",
+        "mapZone4Name": "Underwater Cave"
     },
     {
         "patternName": "twospaceshipgenerators",
@@ -70,29 +94,5 @@
         "mapZone2Name": "spaceyo",
         "mapZone3Name": "froyo",
         "mapZone4Name": "frotime"
-    },
-    {
-        "patternName": "eightr",
-        "mapName": "Sunbeam Moondog",
-        "mapZone1Name": "sunbeam",
-        "mapZone2Name": "moonbeam",
-        "mapZone3Name": "moondog",
-        "mapZone4Name": "sundog"
-    },
-    {
-        "patternName": "eightpi",
-        "mapName": "The Zoo",
-        "mapZone1Name": "land birds",
-        "mapZone2Name": "air birds",
-        "mapZone3Name": "air reptiles",
-        "mapZone4Name": "land reptiles"
-    },
-    {
-        "patternName": "twomultum",
-        "mapName": "Underground Cave Complex",
-        "mapZone1Name": "Haunted Cave",
-        "mapZone2Name": "Rainbow Cave",
-        "mapZone3Name": "Spider Cave",
-        "mapZone4Name": "Underwater Cave"
     }
 ]
