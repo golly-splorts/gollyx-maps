@@ -118,7 +118,7 @@ def random_twocolor(rows, cols):
         row1 = []
         row2 = []
 
-        # row 1
+        # team 1 row
         for x in range(cols):
             if (x,y) in points1:
                 row1.append('o')
@@ -127,7 +127,7 @@ def random_twocolor(rows, cols):
         row1str = "".join(row1)
         pattern1.append(row1str)
 
-        # row 2
+        # team 2 row
         for x in range(cols):
             if (x,y) in points2:
                 row2.append('o')
