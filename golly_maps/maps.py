@@ -12,6 +12,10 @@ from .utils import pattern2url
 def get_patterns_map():
     patterns_map = {
         'random': random_twocolor,
+        'randompartition': randompartition_twocolor,
+        'quadjustyna': quadjustyna_twocolor,
+        'spaceshipcrash': spaceshipcrash_twocolor,
+        'spaceshipcluster': spaceshipcluster_twocolor,
         'twoacorn': twoacorn_twocolor,
         'timebomb': timebomb_oscillators_twocolor,
         'fourrabbits': fourrabbits_twocolor,
@@ -81,15 +85,16 @@ def get_map_data(patternname):
     for m in mapdat:
         if m['patternName']==patternname:
             return m
+    raise Exception(f"Error: did not find map labels for pattern {patternname} in data/maps.json, available patterns are: {', '.join([m['patternName'] for m in mapdat])}")
 
 
-def get_pattern_by_name(patternname, rows, cols):
+def get_pattern_by_name(patternname, rows, cols, seed=None):
     patterns_map = get_patterns_map()
     f = patterns_map[patternname]
-    return f(rows,cols)
+    return f(rows, cols, seed)
 
 
-def random_twocolor(rows, cols):
+def random_twocolor(rows, cols, seed=None):
     """
     Generate a random two-color list life initialization.
 
@@ -101,6 +106,9 @@ def random_twocolor(rows, cols):
     convert to list, split in half. Use those
     point sets to create listLife URL strings.
     """
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
     ncells = rows*cols
     nlivecells = ncells*0.12
     points = set()
@@ -141,6 +149,353 @@ def random_twocolor(rows, cols):
 
     return pattern1_url, pattern2_url
 
+def randompartition_twocolor(rows, cols, seed=None):
+    """
+    Generate a two-color map with multiple patterns for each team.
+    """
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+    ncells = rows*cols
+    nlivecells = int(ncells*0.12)
+
+    nhpartitions = random.choice([1, 2, 4, 5])
+    nvpartitions = random.choice([2, 4, 8])
+
+    w_vpartition = cols//nvpartitions
+    h_hpartition = rows//nhpartitions
+
+    team1_points = set()
+    while len(team1_points)<nlivecells//2:
+        randy = random.randint(0, rows-1)
+        randx = random.randint(0, cols-1)
+        if (randx//w_vpartition)%2==(randy//h_hpartition)%2:
+            team1_points.add((randx, randy))
+
+    team2_points = set()
+    while len(team2_points)<nlivecells//2:
+        randy = random.randint(0, rows-1)
+        randx = random.randint(0, cols-1)
+        if (randx//w_vpartition)%2!=(randy//h_hpartition)%2:
+            team2_points.add((randx, randy))
+
+    team1_pattern = []
+    team2_pattern = []
+    for y in range(rows):
+        team1_row = []
+        team2_row = []
+
+        for x in range(cols):
+            if (x,y) in team1_points:
+                team1_row.append('o')
+            else:
+                team1_row.append('.')
+
+            if (x,y) in team2_points:
+                team2_row.append('o')
+            else:
+                team2_row.append('.')
+
+        team1_row_str = "".join(team1_row)
+        team2_row_str = "".join(team2_row)
+        team1_pattern.append(team1_row_str)
+        team2_pattern.append(team2_row_str)
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return (s1, s2)
+
+def quadjustyna_twocolor(rows, cols, seed=None):
+    """
+    Four justyna metheuselas.
+    """
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
+    rotdegs = [0, 90, 180, 270]
+
+    centerx1 = cols//4
+    centerx1a = centerx1 + random.randint(-5, 30)
+    centerx1b = centerx1 + random.randint(-5, 30)
+
+    centery1a = rows//4 + random.randint(-10, 10)
+    centery1b = rows//2 + rows//4 + random.randint(-10, 10)
+
+    j1a = get_grid_pattern(
+        'justyna',
+        rows,
+        cols,
+        xoffset=centerx1a,
+        yoffset=centery1a,
+        hflip=(random.random() < 0.5),
+        vflip=(random.random() < 0.5),
+        rotdeg=random.choice(rotdegs)
+    )
+    j1b = get_grid_pattern(
+        'justyna',
+        rows,
+        cols,
+        xoffset=centerx1b,
+        yoffset=centery1b,
+        hflip=(random.random() < 0.5),
+        vflip=(random.random() < 0.5),
+        rotdeg=random.choice(rotdegs)
+    )
+    j1_pattern = pattern_union([j1a, j1b])
+
+    centerx2 = cols//2 + cols//4
+    centerx2a = centerx2 - random.randint(-5, 30)
+    centerx2b = centerx2 - random.randint(-5, 30)
+
+    centery2a = rows//4 + random.randint(-10, 10)
+    centery2b = rows//2 + rows//4 + random.randint(-10, 10)
+
+    j2a = get_grid_pattern(
+        'justyna',
+        rows,
+        cols,
+        xoffset=centerx2a,
+        yoffset=centery2a,
+        hflip=(random.random() < 0.5),
+        vflip=(random.random() < 0.5),
+        rotdeg=random.choice(rotdegs)
+    )
+    j2b = get_grid_pattern(
+        'justyna',
+        rows,
+        cols,
+        xoffset=centerx2b,
+        yoffset=centery2b,
+        hflip=(random.random() < 0.5),
+        vflip=(random.random() < 0.5),
+        rotdeg=random.choice(rotdegs)
+    )
+    j2_pattern = pattern_union([j2a, j2b])
+
+    s1 = pattern2url(j1_pattern)
+    s2 = pattern2url(j2_pattern)
+
+    return (s1, s2)
+
+def spaceshipcrash_twocolor(rows, cols, seed=None):
+    """
+    Clouds of spaceships in each quadrant crashing into each other at the origin.
+    """
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
+    # Spacing between spaceships
+    w = 12
+
+    # Spaceship locations for team 1
+    s_centerx1 = cols//4
+    s_centery1 = rows//3
+    s1_locations = []
+    for i in [-2, -1, 0, 1]:
+        for j in [-2, -1, 0, 1]:
+            xx = s_centerx1 + i*w + random.randint(-4, 4)
+            yy = s_centery1 + j*w + random.randint(-3, 3)
+            s1_locations.append((xx, yy))
+
+    # Spaceship locations for team 2
+    s_centerx2 = cols//2 + cols//4
+    s_centery2 = rows//3
+    s2_locations = []
+    for i in [-1, 0, 1, 2]:
+        for j in [-3, -2, -1, 0]:
+            xx = s_centerx2 + i*w + random.randint(-4, 4)
+            yy = s_centery2 + j*w + random.randint(-3, 3)
+            s2_locations.append((xx, yy))
+
+    # aferimeter locations for team 1
+    b_centerx1 = cols//3 + random.randint(-15, 5)
+    b_centery1 = 3*rows//4 + random.randint(0, 8)
+
+    # aferimeter locations for team 2
+    b_centerx2 = 2*cols//3 + random.randint(-15, 5)
+    b_centery2 = 3*rows//4 + random.randint(0, 8)
+
+    # Assemble and combine spaceship patterns for team 1
+    team1_pattern_list = []
+    for i in range(len(s1_locations)):
+        xx, yy = s1_locations[i]
+        p = get_grid_pattern(
+            'glider',
+            rows,
+            cols,
+            xoffset=xx,
+            yoffset=yy,
+        )
+        team1_pattern_list.append(p)
+
+    p = get_grid_pattern(
+        'quadrupleburloaferimeter',
+        rows,
+        cols,
+        xoffset=b_centerx1,
+        yoffset=b_centery1,
+    )
+    team1_pattern_list.append(p)
+
+    # Assemble and combine spaceship patterns for team 2
+    team2_pattern_list = []
+    for i in range(len(s2_locations)):
+        xx, yy = s2_locations[i]
+        p = get_grid_pattern(
+            'glider',
+            rows,
+            cols,
+            xoffset=xx,
+            yoffset=yy,
+            hflip=True
+        )
+        team2_pattern_list.append(p)
+
+    p = get_grid_pattern(
+        'quadrupleburloaferimeter',
+        rows,
+        cols,
+        xoffset=b_centerx2,
+        yoffset=b_centery2,
+    )
+    team2_pattern_list.append(p)
+
+    team1_pattern = pattern_union(team1_pattern_list)
+    team2_pattern = pattern_union(team2_pattern_list)
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return (s1, s2)
+
+def spaceshipcluster_twocolor(rows, cols, seed=None):
+    """
+    Clouds of spaceships in the upper quadrants crashing into burloaferimeters below.
+    """
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
+    # Spacing between spaceships
+    w = 12
+
+    # Spaceship locations for team 1
+
+    # NW corner
+    s_centerx1 = cols//4
+    s_centery1 = rows//3
+    s1_nw_locations = []
+    #for i in [-2, -1, 0, 1]:
+    for i in [-2, -1, 0, 1, 2]:
+        for j in [-2, -1, 0, 1]:
+            xx = s_centerx1 + i*w + random.randint(-4, 4)
+            yy = s_centery1 + j*w + random.randint(-3, 3)
+            s1_nw_locations.append((xx, yy))
+
+    # SE corner
+    s_centerx1 = 3*cols//4
+    s_centery1 = 2*rows//3
+    s1_se_locations = []
+    #for i in [-1, 0, 1, 2]:
+    for i in [-2, -1, 0, 1, 2]:
+        for j in [-1, 0, 1, 2]:
+            xx = s_centerx1 + i*w + random.randint(-4, 4)
+            yy = s_centery1 + j*w + random.randint(-3, 3)
+            s1_se_locations.append((xx, yy))
+
+    # Spaceship locations for team 2
+
+    # NE corner
+    s_centerx2 = 3*cols//4
+    s_centery2 = rows//3
+    s2_ne_locations = []
+    #for i in [-1, 0, 1, 2]:
+    for i in [-2, -1, 0, 1, 2]:
+        for j in [-2, -1, 0, 1]:
+            xx = s_centerx2 + i*w + random.randint(-4, 4)
+            yy = s_centery2 + j*w + random.randint(-3, 3)
+            s2_ne_locations.append((xx, yy))
+
+    # SW corner
+    s_centerx2 = cols//4
+    s_centery2 = 2*rows//3
+    s2_sw_locations = []
+    #for i in [-2, -1, 0 ,1]:
+    for i in [-2, -1, 0, 1, 2]:
+        for j in [-1, 0, 1, 2]:
+            xx = s_centerx2 + i*w + random.randint(-4, 4)
+            yy = s_centery2 + j*w + random.randint(-3, 3)
+            s2_sw_locations.append((xx, yy))
+
+
+    # Assemble and combine spaceship patterns for team 1
+    team1_pattern_list = []
+
+    for i in range(len(s1_nw_locations)):
+        xx, yy = s1_nw_locations[i]
+        p = get_grid_pattern(
+            'glider',
+            rows,
+            cols,
+            xoffset=xx,
+            yoffset=yy,
+        )
+        team1_pattern_list.append(p)
+
+    for i in range(len(s1_se_locations)):
+        xx, yy = s1_se_locations[i]
+        p = get_grid_pattern(
+            'glider',
+            rows,
+            cols,
+            xoffset=xx,
+            yoffset=yy,
+            rotdeg=180,
+        )
+        team1_pattern_list.append(p)
+
+
+    # Assemble and combine spaceship patterns for team 2
+    team2_pattern_list = []
+    for i in range(len(s2_ne_locations)):
+        xx, yy = s2_ne_locations[i]
+        p = get_grid_pattern(
+            'glider',
+            rows,
+            cols,
+            xoffset=xx,
+            yoffset=yy,
+            hflip=True,
+        )
+        team2_pattern_list.append(p)
+
+    for i in range(len(s2_sw_locations)):
+        xx, yy = s2_sw_locations[i]
+        p = get_grid_pattern(
+            'glider',
+            rows,
+            cols,
+            xoffset=xx,
+            yoffset=yy,
+            hflip=True,
+            rotdeg=180,
+        )
+        team2_pattern_list.append(p)
+
+    team1_pattern = pattern_union(team1_pattern_list)
+    team2_pattern = pattern_union(team2_pattern_list)
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return (s1, s2)
 
 def twoacorn_twocolor(rows, cols, seed=None):
     """
