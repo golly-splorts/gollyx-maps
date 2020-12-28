@@ -1,43 +1,11 @@
 [
     {
-        "patternName": "random",
-        "mapName": "East Hellmouth",
-        "mapZone1Name": "Containment Zone 1",
-        "mapZone2Name": "Containment Zone 2",
-        "mapZone3Name": "Containment Zone 3",
-        "mapZone4Name": "Containment Zone 4"
-    },
-    {
-        "patternName": "twoacorn",
-        "mapName": "The Quad",
-        "mapZone1Name": "Quadrant I",
-        "mapZone2Name": "Quadrant II",
-        "mapZone3Name": "Quadrant III",
-        "mapZone4Name": "Quadrant IV"
-    },
-    {
-        "patternName": "timebomb",
-        "mapName": "West Hellmouth",
-        "mapZone1Name": "Hot Rock Piles",
-        "mapZone2Name": "Colorful Ponds",
-        "mapZone3Name": "Slag Heap",
-        "mapZone4Name": "Bottomless Hole"
-    },
-    {
-        "patternName": "fourrabbits",
-        "mapName": "Parking Garage",
-        "mapZone1Name": "Level 2A",
-        "mapZone2Name": "Level 2B",
-        "mapZone3Name": "Level 1B",
-        "mapZone4Name": "Level 1A"
-    },
-    {
-        "patternName": "twospaceshipgenerators",
-        "mapName": "Spacetime Complex",
-        "mapZone1Name": "spacetime",
-        "mapZone2Name": "spaceyo",
-        "mapZone3Name": "froyo",
-        "mapZone4Name": "frotime"
+        "patternName": "eightpi",
+        "mapName": "The Zoo",
+        "mapZone1Name": "land birds",
+        "mapZone2Name": "air birds",
+        "mapZone3Name": "air reptiles",
+        "mapZone4Name": "land reptiles"
     },
     {
         "patternName": "eightr",
@@ -48,12 +16,68 @@
         "mapZone4Name": "sundog"
     },
     {
-        "patternName": "eightpi",
-        "mapName": "The Zoo",
-        "mapZone1Name": "land birds",
-        "mapZone2Name": "air birds",
-        "mapZone3Name": "air reptiles",
-        "mapZone4Name": "land reptiles"
+        "patternName": "fourrabbits",
+        "mapName": "Parking Garage",
+        "mapZone1Name": "Level 2A",
+        "mapZone2Name": "Level 2B",
+        "mapZone3Name": "Level 1B",
+        "mapZone4Name": "Level 1A"
+    },
+    {
+        "patternName": "quadjustyna",
+        "mapName": "Justyna",
+        "mapZone1Name": "No Sugar No Cream",
+        "mapZone2Name": "Sugar No Cream",
+        "mapZone3Name": "Cream and Sugar",
+        "mapZone4Name": "Cream No Sugar"
+    },
+    {
+        "patternName": "random",
+        "mapName": "East Hellmouth",
+        "mapZone1Name": "Containment Zone 1",
+        "mapZone2Name": "Containment Zone 2",
+        "mapZone3Name": "Containment Zone 3",
+        "mapZone4Name": "Containment Zone 4"
+    },
+    {
+        "patternName": "randompartition",
+        "mapName": "East Hellmouth's Revenge",
+        "mapZone1Name": "Evacuation Zone 1",
+        "mapZone2Name": "Evacuation Zone 2",
+        "mapZone3Name": "Evacuation Zone 3",
+        "mapZone4Name": "Evacuation Zone 4"
+    },
+    {
+        "patternName": "spaceshipcluster",
+        "mapName": "Charlie Foxtrot",
+        "mapZone1Name": "snafu",
+        "mapZone2Name": "fubar",
+        "mapZone3Name": "dilligaf",
+        "mapZone4Name": "tarfu"
+    },
+    {
+        "patternName": "spaceshipcrash",
+        "mapName": "Crash and Burn",
+        "mapZone1Name": "overflow error",
+        "mapZone2Name": "syntax error",
+        "mapZone3Name": "compiler error",
+        "mapZone4Name": "buffer error"
+    },
+    {
+        "patternName": "timebomb",
+        "mapName": "West Hellmouth",
+        "mapZone1Name": "Hot Rock Piles",
+        "mapZone2Name": "Colorful Ponds",
+        "mapZone3Name": "Slag Heap",
+        "mapZone4Name": "Bottomless Hole"
+    },
+    {
+        "patternName": "twoacorn",
+        "mapName": "The Quad",
+        "mapZone1Name": "Quadrant I",
+        "mapZone2Name": "Quadrant II",
+        "mapZone3Name": "Quadrant III",
+        "mapZone4Name": "Quadrant IV"
     },
     {
         "patternName": "twomultum",
@@ -62,5 +86,13 @@
         "mapZone2Name": "Rainbow Cave",
         "mapZone3Name": "Spider Cave",
         "mapZone4Name": "Underwater Cave"
+    },
+    {
+        "patternName": "twospaceshipgenerators",
+        "mapName": "Spacetime Complex",
+        "mapZone1Name": "spacetime",
+        "mapZone2Name": "spaceyo",
+        "mapZone3Name": "froyo",
+        "mapZone4Name": "frotime"
     }
 ]
