@@ -17,8 +17,12 @@ requirements-dev:
 build: clean
 	python3 setup.py build install
 
-test: requirements-dev build
-	pytest
+test:
+	pytest -v
+
+buildtest: clean build test
+
+cleantest: clean requirements requirements-dev build test
 
 release_main:
 	@echo "Releasing current branch $(CB) to main"
