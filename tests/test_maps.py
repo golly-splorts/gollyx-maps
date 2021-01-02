@@ -7,13 +7,12 @@ import unittest
 """
 test_maps
 
-Create the golly maps API
+Test maps functionality in golly_maps
 """
-
-HERE = os.path.split(os.path.abspath(__file__))[0]
 
 class MapsTest(unittest.TestCase):
     """
+    Test maps functionality in the golly maps package.
     """
     @classmethod
     def setUpClass(self):
@@ -21,31 +20,5 @@ class MapsTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(self):
-        """
-        """
         pass
 
-    def test_routes_index(self):
-        """
-        """
-        pass
-
-    def test_routes_master_list(self):
-        """
-        """
-        pass
-
-    def test_routes_control_panel(self):
-        """
-        """
-        pass
-
-    def test_routes_help(self):
-        """
-        """
-        pass
-
-    def test_routes_faq(self):
-        """
-        """
-        pass
