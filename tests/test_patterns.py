@@ -2,7 +2,7 @@ import subprocess
 import os
 import unittest
 from golly_maps.patterns import (
-    get_patterns, 
+    get_patterns,
     get_pattern,
     get_pattern_size,
     get_grid_pattern,
@@ -187,15 +187,3 @@ class PatternsTest(unittest.TestCase):
         for row in union:
             for ch in row:
                 self.assertEqual(ch, "o")
-
-
-
-
-
-
-
-
-
-
-
-

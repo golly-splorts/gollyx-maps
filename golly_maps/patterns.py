@@ -98,7 +98,7 @@ def get_grid_pattern(pattern_name, rows, columns, xoffset=0, yoffset=0, hflip=Fa
             for ix, x in enumerate(range(xstart, xend)):
                 if x > 0 and x < len(newpattern[iy]):
                     newpattern[y][x] = ogpattern[iy][ix]
-    
+
     newpattern = ["".join(j) for j in newpattern]
     return newpattern
 
@@ -113,7 +113,7 @@ def pattern_union(patterns):
             for i in range(patterns):
                 err += "Pattern {i+1}: rows = {len(patterns[i])}, cols = {len(patterns[i][0]}\n"
             raise Exception(err)
-    
+
     # Turn all patterns into lists of lists (for convenience)
     rows = len(patterns[0])
     cols = len(patterns[0][0])
@@ -135,4 +135,3 @@ def pattern_union(patterns):
 
     newpattern = ["".join(j) for j in newpattern]
     return newpattern
-
