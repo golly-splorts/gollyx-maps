@@ -10,8 +10,8 @@ def pattern2url(pattern, xoffset=0, yoffset=0):
         listLifeRow = {}
         for j in range(cols):
             if pattern[i][j]=='o':
-                y = str(i+1+yoffset)
-                x = j+1+xoffset
+                y = str(i+yoffset)
+                x = j+xoffset
                 if y in listLifeRow.keys():
                     listLifeRow[y].append(x)
                 else:
