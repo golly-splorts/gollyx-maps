@@ -9,7 +9,7 @@ from .utils import pattern2url
 # Map patterns API
 
 
-def get_patterns_map():
+def _get_patterns_map():
     patterns_map = {
         'random': random_twocolor,
         'randompartition': randompartition_twocolor,
@@ -28,7 +28,7 @@ def get_patterns_map():
 
 
 def get_patterns():
-    return list(get_patterns_map().keys())
+    return list(_get_patterns_map().keys())
 
 
 def get_map(patternname, rows=100, cols=120):
@@ -73,7 +73,7 @@ def get_map(patternname, rows=100, cols=120):
 # Map patterns
 
 
-def get_all_map_data():
+def _get_all_map_data():
     map_data_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', 'maps.json')
     with open(map_data_file, 'r') as f:
         mapdat = json.load(f)
@@ -81,7 +81,7 @@ def get_all_map_data():
 
 
 def get_map_data(patternname):
-    mapdat = get_all_map_data()
+    mapdat = _get_all_map_data()
     for m in mapdat:
         if m['patternName']==patternname:
             return m
@@ -89,7 +89,7 @@ def get_map_data(patternname):
 
 
 def get_pattern_by_name(patternname, rows, cols, seed=None):
-    patterns_map = get_patterns_map()
+    patterns_map = _get_patterns_map()
     f = patterns_map[patternname]
     return f(rows, cols, seed)
 
