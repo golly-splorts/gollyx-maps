@@ -1,4 +1,5 @@
 import subprocess
+import json
 import os
 import unittest
 from golly_maps.maps import (
@@ -72,3 +73,17 @@ class MapsTest(unittest.TestCase):
             for rk in req_keys:
                 self.assertIn(rk, dat.keys())
 
+    def test_random(self):
+        """
+        Special tests for the two random maps:
+        make sure we don't have an off-by-one error
+        (artifact: missing any cells for row 0.)
+        """
+        random_patterns = ['random', 'randompartition']
+        for pattern_name in random_patterns:
+            r = 100
+            c = 120
+            m = get_map(pattern_name, r, c)
+            ic1 = json.loads(m['initialConditions1'])[0]
+            ic2 = json.loads(m['initialConditions2'])[0]
+            self.assertTrue(ic1!="0" or ic2!="0")
