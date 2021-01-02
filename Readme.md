@@ -1,5 +1,7 @@
 # golly-maps
 
+[![Travis](https://travis-ci.com/golly-splorts/golly-maps.svg?branch=main)](https://travis-ci.com/golly-splorts/golly-maps.svg?branch=main)
+
 Code for turning Game of Life patterns into Golly maps (ListLife arrays).
 
 To use golly-maps, install it directly from the git repo by adding the following
