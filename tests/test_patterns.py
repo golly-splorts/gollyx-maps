@@ -10,13 +10,6 @@ from golly_maps.patterns import (
 )
 
 
-
-"""
-test_patterns
-
-Test patterns functionality in golly_maps
-"""
-
 HERE = os.path.split(os.path.abspath(__file__))[0]
 
 ALL_PATTERNS = [
@@ -66,7 +59,7 @@ PATTERN_SIZES = {
 
 class PatternsTest(unittest.TestCase):
     """
-    Test patterns functionality in the golly maps package.
+    Test patterns functionality in golly_maps
     """
     def test_get_patterns(self):
         """
