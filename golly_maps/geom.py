@@ -11,10 +11,13 @@ def vflip_pattern(pattern):
 
 
 def rot_pattern(pattern, deg):
-    """Rotate a pattern 90, 180, or 270 degrees"""
+    """Rotate a pattern 0, 90, 180, 270, or 360 degrees"""
     newpattern = pattern[:]
-    if deg in [90, 180, 270]:
+    valid_deg = [0, 90, 180, 270, 360]
+    if deg in valid_deg:
         for i in range(deg//90):
             newpattern_tup = zip(*list(reversed(newpattern)))
             newpattern = ["".join(j) for j in newpattern_tup]
+    else:
+        raise Exception(f"Invalid degree specified, must be one of: {', '.join(valid_deg)}")
     return newpattern
