@@ -17,7 +17,7 @@ def get_patterns():
         )
     )
     # trim extension
-    patternfiles = [p[:-4] for p in patternfiles]
+    patternfiles = [os.path.basename(os.path.splitext(p)[0]) for p in patternfiles]
     return patternfiles
 
 
