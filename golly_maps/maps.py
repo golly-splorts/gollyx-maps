@@ -9,7 +9,7 @@ from .utils import pattern2url
 # Map patterns API
 
 
-def get_patterns_map():
+def _get_patterns_map():
     patterns_map = {
         'random': random_twocolor,
         'randompartition': randompartition_twocolor,
@@ -28,7 +28,7 @@ def get_patterns_map():
 
 
 def get_patterns():
-    return list(get_patterns_map().keys())
+    return list(_get_patterns_map().keys())
 
 
 def get_map(patternname, rows=100, cols=120):
@@ -73,7 +73,7 @@ def get_map(patternname, rows=100, cols=120):
 # Map patterns
 
 
-def get_all_map_data():
+def _get_all_map_data():
     map_data_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', 'maps.json')
     with open(map_data_file, 'r') as f:
         mapdat = json.load(f)
@@ -81,7 +81,7 @@ def get_all_map_data():
 
 
 def get_map_data(patternname):
-    mapdat = get_all_map_data()
+    mapdat = _get_all_map_data()
     for m in mapdat:
         if m['patternName']==patternname:
             return m
@@ -89,9 +89,9 @@ def get_map_data(patternname):
 
 
 def get_pattern_by_name(patternname, rows, cols, seed=None):
-    patterns_map = get_patterns_map()
+    patterns_map = _get_patterns_map()
     f = patterns_map[patternname]
-    return f(rows, cols, seed)
+    return f(rows, cols, seed=seed)
 
 
 def random_twocolor(rows, cols, seed=None):
@@ -332,6 +332,7 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
             cols,
             xoffset=xx,
             yoffset=yy,
+            check_overflow = False
         )
         team1_pattern_list.append(p)
 
@@ -354,7 +355,8 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
             cols,
             xoffset=xx,
             yoffset=yy,
-            hflip=True
+            hflip=True,
+            check_overflow = False
         )
         team2_pattern_list.append(p)
 
@@ -446,6 +448,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
             cols,
             xoffset=xx,
             yoffset=yy,
+            check_overflow = False
         )
         team1_pattern_list.append(p)
 
@@ -458,6 +461,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
             xoffset=xx,
             yoffset=yy,
             rotdeg=180,
+            check_overflow = False
         )
         team1_pattern_list.append(p)
 
@@ -473,6 +477,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
             xoffset=xx,
             yoffset=yy,
             hflip=True,
+            check_overflow = False
         )
         team2_pattern_list.append(p)
 
@@ -486,6 +491,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
             yoffset=yy,
             hflip=True,
             rotdeg=180,
+            check_overflow = False
         )
         team2_pattern_list.append(p)
 
@@ -635,7 +641,11 @@ def fourrabbits_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def twospaceshipgenerators_twocolor(rows, cols):
+def twospaceshipgenerators_twocolor(rows, cols, seed=None):
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
     # backrake 2 laying trail of glider ships
     # both backrakes start at very bottom
     # squares in middle, of alternating colors
@@ -677,7 +687,11 @@ def twospaceshipgenerators_twocolor(rows, cols):
     return pattern1_url, pattern2_url
 
 
-def eightr_twocolor(rows, cols):
+def eightr_twocolor(rows, cols, seed=None):
+
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
 
     centerx = cols//2
     centery = rows//2
@@ -766,7 +780,12 @@ def eightr_twocolor(rows, cols):
     return pattern1_url, pattern2_url
 
 
-def eightpi_twocolor(rows, cols):
+def eightpi_twocolor(rows, cols, seed=None):
+
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
     centerx = cols//2
     centery = rows//2
 
@@ -854,7 +873,12 @@ def eightpi_twocolor(rows, cols):
     return pattern1_url, pattern2_url
 
 
-def twomultum_twocolor(rows, cols):
+def twomultum_twocolor(rows, cols, seed=None):
+
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
     centerx = cols//2
     centery1 = rows//2
     centery2 = rows//2 #2*rows//3
