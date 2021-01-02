@@ -332,6 +332,7 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
             cols,
             xoffset=xx,
             yoffset=yy,
+            check_overflow = False
         )
         team1_pattern_list.append(p)
 
@@ -354,7 +355,8 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
             cols,
             xoffset=xx,
             yoffset=yy,
-            hflip=True
+            hflip=True,
+            check_overflow = False
         )
         team2_pattern_list.append(p)
 
@@ -446,6 +448,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
             cols,
             xoffset=xx,
             yoffset=yy,
+            check_overflow = False
         )
         team1_pattern_list.append(p)
 
@@ -458,6 +461,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
             xoffset=xx,
             yoffset=yy,
             rotdeg=180,
+            check_overflow = False
         )
         team1_pattern_list.append(p)
 
@@ -473,6 +477,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
             xoffset=xx,
             yoffset=yy,
             hflip=True,
+            check_overflow = False
         )
         team2_pattern_list.append(p)
 
@@ -486,6 +491,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
             yoffset=yy,
             hflip=True,
             rotdeg=180,
+            check_overflow = False
         )
         team2_pattern_list.append(p)
 
