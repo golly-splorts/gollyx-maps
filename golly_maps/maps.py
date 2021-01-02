@@ -91,7 +91,7 @@ def get_map_data(patternname):
 def get_pattern_by_name(patternname, rows, cols, seed=None):
     patterns_map = _get_patterns_map()
     f = patterns_map[patternname]
-    return f(rows, cols, seed)
+    return f(rows, cols, seed=seed)
 
 
 def random_twocolor(rows, cols, seed=None):
@@ -635,7 +635,11 @@ def fourrabbits_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def twospaceshipgenerators_twocolor(rows, cols):
+def twospaceshipgenerators_twocolor(rows, cols, seed=None):
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
     # backrake 2 laying trail of glider ships
     # both backrakes start at very bottom
     # squares in middle, of alternating colors
@@ -677,7 +681,11 @@ def twospaceshipgenerators_twocolor(rows, cols):
     return pattern1_url, pattern2_url
 
 
-def eightr_twocolor(rows, cols):
+def eightr_twocolor(rows, cols, seed=None):
+
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
 
     centerx = cols//2
     centery = rows//2
@@ -766,7 +774,12 @@ def eightr_twocolor(rows, cols):
     return pattern1_url, pattern2_url
 
 
-def eightpi_twocolor(rows, cols):
+def eightpi_twocolor(rows, cols, seed=None):
+
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
     centerx = cols//2
     centery = rows//2
 
@@ -854,7 +867,12 @@ def eightpi_twocolor(rows, cols):
     return pattern1_url, pattern2_url
 
 
-def twomultum_twocolor(rows, cols):
+def twomultum_twocolor(rows, cols, seed=None):
+
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
     centerx = cols//2
     centery1 = rows//2
     centery2 = rows//2 #2*rows//3
