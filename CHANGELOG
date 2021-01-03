@@ -1,3 +1,9 @@
+Version 5.0:
+
+* Version in use for Season 5
+* Fixed an off-by-one issue when generating new maps using composed patterns
+* Added tests for patterns, geom, and maps
+
 Version 4.0:
 
 * Version in use for Season 4
