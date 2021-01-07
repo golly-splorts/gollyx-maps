@@ -27,6 +27,17 @@ PATTERNS = [
     "twospaceshipgenerators",
 ]
 
+PATTERNS_PRE3 = [
+    "eightpi",
+    "eightr",
+    "fourrabbits",
+    "random",
+    "timebomb",
+    "twoacorn",
+    "twomultum",
+    "twospaceshipgenerators",
+]
+
 
 class MapsTest(unittest.TestCase):
     """
@@ -58,6 +69,16 @@ class MapsTest(unittest.TestCase):
             ]
             for rk in req_keys:
                 self.assertIn(rk, m.keys())
+
+    def test_get_all_map_data(self):
+        for pattern_name in PATTERNS:
+            for season in range(0,10):
+                map_data = get_all_map_data(season)
+                pattern_names = [m['patternName'] for m in map_data]
+                if season < 3:
+                    self.assertEqual(sorted(pattern_names), sorted(PATTERNS_PRE3))
+                else:
+                    self.assertEqual(sorted(pattern_names), sorted(PATTERNS))
 
     def test_get_map_data(self):
         for pattern_name in PATTERNS:

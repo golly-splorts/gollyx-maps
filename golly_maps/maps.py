@@ -72,11 +72,19 @@ def get_map(patternname, rows=100, cols=120):
 #####################################################
 # Map patterns
 
-
-def _get_all_map_data():
+def get_all_map_data(season):
+    """
+    Get all map data for the specified season.
+    Season is ZERO-INDEXED.
+    """
     map_data_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', 'maps.json')
     with open(map_data_file, 'r') as f:
         mapdat = json.load(f)
+
+    if season < 3:
+        filter_patterns = ['random', 'twoacorn', 'timebomb', 'fourrabbits', 'twospaceshipgenerators', 'eightr', 'eightpi', 'twomultum']
+        mapdat = [m for m in mapdat if m['patternName'] in filter_patterns]
+
     return mapdat
 
 
