@@ -72,7 +72,7 @@ def get_map(patternname, rows=100, cols=120):
 #####################################################
 # Map patterns
 
-def get_all_map_data(season):
+def get_all_map_data(season=999):
     """
     Get all map data for the specified season.
     Season is ZERO-INDEXED.
@@ -89,7 +89,7 @@ def get_all_map_data(season):
 
 
 def get_map_data(patternname):
-    mapdat = _get_all_map_data()
+    mapdat = get_all_map_data()
     for m in mapdat:
         if m['patternName']==patternname:
             return m

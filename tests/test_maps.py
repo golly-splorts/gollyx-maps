@@ -6,6 +6,7 @@ from golly_maps.maps import (
     get_patterns,
     get_map,
     get_map_data,
+    get_all_map_data,
     get_pattern_by_name
 )
 
