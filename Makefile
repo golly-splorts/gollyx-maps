@@ -1,5 +1,7 @@
 include common.mk
 
+MODULES=golly_maps tests
+
 CB := $(shell git branch --show-current)
 
 all:
@@ -7,6 +9,12 @@ all:
 
 help:
 	cat Makefile
+
+lint:
+	flake8 $(MODULES)
+
+mypy:
+	mypy --ignore-missing-imports --no-strict-optional $(MODULES)
 
 requirements:
 	python3 -m pip install --upgrade -r requirements.txt
