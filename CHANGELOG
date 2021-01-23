@@ -5,7 +5,7 @@ Version 8.0:
 
 Version 6.0:
 
-* Version in use for Season 6
+* Version in use for Season 6, 7, 8, 9, 10
 * Add ability to get maps by season in API endpoint
 * Update maps submodule API interfaces, make consistent/cleaner
 
