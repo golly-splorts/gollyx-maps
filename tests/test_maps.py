@@ -1,4 +1,3 @@
-import subprocess
 import json
 import os
 import unittest
@@ -7,7 +6,6 @@ from golly_maps.maps import (
     get_map,
     get_map_data,
     get_all_map_data,
-    get_pattern_by_name
 )
 
 
@@ -44,6 +42,7 @@ class MapsTest(unittest.TestCase):
     """
     Test maps functionality in the golly maps package.
     """
+
     def test_get_patterns(self):
         patterns = get_patterns()
         for pattern_name in PATTERNS:
@@ -55,27 +54,27 @@ class MapsTest(unittest.TestCase):
             c = 120
             m = get_map(pattern_name, rows=r, cols=c)
             req_keys = [
-                'patternName',
-                'mapName',
-                'url',
-                'rows',
-                'columns',
-                'cellSize',
-                'initialConditions1',
-                'initialConditions2',
-                'mapZone1Name',
-                'mapZone2Name',
-                'mapZone3Name',
-                'mapZone4Name'
+                "patternName",
+                "mapName",
+                "url",
+                "rows",
+                "columns",
+                "cellSize",
+                "initialConditions1",
+                "initialConditions2",
+                "mapZone1Name",
+                "mapZone2Name",
+                "mapZone3Name",
+                "mapZone4Name",
             ]
             for rk in req_keys:
                 self.assertIn(rk, m.keys())
 
     def test_get_all_map_data(self):
         for pattern_name in PATTERNS:
-            for season in range(0,10):
+            for season in range(0, 10):
                 map_data = get_all_map_data(season)
-                pattern_names = [m['patternName'] for m in map_data]
+                pattern_names = [m["patternName"] for m in map_data]
                 if season < 3:
                     self.assertEqual(sorted(pattern_names), sorted(PATTERNS_PRE3))
                 else:
@@ -85,12 +84,12 @@ class MapsTest(unittest.TestCase):
         for pattern_name in PATTERNS:
             dat = get_map_data(pattern_name)
             req_keys = [
-                'patternName',
-                'mapName',
-                'mapZone1Name',
-                'mapZone2Name',
-                'mapZone3Name',
-                'mapZone4Name'
+                "patternName",
+                "mapName",
+                "mapZone1Name",
+                "mapZone2Name",
+                "mapZone3Name",
+                "mapZone4Name",
             ]
             for rk in req_keys:
                 self.assertIn(rk, dat.keys())
@@ -101,11 +100,11 @@ class MapsTest(unittest.TestCase):
         make sure we don't have an off-by-one error
         (artifact: missing any cells for row 0.)
         """
-        random_patterns = ['random', 'randompartition']
+        random_patterns = ["random", "randompartition"]
         for pattern_name in random_patterns:
             r = 100
             c = 120
             m = get_map(pattern_name, r, c)
-            ic1 = json.loads(m['initialConditions1'])[0]
-            ic2 = json.loads(m['initialConditions2'])[0]
-            self.assertTrue(ic1!="0" or ic2!="0")
+            ic1 = json.loads(m["initialConditions1"])[0]
+            ic2 = json.loads(m["initialConditions2"])[0]
+            self.assertTrue(ic1 != "0" or ic2 != "0")

@@ -1,4 +1,3 @@
-import subprocess
 import os
 import unittest
 from golly_maps.patterns import (
@@ -6,7 +5,7 @@ from golly_maps.patterns import (
     get_pattern,
     get_pattern_size,
     get_grid_pattern,
-    pattern_union
+    pattern_union,
 )
 
 
@@ -43,7 +42,7 @@ ALL_PATTERNS = [
     "twoglidermess",
     "unidimensionalinfinitegrowth",
     "unidimensionalsixgliders",
-    "x66"
+    "x66",
 ]
 
 # [nrows, ncols]
@@ -53,7 +52,7 @@ PATTERN_SIZES = {
     "justyna": (17, 22),
     "multuminparvo": (4, 6),
     "quadrupleburloaferimeter": (16, 16),
-    "x66": (11, 9)
+    "x66": (11, 9),
 }
 
 
@@ -61,6 +60,7 @@ class PatternsTest(unittest.TestCase):
     """
     Test patterns functionality in golly_maps
     """
+
     def test_get_patterns(self):
         """
         Compare the list of patterns returned to the hard-coded list.
@@ -137,20 +137,81 @@ class PatternsTest(unittest.TestCase):
         Check that the grid patterns returned are the correct size.
         """
         for pattern_name, (pattern_r, pattern_c) in PATTERN_SIZES.items():
-            pattern = get_pattern(pattern_name)
+            # Test get pattern
+            _ = get_pattern(pattern_name)
+
+            # Test get grid pattern
             rows = 80
             cols = 80
             xoffset = 40
             yoffset = 40
 
             grid_patterns = []
-            grid_patterns.append(get_grid_pattern(pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset))
-            grid_patterns.append(get_grid_pattern(pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset, hflip=True))
-            grid_patterns.append(get_grid_pattern(pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset, vflip=True))
-            grid_patterns.append(get_grid_pattern(pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset, rotdeg=90))
-            grid_patterns.append(get_grid_pattern(pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset, rotdeg=180))
-            grid_patterns.append(get_grid_pattern(pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset, rotdeg=270))
-            grid_patterns.append(get_grid_pattern(pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset, rotdeg=360))
+            grid_patterns.append(
+                get_grid_pattern(
+                    pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset
+                )
+            )
+            grid_patterns.append(
+                get_grid_pattern(
+                    pattern_name,
+                    rows,
+                    cols,
+                    xoffset=xoffset,
+                    yoffset=yoffset,
+                    hflip=True,
+                )
+            )
+            grid_patterns.append(
+                get_grid_pattern(
+                    pattern_name,
+                    rows,
+                    cols,
+                    xoffset=xoffset,
+                    yoffset=yoffset,
+                    vflip=True,
+                )
+            )
+            grid_patterns.append(
+                get_grid_pattern(
+                    pattern_name,
+                    rows,
+                    cols,
+                    xoffset=xoffset,
+                    yoffset=yoffset,
+                    rotdeg=90,
+                )
+            )
+            grid_patterns.append(
+                get_grid_pattern(
+                    pattern_name,
+                    rows,
+                    cols,
+                    xoffset=xoffset,
+                    yoffset=yoffset,
+                    rotdeg=180,
+                )
+            )
+            grid_patterns.append(
+                get_grid_pattern(
+                    pattern_name,
+                    rows,
+                    cols,
+                    xoffset=xoffset,
+                    yoffset=yoffset,
+                    rotdeg=270,
+                )
+            )
+            grid_patterns.append(
+                get_grid_pattern(
+                    pattern_name,
+                    rows,
+                    cols,
+                    xoffset=xoffset,
+                    yoffset=yoffset,
+                    rotdeg=360,
+                )
+            )
 
             for gp in grid_patterns:
                 self.assertEqual(len(gp), rows)
@@ -160,22 +221,21 @@ class PatternsTest(unittest.TestCase):
                 get_grid_pattern(pattern_name, rows=-1, cols=-1)
                 get_grid_pattern(pattern_name, rows=0, cols=0)
                 get_grid_pattern(pattern_name, rows=1, cols=1)
-                get_grid_pattern(pattern_name, rows=10, cols=10, xoffset=100, yoffset=100)
-                get_grid_pattern(pattern_name, rows, cols, xoffset=xoffset, yoffset=yoffset, rotdeg=111)
+                get_grid_pattern(
+                    pattern_name, rows=10, cols=10, xoffset=100, yoffset=100
+                )
+                get_grid_pattern(
+                    pattern_name,
+                    rows,
+                    cols,
+                    xoffset=xoffset,
+                    yoffset=yoffset,
+                    rotdeg=111,
+                )
 
     def test_pattern_union(self):
-        pattern1 = [
-            ".......ooo",
-            ".......ooo",
-            "...ooooooo",
-            "...ooooooo"
-        ]
-        pattern2 = [
-            "ooooooo...",
-            "ooooooo...",
-            "ooo.......",
-            "ooo......."
-        ]
+        pattern1 = [".......ooo", ".......ooo", "...ooooooo", "...ooooooo"]
+        pattern2 = ["ooooooo...", "ooooooo...", "ooo.......", "ooo......."]
         union = pattern_union([pattern1, pattern2])
         for row in union:
             for ch in row:
