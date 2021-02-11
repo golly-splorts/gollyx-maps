@@ -23,6 +23,8 @@ def _get_patterns_map():
         "eightr": eightr_twocolor,
         "eightpi": eightpi_twocolor,
         "twomultum": twomultum_twocolor,
+        "bigsegment": segment_big,
+        "smallsegment": segment_small,
     }
     return patterns_map
 
@@ -939,3 +941,52 @@ def twomultum_twocolor(rows, cols, seed=None):
     pattern2_url = pattern2url(p2)
 
     return pattern1_url, pattern2_url
+
+def segment_big(rows, cols, seed=None):
+    
+    nhseg = random.randint(0,3)
+    nvseg = random.randint(1,3)
+
+    jitterx = 12
+    jittery = 20
+
+    # Get the snap-to-grid centers
+    hsegcenters = [(iy+1)*rows//(nhseg+1) for iy in range(nhseg)]
+    vsegcenters = [(ix+1)*cols//(nvseg+1) for ix in range(nvseg)]
+
+    # Add jitter, and bookend with 0 and nrows/ncols
+    hseglocs = [0] + [k + random.randint(-jittery, jittery) for k in hsegcenters] + [rows]
+    vseglocs = [0] + [k + random.randint(-jitterx, jitterx) for k in vsegcenters] + [cols]
+
+    loclenlist = []
+    for ih in range(1,len(hseglocs)):
+        yh = hseglocs[ih]
+        yhm1 = hseglocs[ih-1]
+        for iv in range(1,len(vseglocs)):
+            xv = vseglocs[iv]
+            xvm1 = vseglocs[iv-1]
+
+            vseg_x = xv
+            vseg_starty = yh
+            vseg_endy = yhm1
+            mag = yh - yhm1
+            tiebreaker = random.randint(1,100)
+            loclenlist.append((vseg_x, vseg_starty, vseg_x, vseg_endy, mag, tiebreaker))
+
+            hseg_y = yh
+            hseg_startx = xv
+            hseg_endx = xvm1
+            mag = yh - yhm1
+            tiebreaker = random.randint(1,100)
+            loclenlist.append((hseg_startx, hseg_y, hseg_endx, hseg_y, mag, tiebreaker))
+
+    from operator import itemgetter
+    loclenlist.sort(key=itemgetter(4, 5), reverse=[True, False])
+    import pdb; pdb.set_trace()
+
+
+
+
+
+
+
