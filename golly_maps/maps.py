@@ -1,7 +1,7 @@
 import json
 import os
 import random
-from .patterns import get_pattern_size, get_grid_pattern, pattern_union
+from .patterns import get_pattern_size, get_grid_empty, get_grid_pattern, pattern_union
 from .utils import pattern2url
 
 
@@ -23,8 +23,8 @@ def _get_patterns_map():
         "eightr": eightr_twocolor,
         "eightpi": eightpi_twocolor,
         "twomultum": twomultum_twocolor,
-        "bigsegment": segment_big,
-        "smallsegment": segment_small,
+        "bigsegment": bigsegment,
+        "randsegment": randsegment,
     }
     return patterns_map
 
@@ -107,9 +107,21 @@ def get_map_data(patternname):
     for m in mapdat:
         if m["patternName"] == patternname:
             return m
-    err = f"Error: did not find map labels for pattern {patternname} in data/maps.json\n"
-    err += "Available patterns are: {', '.join([m['patternName'] for m in mapdat])}"
-    raise Exception(err)
+    #err = f"Error: did not find map labels for pattern {patternname} in data/maps.json\n"
+    #err += "Available patterns are: {', '.join([m['patternName'] for m in mapdat])}"
+    #raise Exception(err)
+    warn = f"Warning: did not find map labels for pattern {patternname} in data/maps.json\n"
+    warn += "Making something up..."
+    print(warn)
+    m = {
+        "patternName": patternname,
+        "mapName": "Unnamed Map",
+        "mapZone1Name": "Zone 1",
+        "mapZone2Name": "Zone 2",
+        "mapZone3Name": "Zone 3",
+        "mapZone4Name": "Zone 4"
+    }
+    return m
 
 
 def get_pattern_by_name(patternname, rows, cols, seed=None):
@@ -942,51 +954,130 @@ def twomultum_twocolor(rows, cols, seed=None):
 
     return pattern1_url, pattern2_url
 
-def segment_big(rows, cols, seed=None):
-    
-    nhseg = random.randint(0,3)
-    nvseg = random.randint(1,3)
 
-    jitterx = 12
-    jittery = 20
+def bigsegment(rows, cols, seed=None):
+
+    nhseg = 0
+    nvseg = 0
+    while (nhseg==0 and nvseg==0):
+        nhseg = random.choice([0,1,3,5])
+        nvseg = random.choice([0,1,3,5])
+
+    jitterx = 15
+    jittery = 15
+
+    return _segment(rows, cols, seed, colormode='classic', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+
+
+def randsegment(rows, cols, seed=None):
+
+    nhseg = 1
+    nvseg = 1
+
+    jitterx = 0
+    jittery = 40
+
+    return _segment(rows, cols, seed, colormode='random', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+
+
+def _segment(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=0, nvseg=0):
+    valid_colormodes = ['classic', 'random']
+    if colormode not in valid_colormodes:
+        raise Exception("Error: invalid color mode {colormode} passed to _segment(), must be in {', '.join(valid_colormodes)}")
+    if nhseg==0 and nvseg==0:
+        raise Exception("Error: invalid number of segments (0 horizontal and 0 vertical) passed to _segment()")
+
 
     # Get the snap-to-grid centers
-    hsegcenters = [(iy+1)*rows//(nhseg+1) for iy in range(nhseg)]
-    vsegcenters = [(ix+1)*cols//(nvseg+1) for ix in range(nvseg)]
+    hsegcenters = [(iy+1)*rows//(nhseg+1) - 1 for iy in range(nhseg)]
+    vsegcenters = [(ix+1)*cols//(nvseg+1) - 1 for ix in range(nvseg)]
 
     # Add jitter, and bookend with 0 and nrows/ncols
-    hseglocs = [0] + [k + random.randint(-jittery, jittery) for k in hsegcenters] + [rows]
-    vseglocs = [0] + [k + random.randint(-jitterx, jitterx) for k in vsegcenters] + [cols]
+    hseglocs = [-1] + [k + random.randint(-jittery, jittery) for k in hsegcenters] + [rows]
+    vseglocs = [-1] + [k + random.randint(-jitterx, jitterx) for k in vsegcenters] + [cols]
 
     loclenlist = []
-    for ih in range(1,len(hseglocs)):
-        yh = hseglocs[ih]
-        yhm1 = hseglocs[ih-1]
-        for iv in range(1,len(vseglocs)):
-            xv = vseglocs[iv]
-            xvm1 = vseglocs[iv-1]
 
-            vseg_x = xv
-            vseg_starty = yh
-            vseg_endy = yhm1
-            mag = yh - yhm1
-            tiebreaker = random.randint(1,100)
-            loclenlist.append((vseg_x, vseg_starty, vseg_x, vseg_endy, mag, tiebreaker))
+    # Construct vertical segments first:
+    # ----------------
+    # Horizontal segment locations give us the start/end coordinates for vertical segments
+    # Skip the first loc - it's 1 past the edge so the segments start at 0
+    for ih in range(1, len(hseglocs)):
+        yend = hseglocs[ih] - 1
+        ystart = hseglocs[ih-1] + 1
+        mag = yend - ystart + 1
+        # Skip the first vseg loc - it's 1 past the edge
+        # Skip the last vseg loc - it's also 1 past the edge
+        for iv in range(1, len(vseglocs)-1):
+            x = vseglocs[iv]
+            loclenlist.append((ystart, yend, x, x, mag))
 
-            hseg_y = yh
-            hseg_startx = xv
-            hseg_endx = xvm1
-            mag = yh - yhm1
-            tiebreaker = random.randint(1,100)
-            loclenlist.append((hseg_startx, hseg_y, hseg_endx, hseg_y, mag, tiebreaker))
+    # Construct horizontal segments:
+    # ----------------
+    for iv in range(1, len(vseglocs)):
+        xend = vseglocs[iv] - 1
+        xstart = vseglocs[iv-1] + 1
+        mag = xend - xstart + 1
+        for ih in range(1, len(hseglocs)-1):
+            y = hseglocs[ih]
+            loclenlist.append((y, y, xstart, xend, mag))
 
-    from operator import itemgetter
-    loclenlist.sort(key=itemgetter(4, 5), reverse=[True, False])
-    import pdb; pdb.set_trace()
+    # These store the the .o diagrams (flat=False means these are lists of lists of one char)
+    team1_pattern = get_grid_empty(rows, cols, flat=False)
+    team2_pattern = get_grid_empty(rows, cols, flat=False)
 
+    # Color mode:
+    # ------------------------
+    # We have a list of segments, coordinates and lengths,
+    # now the way we populate the map depends on the color mode.
 
+    if colormode=="classic":
 
+        # Classic color mode:
+        # Each segment is a single solid color,
+        # use serpentine pattern to assign colors
+        serpentine_pattern = [1, 2, 2, 1]
 
+        from operator import itemgetter
+        random.shuffle(loclenlist)
+        loclenlist.sort(key=itemgetter(4), reverse=True)
 
+        for i, (starty, endy, startx, endx, _) in enumerate(loclenlist):
 
+            serpix = i%len(serpentine_pattern)
+            serpteam = serpentine_pattern[serpix]
+            for y in range(starty, endy+1):
+                for x in range(startx, endx+1):
+                    if serpteam==1:
+                        team1_pattern[y][x] = "o"
+                    else:
+                        team2_pattern[y][x] = "o"
 
+    elif colormode=="random":
+
+        # Random color mode:
+        # For each segment of length N,
+        # create an array of N/2 zeros and N/2 ones,
+        # shuffle it, usee it to assign colors.
+        for i, (starty, endy, startx, endx, mag) in enumerate(loclenlist):
+            magh = mag//2
+            magoh = mag - mag//2
+            team_assignments = [1,]*magh + [2,]*magoh
+            random.shuffle(team_assignments)
+
+            ta_ix = 0
+            for y in range(starty, endy+1):
+                for x in range(startx, endx+1):
+                    if team_assignments[ta_ix]==1:
+                        team1_pattern[y][x] = "o"
+                    elif team_assignments[ta_ix]==2:
+                        team2_pattern[y][x] = "o"
+                    ta_ix += 1
+
+    team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
+    team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
+
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+
+    return pattern1_url, pattern2_url

@@ -43,6 +43,20 @@ def get_pattern_size(pattern_name, **kwargs):
     return (len(pattern), len(pattern[0]))
 
 
+def get_grid_empty(rows, columns, flat=True):
+    if columns < 1 or rows < 1:
+        err = f"Error: invalid number of rows {rows} or columns {columns}, must be positive integers > 0"
+        raise Exception(err)
+
+    blank_row = ["."] * columns
+    blank_grid = [blank_row[:] for r in range(rows)]
+
+    if flat:
+        blank_grid = ["".join(gridrow) for gridrow in blank_grid]
+
+    return blank_grid
+
+
 def get_grid_pattern(
     pattern_name,
     rows,
