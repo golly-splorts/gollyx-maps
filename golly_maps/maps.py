@@ -25,6 +25,7 @@ def _get_patterns_map():
         "twomultum": twomultum_twocolor,
         "bigsegment": bigsegment,
         "randsegment": randsegment,
+        "spaceshipsegment": spaceshipsegment
     }
     return patterns_map
 
@@ -960,8 +961,8 @@ def bigsegment(rows, cols, seed=None):
     nhseg = 0
     nvseg = 0
     while (nhseg==0 and nvseg==0):
-        nhseg = random.choice([0,1,3,5])
-        nvseg = random.choice([0,1,3,5])
+        nhseg = random.choice([0,1,3])
+        nvseg = random.choice([0,1,3])
 
     jitterx = 15
     jittery = 15
@@ -979,8 +980,8 @@ def randsegment(rows, cols, seed=None):
     nhseg = 0
     nvseg = 0
     while (nhseg==0 and nvseg==0):
-        nhseg = random.choice(list(range(5)))
-        nvseg = random.choice(list(range(5)))
+        nhseg = random.choice(list(range(4)))
+        nvseg = random.choice(list(range(4)))
 
     jitterx = 0
     jittery = 40
@@ -993,8 +994,62 @@ def randsegment(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
+def spaceshipsegment(rows, cols, seed=None):
+
+    nhseg = 1
+    nvseg = 0
+
+    jitterx = 0
+    jittery = 10
+
+    team1_segment, team2_segment = _segment(rows, cols, seed, colormode='random', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+
+    ss_name = "lightweightspaceship"
+    ssh, ssw = get_pattern_size(ss_name)
+
+    hbuff = 8
+    vbuff = 3
+    ssjitterx = 3
+
+    remaining_height = (rows//2)
+    nspaceships = ((remaining_height-vbuff)//(ssh+vbuff))-1
+
+    print(nspaceships)
+    # Team 1 has a fleet of lightweight spaceships in upper right corner
+    team1_spaceships = []
+    for i in range(nspaceships):
+        # find center y, starting from top
+        y = 0 + vbuff + i*(ssh+vbuff) + ssh//2
+        # find center x, starting from far right
+        x = cols - hbuff - 2*i*(ssw) - ssw//2 + random.randint(-ssjitterx, ssjitterx)
+        p = get_grid_pattern(
+            ss_name, rows, cols, xoffset=x, yoffset=y, check_overflow=False
+        )
+        team1_spaceships.append(p)
+
+    # Team 2 has a fleet of lightweight spaceships in lower left corner
+    team2_spaceships = []
+    for i in range(nspaceships):
+        # find center y, starting from bottom
+        y = rows - vbuff - i*(ssh+vbuff) - ssh//2
+        # find center x, starting from far left
+        x = 0 + hbuff + 2*i*ssw + ssw//2 + random.randint(-ssjitterx, ssjitterx)
+        p = get_grid_pattern(
+            ss_name, rows, cols, xoffset=x, yoffset=y, hflip=True, check_overflow=False
+        )
+        team2_spaceships.append(p)
+
+    s1 = pattern_union([team1_segment]+team1_spaceships)
+    s2 = pattern_union([team2_segment]+team2_spaceships)
+
+    pattern1_url = pattern2url(s1)
+    pattern2_url = pattern2url(s2)
+
+    return pattern1_url, pattern2_url
+
+
 def _segment(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=0, nvseg=0):
-    valid_colormodes = ['classic', 'random']
+    valid_colormodes = ['classic', 'random']#, 'randombroken']
     if colormode not in valid_colormodes:
         raise Exception("Error: invalid color mode {colormode} passed to _segment(), must be in {', '.join(valid_colormodes)}")
     if nhseg==0 and nvseg==0:
