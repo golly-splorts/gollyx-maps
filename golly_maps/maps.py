@@ -966,7 +966,12 @@ def bigsegment(rows, cols, seed=None):
     jitterx = 15
     jittery = 15
 
-    return _segment(rows, cols, seed, colormode='classic', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+    team1_pattern, team2_pattern = _segment(rows, cols, seed, colormode='classic', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+
+    return pattern1_url, pattern2_url
 
 
 def randsegment(rows, cols, seed=None):
@@ -980,7 +985,12 @@ def randsegment(rows, cols, seed=None):
     jitterx = 0
     jittery = 40
 
-    return _segment(rows, cols, seed, colormode='random', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+    team1_pattern, team2_pattern = _segment(rows, cols, seed, colormode='random', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+
+    return pattern1_url, pattern2_url
 
 
 def _segment(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=0, nvseg=0):
@@ -1080,7 +1090,5 @@ def _segment(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
     team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
 
-    pattern1_url = pattern2url(team1_pattern)
-    pattern2_url = pattern2url(team2_pattern)
+    return team1_pattern, team2_pattern
 
-    return pattern1_url, pattern2_url
