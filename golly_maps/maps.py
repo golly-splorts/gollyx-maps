@@ -971,8 +971,11 @@ def bigsegment(rows, cols, seed=None):
 
 def randsegment(rows, cols, seed=None):
 
-    nhseg = 1
-    nvseg = 1
+    nhseg = 0
+    nvseg = 0
+    while (nhseg==0 and nvseg==0):
+        nhseg = random.choice(list(range(5)))
+        nvseg = random.choice(list(range(5)))
 
     jitterx = 0
     jittery = 40
