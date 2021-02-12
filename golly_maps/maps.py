@@ -622,7 +622,7 @@ def timebomb_oscillators_twocolor(rows, cols, seed=None):
     centery2 += random.randint(-8, 8)
 
     timebomb = get_grid_pattern(
-        "timebomb", rows, cols, xoffset=centerx2, yoffset=centery2
+        "timebomb", rows, cols, xoffset=centerx2, yoffset=centery2, hflip=random.random()<0.50
     )
 
     pattern1_url = pattern2url(osc_pattern)
@@ -651,10 +651,9 @@ def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
         cols // 2 + random.randint(-4, 4)
     ]
     centerys = [
-        (rows // 4),
+        (rows // 3),
     ] * 3
-    # centerxs = [cols//2]
-    # centerys = [rows//4]
+    centerys = [j + random.randint(-4, 4) for j in centerys]
 
     osc_patterns = []
     for centerx, centery in zip(centerxs, centerys):
@@ -670,11 +669,13 @@ def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
     centerx2 = cols // 2
     centery2 = 2 * rows // 3
 
-    centerx2 += random.randint(-8, 8)
+    centerx2 += random.randint(-12, 12)
     centery2 += random.randint(-8, 8)
 
+    vflipopt = bool(random.getrandbits(1))
+    hflipopt = bool(random.getrandbits(1))
     timebomb = get_grid_pattern(
-        "timebomb", rows, cols, xoffset=centerx2, yoffset=centery2
+        "timebomb", rows, cols, xoffset=centerx2, yoffset=centery2, hflip=hflipopt, vflip=vflipopt, rotdeg=90
     )
 
     pattern1_url = pattern2url(osc_pattern)
