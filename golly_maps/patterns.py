@@ -157,3 +157,119 @@ def pattern_union(patterns):
 
     newpattern = ["".join(j) for j in newpattern]
     return newpattern
+
+
+def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=0, nvseg=0):
+    """
+    Return a two-color pattern consisting of nhseg horizontal segments and nvseg vertical segments.
+
+    In classic color mode, each segment piece is assigned to a single team.
+    In random color mode, each segment cell is assigned random teams.
+    In random broken mode, each segment cell is assigned random teams or is not alive.
+    """
+    valid_colormodes = ['classic', 'random', 'randombroken']
+    if colormode not in valid_colormodes:
+        raise Exception(f"Error: invalid color mode {colormode} passed to _segment(), must be in {', '.join(valid_colormodes)}")
+    if nhseg==0 and nvseg==0:
+        raise Exception(f"Error: invalid number of segments (0 horizontal and 0 vertical) passed to _segment()")
+
+
+    # Get the snap-to-grid centers
+    hsegcenters = [(iy+1)*rows//(nhseg+1) - 1 for iy in range(nhseg)]
+    vsegcenters = [(ix+1)*cols//(nvseg+1) - 1 for ix in range(nvseg)]
+
+    # Add jitter, and bookend with 0 and nrows/ncols
+    hseglocs = [-1] + [k + random.randint(-jittery, jittery) for k in hsegcenters] + [rows]
+    vseglocs = [-1] + [k + random.randint(-jitterx, jitterx) for k in vsegcenters] + [cols]
+
+    loclenlist = []
+
+    # Construct vertical segments first:
+    # ----------------
+    # Horizontal segment locations give us the start/end coordinates for vertical segments
+    # Skip the first loc - it's 1 past the edge so the segments start at 0
+    for ih in range(1, len(hseglocs)):
+        yend = hseglocs[ih] - 1
+        ystart = hseglocs[ih-1] + 1
+        mag = yend - ystart + 1
+        # Skip the first vseg loc - it's 1 past the edge
+        # Skip the last vseg loc - it's also 1 past the edge
+        for iv in range(1, len(vseglocs)-1):
+            x = vseglocs[iv]
+            loclenlist.append((ystart, yend, x, x, mag))
+
+    # Construct horizontal segments:
+    # ----------------
+    for iv in range(1, len(vseglocs)):
+        xend = vseglocs[iv] - 1
+        xstart = vseglocs[iv-1] + 1
+        mag = xend - xstart + 1
+        for ih in range(1, len(hseglocs)-1):
+            y = hseglocs[ih]
+            loclenlist.append((y, y, xstart, xend, mag))
+
+    # These store the the .o diagrams (flat=False means these are lists of lists of one char)
+    team1_pattern = get_grid_empty(rows, cols, flat=False)
+    team2_pattern = get_grid_empty(rows, cols, flat=False)
+
+    # Color mode:
+    # ------------------------
+    # We have a list of segments, coordinates and lengths,
+    # now the way we populate the map depends on the color mode.
+
+    if colormode=="classic":
+
+        # Classic color mode:
+        # Each segment is a single solid color,
+        # use serpentine pattern to assign colors
+        serpentine_pattern = [1, 2, 2, 1]
+
+        from operator import itemgetter
+        random.shuffle(loclenlist)
+        loclenlist.sort(key=itemgetter(4), reverse=True)
+
+        for i, (starty, endy, startx, endx, _) in enumerate(loclenlist):
+
+            serpix = i%len(serpentine_pattern)
+            serpteam = serpentine_pattern[serpix]
+            for y in range(starty, endy+1):
+                for x in range(startx, endx+1):
+                    if serpteam==1:
+                        team1_pattern[y][x] = "o"
+                    else:
+                        team2_pattern[y][x] = "o"
+
+    elif colormode=="random" or colormode=="randombroken":
+
+        # Random/random broken color mode:
+        # For each segment of length N,
+        # create an array of N/2 zeros and N/2 ones,
+        # shuffle it, use it to assign colors.
+        # If broken, include 0s to represent dead cells
+        for i, (starty, endy, startx, endx, mag) in enumerate(loclenlist):
+            if colormode=="random":
+                magh = mag//2
+                magoh = mag - mag//2
+                team_assignments = [1,]*magh + [2,]*magoh
+                random.shuffle(team_assignments)
+            elif colormode=="randombroken":
+                magh = 12*mag//25
+                magoh = 12*mag//25
+                rem = mag - magh - magoh
+                team_assignments = [1,]*magh + [2,]*magoh + [0,]*rem
+                random.shuffle(team_assignments)
+
+            ta_ix = 0
+            for y in range(starty, endy+1):
+                for x in range(startx, endx+1):
+                    if team_assignments[ta_ix]==1:
+                        team1_pattern[y][x] = "o"
+                    elif team_assignments[ta_ix]==2:
+                        team2_pattern[y][x] = "o"
+                    ta_ix += 1
+
+    team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
+    team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
+
+    return team1_pattern, team2_pattern
+

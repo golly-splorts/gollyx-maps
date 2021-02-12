@@ -18,14 +18,15 @@ def _get_patterns_map():
         "spaceshipcluster": spaceshipcluster_twocolor,
         "twoacorn": twoacorn_twocolor,
         "timebomb": timebomb_oscillators_twocolor,
+        "timebombredux": timebomb_randomoscillators_twocolor,
         "fourrabbits": fourrabbits_twocolor,
         "twospaceshipgenerators": twospaceshipgenerators_twocolor,
         "eightr": eightr_twocolor,
         "eightpi": eightpi_twocolor,
         "twomultum": twomultum_twocolor,
-        "bigsegment": bigsegment,
-        "randsegment": randsegment,
-        "spaceshipsegment": spaceshipsegment
+        "bigsegment": bigsegment_twocolor,
+        "randsegment": randsegment_twocolor,
+        "spaceshipsegment": spaceshipsegment_twocolor
     }
     return patterns_map
 
@@ -143,7 +144,6 @@ def random_twocolor(rows, cols, seed=None):
     convert to list, split in half. Use those
     point sets to create listLife URL strings.
     """
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
     ncells = rows * cols
@@ -191,7 +191,6 @@ def randompartition_twocolor(rows, cols, seed=None):
     """
     Generate a two-color map with multiple patterns for each team.
     """
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
     ncells = rows * cols
@@ -249,11 +248,6 @@ def quadjustyna_twocolor(rows, cols, seed=None):
     """
     Four justyna metheuselas.
     """
-    # set rng seed (optional)
-    if seed is not None:
-        random.seed(seed)
-
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -327,7 +321,6 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
     """
     Clouds of spaceships in each quadrant crashing into each other at the origin.
     """
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -417,7 +410,6 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
     """
     Clouds of spaceships in the upper quadrants crashing into burloaferimeters below.
     """
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -546,7 +538,6 @@ def twoacorn_twocolor(rows, cols, seed=None):
     - get size of acorn pattern
     - ask for acorn at particular offset
     """
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -594,7 +585,6 @@ def twoacorn_twocolor(rows, cols, seed=None):
 
 
 def timebomb_oscillators_twocolor(rows, cols, seed=None):
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -641,8 +631,53 @@ def timebomb_oscillators_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
+def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
+
+    oscillators = ['airforce', 'koksgalaxy', 'dinnertable', 'ring64', 'harbor']
+
+    # Flip a coin to decide on random oscillators or all the same oscillators
+    random_oscillators = False
+    if random.random() < 0.50:
+        random_oscillators = True
+
+    oscillator_name = random.choice(oscillators)
+
+    #centerxs = [(cols//2)+(cols//4), cols//4, cols//2]
+    #centerys = [(rows//4),]*3
+    centerxs = [cols//2]
+    centerys = [rows//4]
+
+    osc_patterns = []
+    for centerx, centery in zip(centerxs, centerys):
+        if random_oscillators:
+            oscillator_name = random.choice(oscillators)
+        osc = get_grid_pattern(
+            oscillator_name, rows, cols, xoffset=centerx, yoffset=centery
+        )
+        osc_patterns.append(osc)
+
+    osc_pattern = pattern_union(osc_patterns)
+
+    centerx2 = cols // 2
+    centery2 = 2 * rows // 3
+
+    centerx2 += random.randint(-8, 8)
+    centery2 += random.randint(-8, 8)
+
+    timebomb = get_grid_pattern(
+        "timebomb", rows, cols, xoffset=centerx2, yoffset=centery2
+    )
+
+    pattern1_url = pattern2url(osc_pattern)
+    pattern2_url = pattern2url(timebomb)
+
+    return pattern1_url, pattern2_url
+
+
 def fourrabbits_twocolor(rows, cols, seed=None):
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -686,7 +721,6 @@ def fourrabbits_twocolor(rows, cols, seed=None):
 
 
 def twospaceshipgenerators_twocolor(rows, cols, seed=None):
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -738,7 +772,6 @@ def twospaceshipgenerators_twocolor(rows, cols, seed=None):
 
 def eightr_twocolor(rows, cols, seed=None):
 
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -831,7 +864,6 @@ def eightr_twocolor(rows, cols, seed=None):
 
 def eightpi_twocolor(rows, cols, seed=None):
 
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -924,7 +956,6 @@ def eightpi_twocolor(rows, cols, seed=None):
 
 def twomultum_twocolor(rows, cols, seed=None):
 
-    # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
@@ -956,7 +987,10 @@ def twomultum_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def bigsegment(rows, cols, seed=None):
+def bigsegment_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
 
     nhseg = 0
     nvseg = 0
@@ -967,7 +1001,7 @@ def bigsegment(rows, cols, seed=None):
     jitterx = 15
     jittery = 15
 
-    team1_pattern, team2_pattern = _segment(rows, cols, seed, colormode='classic', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+    team1_pattern, team2_pattern = segment_pattern(rows, cols, seed, colormode='classic', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
 
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
@@ -975,7 +1009,10 @@ def bigsegment(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def randsegment(rows, cols, seed=None):
+def randsegment_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
 
     nhseg = 0
     nvseg = 0
@@ -986,7 +1023,7 @@ def randsegment(rows, cols, seed=None):
     jitterx = 0
     jittery = 40
 
-    team1_pattern, team2_pattern = _segment(rows, cols, seed, colormode='random', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+    team1_pattern, team2_pattern = segment_pattern(rows, cols, seed, colormode='random', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
 
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
@@ -994,27 +1031,29 @@ def randsegment(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def spaceshipsegment(rows, cols, seed=None):
+def spaceshipsegment_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
 
     nhseg = 1
     nvseg = 0
 
     jitterx = 0
-    jittery = 10
+    jittery = 5
 
-    team1_segment, team2_segment = _segment(rows, cols, seed, colormode='random', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+    team1_segment, team2_segment = segment_pattern(rows, cols, seed, colormode='randombroken', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
 
     ss_name = "lightweightspaceship"
     ssh, ssw = get_pattern_size(ss_name)
 
-    hbuff = 8
+    hbuff = 10
     vbuff = 3
-    ssjitterx = 3
+    ssjitterx = ssw
 
     remaining_height = (rows//2)
     nspaceships = ((remaining_height-vbuff)//(ssh+vbuff))-1
 
-    print(nspaceships)
     # Team 1 has a fleet of lightweight spaceships in upper right corner
     team1_spaceships = []
     for i in range(nspaceships):
@@ -1047,103 +1086,14 @@ def spaceshipsegment(rows, cols, seed=None):
 
     return pattern1_url, pattern2_url
 
+def switchengine(rows, cols, seed=None):
+    pass
 
-def _segment(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=0, nvseg=0):
-    valid_colormodes = ['classic', 'random']#, 'randombroken']
-    if colormode not in valid_colormodes:
-        raise Exception("Error: invalid color mode {colormode} passed to _segment(), must be in {', '.join(valid_colormodes)}")
-    if nhseg==0 and nvseg==0:
-        raise Exception("Error: invalid number of segments (0 horizontal and 0 vertical) passed to _segment()")
+def orchard(rows, cols, seed=None):
+    pass
 
+def randommetheuselas(rows, cols, seed=None):
+    pass
 
-    # Get the snap-to-grid centers
-    hsegcenters = [(iy+1)*rows//(nhseg+1) - 1 for iy in range(nhseg)]
-    vsegcenters = [(ix+1)*cols//(nvseg+1) - 1 for ix in range(nvseg)]
-
-    # Add jitter, and bookend with 0 and nrows/ncols
-    hseglocs = [-1] + [k + random.randint(-jittery, jittery) for k in hsegcenters] + [rows]
-    vseglocs = [-1] + [k + random.randint(-jitterx, jitterx) for k in vsegcenters] + [cols]
-
-    loclenlist = []
-
-    # Construct vertical segments first:
-    # ----------------
-    # Horizontal segment locations give us the start/end coordinates for vertical segments
-    # Skip the first loc - it's 1 past the edge so the segments start at 0
-    for ih in range(1, len(hseglocs)):
-        yend = hseglocs[ih] - 1
-        ystart = hseglocs[ih-1] + 1
-        mag = yend - ystart + 1
-        # Skip the first vseg loc - it's 1 past the edge
-        # Skip the last vseg loc - it's also 1 past the edge
-        for iv in range(1, len(vseglocs)-1):
-            x = vseglocs[iv]
-            loclenlist.append((ystart, yend, x, x, mag))
-
-    # Construct horizontal segments:
-    # ----------------
-    for iv in range(1, len(vseglocs)):
-        xend = vseglocs[iv] - 1
-        xstart = vseglocs[iv-1] + 1
-        mag = xend - xstart + 1
-        for ih in range(1, len(hseglocs)-1):
-            y = hseglocs[ih]
-            loclenlist.append((y, y, xstart, xend, mag))
-
-    # These store the the .o diagrams (flat=False means these are lists of lists of one char)
-    team1_pattern = get_grid_empty(rows, cols, flat=False)
-    team2_pattern = get_grid_empty(rows, cols, flat=False)
-
-    # Color mode:
-    # ------------------------
-    # We have a list of segments, coordinates and lengths,
-    # now the way we populate the map depends on the color mode.
-
-    if colormode=="classic":
-
-        # Classic color mode:
-        # Each segment is a single solid color,
-        # use serpentine pattern to assign colors
-        serpentine_pattern = [1, 2, 2, 1]
-
-        from operator import itemgetter
-        random.shuffle(loclenlist)
-        loclenlist.sort(key=itemgetter(4), reverse=True)
-
-        for i, (starty, endy, startx, endx, _) in enumerate(loclenlist):
-
-            serpix = i%len(serpentine_pattern)
-            serpteam = serpentine_pattern[serpix]
-            for y in range(starty, endy+1):
-                for x in range(startx, endx+1):
-                    if serpteam==1:
-                        team1_pattern[y][x] = "o"
-                    else:
-                        team2_pattern[y][x] = "o"
-
-    elif colormode=="random":
-
-        # Random color mode:
-        # For each segment of length N,
-        # create an array of N/2 zeros and N/2 ones,
-        # shuffle it, usee it to assign colors.
-        for i, (starty, endy, startx, endx, mag) in enumerate(loclenlist):
-            magh = mag//2
-            magoh = mag - mag//2
-            team_assignments = [1,]*magh + [2,]*magoh
-            random.shuffle(team_assignments)
-
-            ta_ix = 0
-            for y in range(starty, endy+1):
-                for x in range(startx, endx+1):
-                    if team_assignments[ta_ix]==1:
-                        team1_pattern[y][x] = "o"
-                    elif team_assignments[ta_ix]==2:
-                        team2_pattern[y][x] = "o"
-                    ta_ix += 1
-
-    team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
-    team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
-
-    return team1_pattern, team2_pattern
-
+def rabbitfarm(rows, cols, seed=None):
+    pass
