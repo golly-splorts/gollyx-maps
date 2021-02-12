@@ -26,7 +26,7 @@ def _get_patterns_map():
         "twomultum": twomultum_twocolor,
         "bigsegment": bigsegment_twocolor,
         "randsegment": randsegment_twocolor,
-        "spaceshipsegment": spaceshipsegment_twocolor
+        "spaceshipsegment": spaceshipsegment_twocolor,
     }
     return patterns_map
 
@@ -109,9 +109,9 @@ def get_map_data(patternname):
     for m in mapdat:
         if m["patternName"] == patternname:
             return m
-    #err = f"Error: did not find map labels for pattern {patternname} in data/maps.json\n"
-    #err += "Available patterns are: {', '.join([m['patternName'] for m in mapdat])}"
-    #raise Exception(err)
+    # err = f"Error: did not find map labels for pattern {patternname} in data/maps.json\n"
+    # err += "Available patterns are: {', '.join([m['patternName'] for m in mapdat])}"
+    # raise Exception(err)
     warn = f"Warning: did not find map labels for pattern {patternname} in data/maps.json\n"
     warn += "Making something up..."
     print(warn)
@@ -121,7 +121,7 @@ def get_map_data(patternname):
         "mapZone1Name": "Zone 1",
         "mapZone2Name": "Zone 2",
         "mapZone3Name": "Zone 3",
-        "mapZone4Name": "Zone 4"
+        "mapZone4Name": "Zone 4",
     }
     return m
 
@@ -155,8 +155,8 @@ def random_twocolor(rows, cols, seed=None):
         points.add((randx, randy))
 
     points = list(points)
-    points1 = set(points[:len(points) // 2])
-    points2 = set(points[len(points) // 2:])
+    points1 = set(points[: len(points) // 2])
+    points2 = set(points[len(points) // 2 :])
     pattern1 = []
     pattern2 = []
     for y in range(rows):
@@ -636,19 +636,25 @@ def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    oscillators = ['airforce', 'koksgalaxy', 'dinnertable', 'ring64', 'harbor']
+    oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
 
     # Flip a coin to decide on random oscillators or all the same oscillators
     random_oscillators = False
-    if random.random() < 0.50:
+    if random.random() < 0.33:
         random_oscillators = True
 
     oscillator_name = random.choice(oscillators)
 
-    #centerxs = [(cols//2)+(cols//4), cols//4, cols//2]
-    #centerys = [(rows//4),]*3
-    centerxs = [cols//2]
-    centerys = [rows//4]
+    centerxs = [
+        (cols // 2) + (cols // 4) + random.randint(-4, 4), 
+        cols // 4 + random.randint(-4, 4),
+        cols // 2 + random.randint(-4, 4)
+    ]
+    centerys = [
+        (rows // 4),
+    ] * 3
+    # centerxs = [cols//2]
+    # centerys = [rows//4]
 
     osc_patterns = []
     for centerx, centery in zip(centerxs, centerys):
@@ -994,14 +1000,23 @@ def bigsegment_twocolor(rows, cols, seed=None):
 
     nhseg = 0
     nvseg = 0
-    while (nhseg==0 and nvseg==0):
-        nhseg = random.choice([0,1,3])
-        nvseg = random.choice([0,1,3])
+    while nhseg == 0 and nvseg == 0:
+        nhseg = random.choice([0, 1, 3])
+        nvseg = random.choice([0, 1, 3])
 
     jitterx = 15
     jittery = 15
 
-    team1_pattern, team2_pattern = segment_pattern(rows, cols, seed, colormode='classic', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+    team1_pattern, team2_pattern = segment_pattern(
+        rows,
+        cols,
+        seed,
+        colormode="classic",
+        nhseg=nhseg,
+        nvseg=nvseg,
+        jitterx=jitterx,
+        jittery=jittery,
+    )
 
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
@@ -1016,14 +1031,23 @@ def randsegment_twocolor(rows, cols, seed=None):
 
     nhseg = 0
     nvseg = 0
-    while (nhseg==0 and nvseg==0):
+    while nhseg == 0 and nvseg == 0:
         nhseg = random.choice(list(range(4)))
         nvseg = random.choice(list(range(4)))
 
     jitterx = 0
     jittery = 40
 
-    team1_pattern, team2_pattern = segment_pattern(rows, cols, seed, colormode='random', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+    team1_pattern, team2_pattern = segment_pattern(
+        rows,
+        cols,
+        seed,
+        colormode="random",
+        nhseg=nhseg,
+        nvseg=nvseg,
+        jitterx=jitterx,
+        jittery=jittery,
+    )
 
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
@@ -1042,7 +1066,16 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 5
 
-    team1_segment, team2_segment = segment_pattern(rows, cols, seed, colormode='randombroken', nhseg=nhseg, nvseg=nvseg, jitterx=jitterx, jittery=jittery)
+    team1_segment, team2_segment = segment_pattern(
+        rows,
+        cols,
+        seed,
+        colormode="randombroken",
+        nhseg=nhseg,
+        nvseg=nvseg,
+        jitterx=jitterx,
+        jittery=jittery,
+    )
 
     ss_name = "lightweightspaceship"
     ssh, ssw = get_pattern_size(ss_name)
@@ -1051,16 +1084,22 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     vbuff = 3
     ssjitterx = ssw
 
-    remaining_height = (rows//2)
-    nspaceships = ((remaining_height-vbuff)//(ssh+vbuff))-1
+    remaining_height = rows // 2
+    nspaceships = ((remaining_height - vbuff) // (ssh + vbuff)) - 1
 
     # Team 1 has a fleet of lightweight spaceships in upper right corner
     team1_spaceships = []
     for i in range(nspaceships):
         # find center y, starting from top
-        y = 0 + vbuff + i*(ssh+vbuff) + ssh//2
+        y = 0 + vbuff + i * (ssh + vbuff) + ssh // 2
         # find center x, starting from far right
-        x = cols - hbuff - 2*i*(ssw) - ssw//2 + random.randint(-ssjitterx, ssjitterx)
+        x = (
+            cols
+            - hbuff
+            - 2 * i * (ssw)
+            - ssw // 2
+            + random.randint(-ssjitterx, ssjitterx)
+        )
         p = get_grid_pattern(
             ss_name, rows, cols, xoffset=x, yoffset=y, check_overflow=False
         )
@@ -1070,30 +1109,34 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     team2_spaceships = []
     for i in range(nspaceships):
         # find center y, starting from bottom
-        y = rows - vbuff - i*(ssh+vbuff) - ssh//2
+        y = rows - vbuff - i * (ssh + vbuff) - ssh // 2
         # find center x, starting from far left
-        x = 0 + hbuff + 2*i*ssw + ssw//2 + random.randint(-ssjitterx, ssjitterx)
+        x = 0 + hbuff + 2 * i * ssw + ssw // 2 + random.randint(-ssjitterx, ssjitterx)
         p = get_grid_pattern(
             ss_name, rows, cols, xoffset=x, yoffset=y, hflip=True, check_overflow=False
         )
         team2_spaceships.append(p)
 
-    s1 = pattern_union([team1_segment]+team1_spaceships)
-    s2 = pattern_union([team2_segment]+team2_spaceships)
+    s1 = pattern_union([team1_segment] + team1_spaceships)
+    s2 = pattern_union([team2_segment] + team2_spaceships)
 
     pattern1_url = pattern2url(s1)
     pattern2_url = pattern2url(s2)
 
     return pattern1_url, pattern2_url
 
+
 def switchengine(rows, cols, seed=None):
     pass
+
 
 def orchard(rows, cols, seed=None):
     pass
 
+
 def randommetheuselas(rows, cols, seed=None):
     pass
+
 
 def rabbitfarm(rows, cols, seed=None):
     pass
