@@ -12,6 +12,29 @@ from golly_maps.maps import (
 HERE = os.path.split(os.path.abspath(__file__))[0]
 
 PATTERNS = [
+    "bigsegment",
+    "eightpi",
+    "eightr",
+    "fourrabbits",
+    "orchard",
+    "quadjustyna",
+    "rabbitfarm",
+    "random",
+    "randommetheuselas",
+    "randompartition",
+    "randomsegment",
+    "spaceshipcluster",
+    "spaceshipcrash",
+    "spaceshipsegment",
+    "switchengines",
+    "timebomb",
+    "timebombredux",
+    "twoacorn",
+    "twomultum",
+    "twospaceshipgenerators",
+]
+
+PATTERNS_PRE10 = [
     "eightpi",
     "eightr",
     "fourrabbits",
@@ -70,13 +93,23 @@ class MapsTest(unittest.TestCase):
             for rk in req_keys:
                 self.assertIn(rk, m.keys())
 
+    def test_get_map_no_exceptions(self):
+        for pattern_name in PATTERNS:
+            # Get each map 25 times and ensure no corner cases raise exceptions
+            r = 100
+            c = 120
+            for i in range(25):
+                get_map(pattern_name, rows=r, cols=c)
+
     def test_get_all_map_data(self):
         for pattern_name in PATTERNS:
-            for season in range(0, 10):
+            for season in range(0, 15):
                 map_data = get_all_map_data(season)
                 pattern_names = [m["patternName"] for m in map_data]
                 if season < 3:
                     self.assertEqual(sorted(pattern_names), sorted(PATTERNS_PRE3))
+                elif season < 10:
+                    self.assertEqual(sorted(pattern_names), sorted(PATTERNS_PRE10))
                 else:
                     self.assertEqual(sorted(pattern_names), sorted(PATTERNS))
 
@@ -90,6 +123,8 @@ class MapsTest(unittest.TestCase):
                 "mapZone2Name",
                 "mapZone3Name",
                 "mapZone4Name",
+                "mapDescription",
+                "mapSeason",
             ]
             for rk in req_keys:
                 self.assertIn(rk, dat.keys())

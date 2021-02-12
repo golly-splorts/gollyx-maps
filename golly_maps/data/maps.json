@@ -5,7 +5,9 @@
         "mapZone1Name": "land birds",
         "mapZone2Name": "air birds",
         "mapZone3Name": "air reptiles",
-        "mapZone4Name": "land reptiles"
+        "mapZone4Name": "land reptiles",
+        "mapDescription": "A row of eight Pi pentominos with some vertical jitter.",
+        "mapSeason": 0
     },
     {
         "patternName": "eightr",
@@ -13,7 +15,9 @@
         "mapZone1Name": "sunbeam",
         "mapZone2Name": "moonbeam",
         "mapZone3Name": "moondog",
-        "mapZone4Name": "sundog"
+        "mapZone4Name": "sundog",
+        "mapDescription": "A row of eight R pentominos with some vertical jitter.",
+        "mapSeason": 0
     },
     {
         "patternName": "fourrabbits",
@@ -21,7 +25,9 @@
         "mapZone1Name": "Level 2A",
         "mapZone2Name": "Level 2B",
         "mapZone3Name": "Level 1B",
-        "mapZone4Name": "Level 1A"
+        "mapZone4Name": "Level 1A",
+        "mapDescription": "Four fast-growing rabbits, one in each quadrant.",
+        "mapSeason": 0
     },
     {
         "patternName": "quadjustyna",
@@ -29,7 +35,9 @@
         "mapZone1Name": "No Sugar No Cream",
         "mapZone2Name": "Sugar No Cream",
         "mapZone3Name": "Cream and Sugar",
-        "mapZone4Name": "Cream No Sugar"
+        "mapZone4Name": "Cream No Sugar",
+        "mapDescription": "Four justyna metheuselas, randomly oriented.",
+        "mapSeason": 3
     },
     {
         "patternName": "random",
@@ -37,7 +45,9 @@
         "mapZone1Name": "Containment Zone 1",
         "mapZone2Name": "Containment Zone 2",
         "mapZone3Name": "Containment Zone 3",
-        "mapZone4Name": "Containment Zone 4"
+        "mapZone4Name": "Containment Zone 4",
+        "mapDescription": "A completely random map layout, territory split 50/50.",
+        "mapSeason": 0
     },
     {
         "patternName": "randompartition",
@@ -45,7 +55,9 @@
         "mapZone1Name": "Evacuation Zone 1",
         "mapZone2Name": "Evacuation Zone 2",
         "mapZone3Name": "Evacuation Zone 3",
-        "mapZone4Name": "Evacuation Zone 4"
+        "mapZone4Name": "Evacuation Zone 4",
+        "mapDescription": "Randomly partitioned random maps, with teams placed in alternating partitions.",
+        "mapSeason": 3
     },
     {
         "patternName": "spaceshipcluster",
@@ -53,7 +65,9 @@
         "mapZone1Name": "snafu",
         "mapZone2Name": "fubar",
         "mapZone3Name": "dilligaf",
-        "mapZone4Name": "tarfu"
+        "mapZone4Name": "tarfu",
+        "mapDescription": "Glider clouds all aiming for the origin.",
+        "mapSeason": 3
     },
     {
         "patternName": "spaceshipcrash",
@@ -61,7 +75,9 @@
         "mapZone1Name": "overflow error",
         "mapZone2Name": "syntax error",
         "mapZone3Name": "compiler error",
-        "mapZone4Name": "buffer error"
+        "mapZone4Name": "buffer error",
+        "mapDescription": "Glider clouds aimed at quadruple burloaferimeters.",
+        "mapSeason": 3
     },
     {
         "patternName": "timebomb",
@@ -69,15 +85,19 @@
         "mapZone1Name": "Hot Rock Piles",
         "mapZone2Name": "Colorful Ponds",
         "mapZone3Name": "Slag Heap",
-        "mapZone4Name": "Bottomless Hole"
+        "mapZone4Name": "Bottomless Hole",
+        "mapDescription": "Three quadruple burloaferimeters holding defensive positions against a timebomb metheusela.",
+        "mapSeason": 0
     },
     {
         "patternName": "timebombredux",
         "mapName": "West Hellmouth's Revenge",
-        "mapZone1Name": "Toxic Goop",
-        "mapZone2Name": "Ash Heap",
-        "mapZone3Name": "Underground Fire",
-        "mapZone4Name": "Mysterious Sinkhole"
+        "mapZone1Name": "Hole On Fire",
+        "mapZone2Name": "Mysterious Sinkhole",
+        "mapZone3Name": "Ash Heap",
+        "mapZone4Name": "Visitor Center",
+        "mapDescription": "Three large oscillators holding defensive positions against a timebomb metheusela.",
+        "mapSeason": 10
     },
     {
         "patternName": "twoacorn",
@@ -85,7 +105,9 @@
         "mapZone1Name": "Quadrant I",
         "mapZone2Name": "Quadrant II",
         "mapZone3Name": "Quadrant III",
-        "mapZone4Name": "Quadrant IV"
+        "mapZone4Name": "Quadrant IV",
+        "mapDescription": "Two fast-growing acorn metheuselas placed in the top and bottom halves of the grid.",
+        "mapSeason": 0
     },
     {
         "patternName": "twomultum",
@@ -93,7 +115,9 @@
         "mapZone1Name": "Haunted Cave",
         "mapZone2Name": "Rainbow Cave",
         "mapZone3Name": "Spider Cave",
-        "mapZone4Name": "Underwater Cave"
+        "mapZone4Name": "Underwater Cave",
+        "mapDescription": "Two multum in parvo metheuselas performing acts of reverse disappearing.",
+        "mapSeason": 0
     },
     {
         "patternName": "twospaceshipgenerators",
@@ -101,7 +125,9 @@
         "mapZone1Name": "spacetime",
         "mapZone2Name": "spaceyo",
         "mapZone3Name": "froyo",
-        "mapZone4Name": "frotime"
+        "mapZone4Name": "frotime",
+        "mapDescription": "Two spaceship generators sending spaceships across fields of boxes.",
+        "mapSeason": 0
     },
     {
         "patternName": "bigsegment",
@@ -109,7 +135,9 @@
         "mapZone1Name": "100 N 200 E",
         "mapZone2Name": "800 S 800 E",
         "mapZone3Name": "400 S 800 W",
-        "mapZone4Name": "200 N 400 E"
+        "mapZone4Name": "200 N 400 E",
+        "mapDescription": "A map cut by horizontal and vertical segments of solid colors.",
+        "mapSeason": 10
     },
     {
         "patternName": "randomsegment",
@@ -117,7 +145,9 @@
         "mapZone1Name": "wigglies",
         "mapZone2Name": "moomoos",
         "mapZone3Name": "bitcakes",
-        "mapZone4Name": "gumblesmocks"
+        "mapZone4Name": "gumblesmocks",
+        "mapDescription": "A map cut by horizontal and vertical segments of random colors.",
+        "mapSeason": 10
     },
     {
         "patternName": "spaceshipsegment",
@@ -125,6 +155,48 @@
         "mapZone1Name": "lane change",
         "mapZone2Name": "vroom fast",
         "mapZone3Name": "honk honk",
-        "mapZone4Name": "the bird"
+        "mapZone4Name": "the bird",
+        "mapDescription": "A cluster of lightweight spaceships fly next to a horizontal segment.",
+        "mapSeason": 10
+    },
+    {
+        "patternName": "randommetheuselas",
+        "mapName": "Fistfight at the Opera",
+        "mapZone1Name": "Box Seats",
+        "mapZone2Name": "Usher Punch",
+        "mapZone3Name": "Center Stage",
+        "mapZone4Name": "Green Room",
+        "mapDescription": "A map littered with various fast-growing metheuselas.",
+        "mapSeason": 10
+    },
+    {
+        "patternName": "switchengines",
+        "mapName": "Engine Room",
+        "mapZone1Name": "75 RPM DEFAULT",
+        "mapZone2Name": "420 RPM NICE",
+        "mapZone3Name": "800 RPM WARNING",
+        "mapZone4Name": "10000 RPM DANGER",
+        "mapDescription": "A cluster of switch engines placed in each quadrant.",
+        "mapSeason": 10
+    },
+    {
+        "patternName": "orchard",
+        "mapName": "The Orchard",
+        "mapZone1Name": "Oranges",
+        "mapZone2Name": "Almonds",
+        "mapZone3Name": "Peaches",
+        "mapZone4Name": "Plums",
+        "mapDescription": "A cluster of acorn metheuselas placed in each quadrant.",
+        "mapSeason": 10
+    },
+    {
+        "patternName": "rabbitfarm",
+        "mapName": "Rabbit Farm",
+        "mapZone1Name": "BEWARE OF RABBITS",
+        "mapZone2Name": "AVOID EYE CONTACT",
+        "mapZone3Name": "DO NOT PET",
+        "mapZone4Name": "DANGER: RABBITS",
+        "mapDescription": "A cluster of fenced-in rabbit metheuselas in each quadrant.",
+        "mapSeason": 10
     }
 ]

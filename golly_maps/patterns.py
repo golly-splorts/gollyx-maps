@@ -1,7 +1,9 @@
+from operator import itemgetter
 import random
 import os
 from glob import glob
 from .geom import hflip_pattern, vflip_pattern, rot_pattern
+from .error import GollyPatternsError
 
 
 def get_patterns():
@@ -33,7 +35,7 @@ def get_pattern(pattern_name, hflip=False, vflip=False, rotdeg=0):
             pattern = rot_pattern(pattern, rotdeg)
         return pattern
     else:
-        raise Exception(f"Error: pattern {fname} does not exist!")
+        raise GollyPatternsError(f"Error: pattern {fname} does not exist!")
 
 
 def get_pattern_size(pattern_name, **kwargs):
@@ -44,10 +46,23 @@ def get_pattern_size(pattern_name, **kwargs):
     return (len(pattern), len(pattern[0]))
 
 
+def get_pattern_livecount(pattern_name, **kwargs):
+    """
+    Returns: count of live cells in the given pattern
+    """
+    pattern = get_pattern(pattern_name, **kwargs)
+    count = 0
+    for row in pattern:
+        for j in row:
+            if j == "o":
+                count += 1
+    return count
+
+
 def get_grid_empty(rows, columns, flat=True):
     if columns < 1 or rows < 1:
         err = f"Error: invalid number of rows {rows} or columns {columns}, must be positive integers > 0"
-        raise Exception(err)
+        raise GollyPatternsError(err)
 
     blank_row = ["."] * columns
     blank_grid = [blank_row[:] for r in range(rows)]
@@ -80,7 +95,7 @@ def get_grid_pattern(
     # will actually fit on the specified grid size.
     if columns < 1 or rows < 1:
         err = f"Error: invalid number of rows {rows} or columns {columns}, must be positive integers > 0"
-        raise Exception(err)
+        raise GollyPatternsError(err)
 
     # convert list of strings to list of lists (for convenience)
     ogpattern = get_pattern(pattern_name, hflip=hflip, vflip=vflip, rotdeg=rotdeg)
@@ -99,19 +114,19 @@ def get_grid_pattern(
     # Check size of pattern
     if check_overflow:
         if xstart < 0:
-            raise Exception(
+            raise GollyPatternsError(
                 f"Error: specified offset {xoffset} is too small, need at least {pattern_w//2}"
             )
         if xend >= columns:
-            raise Exception(
+            raise GollyPatternsError(
                 f"Error: specified number of columns {columns} was too small, need at least {xend+1}"
             )
         if ystart < 0:
-            raise Exception(
+            raise GollyPatternsError(
                 f"Error: specified offset {yoffset} is too small, need at least {pattern_h//2}"
             )
         if yend >= rows:
-            raise Exception(
+            raise GollyPatternsError(
                 f"Error: specified number of rows {rows} was too small, need at least {yend+1}"
             )
 
@@ -131,11 +146,12 @@ def pattern_union(patterns):
         axis0different = len(patterns[i - 1]) != len(patterns[i])
         axis1different = len(patterns[i - 1][0]) != len(patterns[i][0])
         if axis0different or axis1different:
-            err = "Error: cannot perform pattern_union on patterns of dissimilar size"
+            err = "Error: pattern_union() received patterns of dissimilar size"
             err += "\n"
-            for i in range(patterns):
-                err += "Pattern {i+1}: rows = {len(patterns[i])}, cols = {len(patterns[i][0]}\n"
-            raise Exception(err)
+            for i in range(1, len(patterns)):
+                err += f"Pattern {i+1}: rows = {len(patterns[i])}, cols = {len(patterns[i][0])}"
+                err += "\n"
+            raise GollyPatternsError(err)
 
     # Turn all patterns into lists of lists (for convenience)
     rows = len(patterns[0])
@@ -160,7 +176,9 @@ def pattern_union(patterns):
     return newpattern
 
 
-def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=0, nvseg=0):
+def segment_pattern(
+    rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=0, nvseg=0
+):
     """
     Return a two-color pattern consisting of nhseg horizontal segments and nvseg vertical segments.
 
@@ -168,20 +186,27 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
     In random color mode, each segment cell is assigned random teams.
     In random broken mode, each segment cell is assigned random teams or is not alive.
     """
-    valid_colormodes = ['classic', 'classicbroken', 'random', 'randombroken']
+    valid_colormodes = ["classic", "classicbroken", "random", "randombroken"]
     if colormode not in valid_colormodes:
-        raise Exception(f"Error: invalid color mode {colormode} passed to _segment(), must be in {', '.join(valid_colormodes)}")
-    if nhseg==0 and nvseg==0:
-        raise Exception(f"Error: invalid number of segments (0 horizontal and 0 vertical) passed to _segment()")
-
+        raise GollyPatternsError(
+            f"Error: invalid color mode {colormode} passed to _segment(), must be in {', '.join(valid_colormodes)}"
+        )
+    if nhseg == 0 and nvseg == 0:
+        raise GollyPatternsError(
+            "Error: invalid number of segments (0 horizontal and 0 vertical) passed to _segment()"
+        )
 
     # Get the snap-to-grid centers
-    hsegcenters = [(iy+1)*rows//(nhseg+1) - 1 for iy in range(nhseg)]
-    vsegcenters = [(ix+1)*cols//(nvseg+1) - 1 for ix in range(nvseg)]
+    hsegcenters = [(iy + 1) * rows // (nhseg + 1) - 1 for iy in range(nhseg)]
+    vsegcenters = [(ix + 1) * cols // (nvseg + 1) - 1 for ix in range(nvseg)]
 
     # Add jitter, and bookend with 0 and nrows/ncols
-    hseglocs = [-1] + [k + random.randint(-jittery, jittery) for k in hsegcenters] + [rows]
-    vseglocs = [-1] + [k + random.randint(-jitterx, jitterx) for k in vsegcenters] + [cols]
+    hseglocs = (
+        [-1] + [k + random.randint(-jittery, jittery) for k in hsegcenters] + [rows]
+    )
+    vseglocs = (
+        [-1] + [k + random.randint(-jitterx, jitterx) for k in vsegcenters] + [cols]
+    )
 
     loclenlist = []
 
@@ -191,11 +216,11 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
     # Skip the first loc - it's 1 past the edge so the segments start at 0
     for ih in range(1, len(hseglocs)):
         yend = hseglocs[ih] - 1
-        ystart = hseglocs[ih-1] + 1
+        ystart = hseglocs[ih - 1] + 1
         mag = yend - ystart + 1
         # Skip the first vseg loc - it's 1 past the edge
         # Skip the last vseg loc - it's also 1 past the edge
-        for iv in range(1, len(vseglocs)-1):
+        for iv in range(1, len(vseglocs) - 1):
             x = vseglocs[iv]
             loclenlist.append((ystart, yend, x, x, mag))
 
@@ -203,9 +228,9 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
     # ----------------
     for iv in range(1, len(vseglocs)):
         xend = vseglocs[iv] - 1
-        xstart = vseglocs[iv-1] + 1
+        xstart = vseglocs[iv - 1] + 1
         mag = xend - xstart + 1
-        for ih in range(1, len(hseglocs)-1):
+        for ih in range(1, len(hseglocs) - 1):
             y = hseglocs[ih]
             loclenlist.append((y, y, xstart, xend, mag))
 
@@ -218,7 +243,7 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
     # We have a list of segments, coordinates and lengths,
     # now the way we populate the map depends on the color mode.
 
-    if colormode=="classic" or colormode=="classicbroken":
+    if colormode == "classic" or colormode == "classicbroken":
 
         # Classic/classic broken color mode:
         # Each segment is a single solid color,
@@ -227,32 +252,35 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
         serpentine_pattern = [1, 2, 2, 1]
 
         from operator import itemgetter
+
         random.shuffle(loclenlist)
         loclenlist.sort(key=itemgetter(4), reverse=True)
 
         for i, (starty, endy, startx, endx, mag) in enumerate(loclenlist):
 
-            serpix = i%len(serpentine_pattern)
+            serpix = i % len(serpentine_pattern)
             serpteam = serpentine_pattern[serpix]
 
-            if colormode=="classic":
-                team_assignments = [serpteam,]*mag
-            elif colormode=="classicbroken":
-                magon = 24*mag//25
+            if colormode == "classic":
+                team_assignments = [
+                    serpteam,
+                ] * mag
+            elif colormode == "classicbroken":
+                magon = 24 * mag // 25
                 rem = mag - magon
-                team_assignments = [serpteam,]*magon + [0,]*rem
+                team_assignments = [serpteam,] * magon + [ 0, ] * rem # noqa
                 random.shuffle(team_assignments)
 
             ta_ix = 0
-            for y in range(starty, endy+1):
-                for x in range(startx, endx+1):
-                    if team_assignments[ta_ix]==1:
+            for y in range(starty, endy + 1):
+                for x in range(startx, endx + 1):
+                    if team_assignments[ta_ix] == 1:
                         team1_pattern[y][x] = "o"
-                    elif team_assignments[ta_ix]==2:
+                    elif team_assignments[ta_ix] == 2:
                         team2_pattern[y][x] = "o"
                     ta_ix += 1
 
-    elif colormode=="random" or colormode=="randombroken":
+    elif colormode == "random" or colormode == "randombroken":
 
         # Random/random broken color mode:
         # For each segment of length N,
@@ -260,28 +288,28 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
         # shuffle it, use it to assign colors.
         # If broken, include 0s to represent dead cells
         for i, (starty, endy, startx, endx, mag) in enumerate(loclenlist):
-            if colormode=="random":
-                magh = mag//2
-                magoh = mag - mag//2
-                team_assignments = [1,]*magh + [2,]*magoh
+            if colormode == "random":
+                magh = mag // 2
+                magoh = mag - mag // 2
+                team_assignments = [1,] * magh + [ 2, ] * magoh # noqa
                 random.shuffle(team_assignments)
-            elif colormode=="randombroken":
-                magh = 12*mag//25
-                magoh = 12*mag//25
+            elif colormode == "randombroken":
+                magh = 12 * mag // 25
+                magoh = 12 * mag // 25
                 rem = mag - magh - magoh
-                team_assignments = [1,]*magh + [2,]*magoh + [0,]*rem
+                team_assignments = ( [ 1, ] * magh + [ 2, ] * magoh + [ 0, ] * rem) # noqa
                 random.shuffle(team_assignments)
 
             ta_ix = 0
-            for y in range(starty, endy+1):
+            for y in range(starty, endy + 1):
                 if y >= rows:
                     continue
-                for x in range(startx, endx+1):
+                for x in range(startx, endx + 1):
                     if x >= cols:
                         continue
-                    if team_assignments[ta_ix]==1:
+                    if team_assignments[ta_ix] == 1:
                         team1_pattern[y][x] = "o"
-                    elif team_assignments[ta_ix]==2:
+                    elif team_assignments[ta_ix] == 2:
                         team2_pattern[y][x] = "o"
                     ta_ix += 1
 
@@ -290,3 +318,223 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
 
     return team1_pattern, team2_pattern
 
+
+def metheusela_quadrants_pattern(
+    rows, cols, seed=None, metheusela_counts=[1, 2, 3, 4, 9], fixed_metheusela=None
+):
+    """
+    Returns a map with a cluster of metheuselas in each quadrant.
+
+    The methesela_counts parameter determines how many metheuselas
+    may be put in each corner.
+
+    Valid configurations:
+    1 (placed in center of quadrant)
+    2 (placed on opposite corners of a four-point square formed by cutting quadrant into thirds
+    4 (placed on all corners of four-point square)
+    3 (placed on diagonal of square with 3 points per edge, or 8 points)
+    9 (placed on all corners and center of 8-point square)
+
+    Procedure:
+    First randomly pair quadrants so their metheusela counts will match.
+    Next, place random metheusela patterns in each of the corners.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    valid_mc = [1, 2, 3, 4, 9]
+    for mc in metheusela_counts:
+        if mc not in valid_mc:
+            msg = "Invalid metheusela counts passed: must be in {', '.join(valid_mc)}\n"
+            msg += "you specified {', '.join(metheusela_counts)}"
+            raise GollyPatternsError(msg)
+
+    metheusela_names = [
+        "acorn",
+        "bheptomino",
+        "cheptomino",
+        "eheptomino",
+        "multuminparvo",
+        "piheptomino",
+        "rabbit",
+        "rpentomino",
+        "timebomb",
+        "switchengine",
+    ]
+    small_metheusela_names = [
+        "bheptomino",
+        "cheptomino",
+        "eheptomino",
+        "piheptomino",
+        "rpentomino",
+    ]
+
+    # Store each quadrant and its upper left corner in (rows from top, cols from left) format
+    quadrants = [
+        (1, (0, cols // 2)),
+        (2, (0, 0)),
+        (3, (rows // 2, 0)),
+        (4, (rows // 2, cols // 2)),
+    ]
+
+    # Shuffle quadrants, first two and second two are now buddies
+    random.shuffle(quadrants)
+
+    rotdegs = [0, 90, 180, 270]
+
+    all_metheuselas = []
+
+    for buddy_index in [[0, 1], [2, 3]]:
+        # Decide how many metheuselas in this quad pair
+        count = random.choice(metheusela_counts)
+
+        if count == 1:
+
+            # Only one metheusela in this quadrant, so use the center
+
+            jitterx = 20
+            jittery = 15
+
+            for bi in buddy_index:
+                corner = quadrants[bi][1]
+
+                y = corner[0] + rows // 4 + random.randint(-jittery, jittery)
+                x = corner[1] + cols // 4 + random.randint(-jitterx, jitterx)
+
+                if fixed_metheusela:
+                    meth = fixed_metheusela
+                else:
+                    meth = random.choice(metheusela_names)
+                pattern = get_grid_pattern(
+                    meth,
+                    cols,
+                    rows,
+                    xoffset=x,
+                    yoffset=y,
+                    hflip=bool(random.getrandbits(1)),
+                    vflip=bool(random.getrandbits(1)),
+                    rotdeg=random.choice(rotdegs),
+                )
+                livecount = get_pattern_livecount(meth)
+                all_metheuselas.append((livecount, pattern))
+
+        elif count == 2 or count == 4:
+
+            # Two or four metheuselas in this quadrant, so place at corners of a square
+            # Form the square by cutting the quadrant into thirds
+
+            jitterx = 12
+            jittery = 8
+
+            for bi in buddy_index:
+                corner = quadrants[bi][1]
+
+                # Slices and partitions form the inside square
+                nslices = 2
+                nparts = nslices + 1
+
+                posdiag = bool(random.getrandbits(1))
+
+                for a in range(1, nparts):
+                    for b in range(1, nparts):
+
+                        proceed = False
+                        if count == 2:
+                            if (posdiag and a == b) or (
+                                not posdiag and a == (nslices - b + 1)
+                            ):
+                                proceed = True
+                        elif count == 4:
+                            proceed = True
+
+                        if proceed:
+                            y = corner[0] + a * ((rows // 2) // nparts)
+                            x = corner[1] + b * ((cols // 2) // nparts)
+
+                            if fixed_metheusela:
+                                meth = fixed_metheusela
+                            else:
+                                meth = random.choice(metheusela_names)
+                            try:
+                                pattern = get_grid_pattern(
+                                    meth,
+                                    rows,
+                                    cols,
+                                    xoffset=x,
+                                    yoffset=y,
+                                    hflip=bool(random.getrandbits(1)),
+                                    vflip=bool(random.getrandbits(1)),
+                                    rotdeg=random.choice(rotdegs),
+                                )
+                            except GollyPatternsError:
+                                raise GollyPatternsError(
+                                    f"Error with metheusela {meth}: cannot fit"
+                                )
+                            livecount = get_pattern_livecount(meth)
+                            all_metheuselas.append((livecount, pattern))
+
+        elif count == 3 or count == 9:
+
+            # Three or nine metheuselas, place these on a square with three points per side
+            # or eight points total
+
+            for bi in buddy_index:
+                corner = quadrants[bi][1]
+
+                nslices = 4
+
+                for a in range(1, nslices):
+                    for b in range(1, nslices):
+
+                        proceed = False
+                        if count == 3:
+                            if a == b:
+                                proceed = True
+                        elif count == 9:
+                            proceed = True
+
+                        if proceed:
+                            y = corner[0] + a * ((rows // 2) // nslices)
+                            x = corner[1] + b * ((cols // 2) // nslices)
+
+                            if fixed_metheusela:
+                                meth = fixed_metheusela
+                            else:
+                                meth = random.choice(small_metheusela_names)
+                            try:
+                                pattern = get_grid_pattern(
+                                    meth,
+                                    rows,
+                                    cols,
+                                    xoffset=x,
+                                    yoffset=y,
+                                    hflip=bool(random.getrandbits(1)),
+                                    vflip=bool(random.getrandbits(1)),
+                                    rotdeg=random.choice(rotdegs),
+                                )
+                            except GollyPatternsError:
+                                raise GollyPatternsError(
+                                    f"Error with metheusela {meth}: cannot fit"
+                                )
+                            livecount = get_pattern_livecount(meth)
+                            all_metheuselas.append((livecount, pattern))
+
+    random.shuffle(all_metheuselas)
+    all_metheuselas.sort(key=itemgetter(0), reverse=True)
+
+    team1_patterns = []
+    team2_patterns = []
+
+    serpentine_pattern = [1, 2, 2, 1]
+    for i, (_, metheusela_pattern) in enumerate(all_metheuselas):
+        serpix = i % len(serpentine_pattern)
+        serpteam = serpentine_pattern[serpix]
+        if serpteam == 1:
+            team1_patterns.append(metheusela_pattern)
+        elif serpteam == 2:
+            team2_patterns.append(metheusela_pattern)
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
+
+    return team1_pattern, team2_pattern

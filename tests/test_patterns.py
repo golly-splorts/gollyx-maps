@@ -14,6 +14,7 @@ HERE = os.path.split(os.path.abspath(__file__))[0]
 ALL_PATTERNS = [
     "78p70",
     "acorn",
+    "airforce",
     "backrake2",
     "bheptomino",
     "block",
@@ -25,6 +26,7 @@ ALL_PATTERNS = [
     "dinnertableedges",
     "eheptomino",
     "glider",
+    "harbor",
     "heavyweightspaceship",
     "justyna",
     "koksgalaxy",
@@ -34,6 +36,7 @@ ALL_PATTERNS = [
     "piheptomino",
     "quadrupleburloaferimeter",
     "rabbit",
+    "ring64",
     "rpentomino",
     "spaceshipgrower",
     "switchengine",
@@ -43,6 +46,7 @@ ALL_PATTERNS = [
     "unidimensionalinfinitegrowth",
     "unidimensionalsixgliders",
     "x66",
+    "vring64",
 ]
 
 # [nrows, ncols]

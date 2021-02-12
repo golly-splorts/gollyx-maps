@@ -1,14 +1,34 @@
+from operator import itemgetter
 import json
 import os
 import random
+from .geom import hflip_pattern
 from .patterns import (
     get_pattern_size,
-    get_grid_empty,
+    get_pattern_livecount,
     get_grid_pattern,
     segment_pattern,
+    metheusela_quadrants_pattern,
     pattern_union,
 )
 from .utils import pattern2url
+from .error import GollyMapsError, GollyPatternsError
+
+
+def retry_on_failure(func, *args, **kwargs):
+    def wrap(*args, **kwargs):
+        done = False
+        maxcount = 10
+        count = 0
+        while not done and count < maxcount:
+            try:
+                return func(*args, **kwargs)
+            except GollyPatternsError:
+                count += 1
+                continue
+        raise GollyMapsError(f"Error: retry failure, tried {maxcount} times!")
+
+    return wrap
 
 
 #####################################################
@@ -17,22 +37,26 @@ from .utils import pattern2url
 
 def _get_patterns_map():
     patterns_map = {
-        "random": random_twocolor,
-        "randompartition": randompartition_twocolor,
+        "bigsegment": bigsegment_twocolor,
+        "eightpi": eightpi_twocolor,
+        "eightr": eightr_twocolor,
+        "fourrabbits": fourrabbits_twocolor,
+        "orchard": orchard_twocolor,
         "quadjustyna": quadjustyna_twocolor,
-        "spaceshipcrash": spaceshipcrash_twocolor,
+        "rabbitfarm": rabbitfarm_twocolor,
+        "random": random_twocolor,
+        "randommetheuselas": randommetheuselas_twocolor,
+        "randompartition": randompartition_twocolor,
+        "randomsegment": randomsegment_twocolor,
         "spaceshipcluster": spaceshipcluster_twocolor,
-        "twoacorn": twoacorn_twocolor,
+        "spaceshipcrash": spaceshipcrash_twocolor,
+        "spaceshipsegment": spaceshipsegment_twocolor,
+        "switchengines": switchengines_twocolor,
         "timebomb": timebomb_oscillators_twocolor,
         "timebombredux": timebomb_randomoscillators_twocolor,
-        "fourrabbits": fourrabbits_twocolor,
-        "twospaceshipgenerators": twospaceshipgenerators_twocolor,
-        "eightr": eightr_twocolor,
-        "eightpi": eightpi_twocolor,
+        "twoacorn": twoacorn_twocolor,
         "twomultum": twomultum_twocolor,
-        "bigsegment": bigsegment_twocolor,
-        "randomsegment": randomsegment_twocolor,
-        "spaceshipsegment": spaceshipsegment_twocolor,
+        "twospaceshipgenerators": twospaceshipgenerators_twocolor,
     }
     return patterns_map
 
@@ -76,6 +100,9 @@ def get_map(patternname, rows=100, cols=120):
     mapdat["columns"] = cols
     mapdat["cellSize"] = 7
 
+    del mapdat['mapSeason']
+    del mapdat['mapDescription']
+
     return mapdat
 
 
@@ -106,7 +133,7 @@ def get_all_map_data(season=999):
             "twomultum",
         ]
         mapdat = [m for m in mapdat if m["patternName"] in filter_patterns]
-    elif season < 3:
+    elif season < 10:
         filter_patterns = [
             "random",
             "twoacorn",
@@ -116,6 +143,10 @@ def get_all_map_data(season=999):
             "eightr",
             "eightpi",
             "twomultum",
+            "randompartition",
+            "quadjustyna",
+            "spaceshipcrash",
+            "spaceshipcluster",
         ]
         mapdat = [m for m in mapdat if m["patternName"] in filter_patterns]
 
@@ -127,12 +158,8 @@ def get_map_data(patternname):
     for m in mapdat:
         if m["patternName"] == patternname:
             return m
-    # err = f"Error: did not find map labels for pattern {patternname} in data/maps.json\n"
-    # err += "Available patterns are: {', '.join([m['patternName'] for m in mapdat])}"
-    # raise Exception(err)
-    warn = f"Warning: did not find map labels for pattern {patternname} in data/maps.json\n"
-    warn += "Making something up..."
-    print(warn)
+
+    # If we reach this point, we didn't find labels in data/maps.json
     m = {
         "patternName": patternname,
         "mapName": "Unnamed Map",
@@ -173,8 +200,8 @@ def random_twocolor(rows, cols, seed=None):
         points.add((randx, randy))
 
     points = list(points)
-    points1 = set(points[: len(points) // 2])
-    points2 = set(points[len(points) // 2 :])
+    points1 = set(points[: len(points) // 2])  # noqa
+    points2 = set(points[len(points) // 2 :])  # noqa
     pattern1 = []
     pattern2 = []
     for y in range(rows):
@@ -1076,7 +1103,7 @@ def randomsegment_twocolor(rows, cols, seed=None):
     jittery = 12
 
     colormode = "random"
-    if random.random()<0.50:
+    if random.random() < 0.50:
         colormode = "randombroken"
 
     team1_pattern, team2_pattern = segment_pattern(
@@ -1167,17 +1194,79 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def switchengine(rows, cols, seed=None):
-    pass
+@retry_on_failure
+def switchengines_twocolor(rows, cols, seed=None):
+    team1_pattern, team2_pattern = metheusela_quadrants_pattern(
+        rows, cols, seed, metheusela_counts=[2, 4], fixed_metheusela="switchengine"
+    )
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+    return pattern1_url, pattern2_url
 
 
-def orchard(rows, cols, seed=None):
-    pass
+@retry_on_failure
+def orchard_twocolor(rows, cols, seed=None):
+    count = random.choice([4, 9])
+    team1_pattern, team2_pattern = metheusela_quadrants_pattern(
+        rows, cols, seed, metheusela_counts=[count], fixed_metheusela="acorn"
+    )
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+    return pattern1_url, pattern2_url
 
 
-def randommetheuselas(rows, cols, seed=None):
-    pass
+@retry_on_failure
+def randommetheuselas_twocolor(rows, cols, seed=None):
+    team1_pattern, team2_pattern = metheusela_quadrants_pattern(rows, cols, seed)
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+    return pattern1_url, pattern2_url
 
 
-def rabbitfarm(rows, cols, seed=None):
-    pass
+def rabbitfarm_twocolor(rows, cols, seed=None):
+
+    # Make the wabbits
+    # -----------------
+    count = 4  # random.choice([4, 9])
+    team1_wabbits, team2_wabbits = metheusela_quadrants_pattern(
+        rows, cols, seed, metheusela_counts=[count], fixed_metheusela="rabbit"
+    )
+
+    # Make the fence
+    # -----------------
+
+    # Always 1 horizontal segment, optional vertical segment
+    nhseg = 1
+    if random.random()<0.33:
+       nvseg = 0
+    else:
+       nvseg = 1
+
+    # Set amount of jitter for placement of segments
+    jitterx = 8
+    jittery = 8
+
+    # Color mode should be broken
+    if random.random()<0.33:
+       colormode = "classicbroken"
+    else:
+       colormode = "randombroken"
+
+    team1_fence, team2_fence = segment_pattern(
+       rows,
+       cols,
+       seed,
+       colormode=colormode,
+       nhseg=nhseg,
+       nvseg=nvseg,
+       jitterx=jitterx,
+       jittery=jittery,
+    )
+
+    team1_pattern = pattern_union([team1_wabbits, team1_fence])
+    team2_pattern = pattern_union([team2_wabbits, team2_fence])
+
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+
+    return pattern1_url, pattern2_url
