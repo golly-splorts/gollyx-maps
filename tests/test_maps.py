@@ -93,6 +93,14 @@ class MapsTest(unittest.TestCase):
             for rk in req_keys:
                 self.assertIn(rk, m.keys())
 
+    def test_get_map_no_exceptions(self):
+        for pattern_name in PATTERNS:
+            # Get each map 25 times and ensure no corner cases raise exceptions
+            r = 100
+            c = 120
+            for i in range(25):
+                get_map(pattern_name, rows=r, cols=c)
+
     def test_get_all_map_data(self):
         for pattern_name in PATTERNS:
             for season in range(0, 15):

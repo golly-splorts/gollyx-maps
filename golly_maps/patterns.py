@@ -146,10 +146,11 @@ def pattern_union(patterns):
         axis0different = len(patterns[i - 1]) != len(patterns[i])
         axis1different = len(patterns[i - 1][0]) != len(patterns[i][0])
         if axis0different or axis1different:
-            err = "Error: cannot perform pattern_union on patterns of dissimilar size"
+            err = "Error: pattern_union() received patterns of dissimilar size"
             err += "\n"
-            for i in range(patterns):
-                err += "Pattern {i+1}: rows = {len(patterns[i])}, cols = {len(patterns[i][0]}\n"
+            for i in range(1, len(patterns)):
+                err += f"Pattern {i+1}: rows = {len(patterns[i])}, cols = {len(patterns[i][0])}"
+                err += "\n"
             raise GollyPatternsError(err)
 
     # Turn all patterns into lists of lists (for convenience)
