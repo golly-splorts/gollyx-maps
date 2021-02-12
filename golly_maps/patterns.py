@@ -1,3 +1,4 @@
+import random
 import os
 from glob import glob
 from .geom import hflip_pattern, vflip_pattern, rot_pattern
@@ -167,7 +168,7 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
     In random color mode, each segment cell is assigned random teams.
     In random broken mode, each segment cell is assigned random teams or is not alive.
     """
-    valid_colormodes = ['classic', 'random', 'randombroken']
+    valid_colormodes = ['classic', 'classicbroken', 'random', 'randombroken']
     if colormode not in valid_colormodes:
         raise Exception(f"Error: invalid color mode {colormode} passed to _segment(), must be in {', '.join(valid_colormodes)}")
     if nhseg==0 and nvseg==0:
@@ -217,27 +218,39 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
     # We have a list of segments, coordinates and lengths,
     # now the way we populate the map depends on the color mode.
 
-    if colormode=="classic":
+    if colormode=="classic" or colormode=="classicbroken":
 
-        # Classic color mode:
+        # Classic/classic broken color mode:
         # Each segment is a single solid color,
-        # use serpentine pattern to assign colors
+        # use serpentine pattern to assign colors.
+        # If broken, use 0s to represent dead cells.
         serpentine_pattern = [1, 2, 2, 1]
 
         from operator import itemgetter
         random.shuffle(loclenlist)
         loclenlist.sort(key=itemgetter(4), reverse=True)
 
-        for i, (starty, endy, startx, endx, _) in enumerate(loclenlist):
+        for i, (starty, endy, startx, endx, mag) in enumerate(loclenlist):
 
             serpix = i%len(serpentine_pattern)
             serpteam = serpentine_pattern[serpix]
+
+            if colormode=="classic":
+                team_assignments = [serpteam,]*mag
+            elif colormode=="classicbroken":
+                magon = 24*mag//25
+                rem = mag - magon
+                team_assignments = [serpteam,]*magon + [0,]*rem
+                random.shuffle(team_assignments)
+
+            ta_ix = 0
             for y in range(starty, endy+1):
                 for x in range(startx, endx+1):
-                    if serpteam==1:
+                    if team_assignments[ta_ix]==1:
                         team1_pattern[y][x] = "o"
-                    else:
+                    elif team_assignments[ta_ix]==2:
                         team2_pattern[y][x] = "o"
+                    ta_ix += 1
 
     elif colormode=="random" or colormode=="randombroken":
 
@@ -261,7 +274,11 @@ def segment_pattern(rows, cols, seed=None, colormode=None, jitterx=0, jittery=0,
 
             ta_ix = 0
             for y in range(starty, endy+1):
+                if y >= rows:
+                    continue
                 for x in range(startx, endx+1):
+                    if x >= cols:
+                        continue
                     if team_assignments[ta_ix]==1:
                         team1_pattern[y][x] = "o"
                     elif team_assignments[ta_ix]==2:

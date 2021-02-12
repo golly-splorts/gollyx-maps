@@ -1,7 +1,13 @@
 import json
 import os
 import random
-from .patterns import get_pattern_size, get_grid_empty, get_grid_pattern, pattern_union
+from .patterns import (
+    get_pattern_size,
+    get_grid_empty,
+    get_grid_pattern,
+    segment_pattern,
+    pattern_union,
+)
 from .utils import pattern2url
 
 
@@ -25,7 +31,7 @@ def _get_patterns_map():
         "eightpi": eightpi_twocolor,
         "twomultum": twomultum_twocolor,
         "bigsegment": bigsegment_twocolor,
-        "randsegment": randsegment_twocolor,
+        "randomsegment": randomsegment_twocolor,
         "spaceshipsegment": spaceshipsegment_twocolor,
     }
     return patterns_map
@@ -89,6 +95,18 @@ def get_all_map_data(season=999):
         mapdat = json.load(f)
 
     if season < 3:
+        filter_patterns = [
+            "random",
+            "twoacorn",
+            "timebomb",
+            "fourrabbits",
+            "twospaceshipgenerators",
+            "eightr",
+            "eightpi",
+            "twomultum",
+        ]
+        mapdat = [m for m in mapdat if m["patternName"] in filter_patterns]
+    elif season < 3:
         filter_patterns = [
             "random",
             "twoacorn",
@@ -1030,7 +1048,7 @@ def bigsegment_twocolor(rows, cols, seed=None):
         rows,
         cols,
         seed,
-        colormode="classic",
+        colormode="classicbroken",
         nhseg=nhseg,
         nvseg=nvseg,
         jitterx=jitterx,
@@ -1043,7 +1061,7 @@ def bigsegment_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def randsegment_twocolor(rows, cols, seed=None):
+def randomsegment_twocolor(rows, cols, seed=None):
 
     if seed is not None:
         random.seed(seed)
@@ -1055,7 +1073,7 @@ def randsegment_twocolor(rows, cols, seed=None):
         nvseg = random.choice(list(range(4)))
 
     jitterx = 0
-    jittery = 40
+    jittery = 12
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
@@ -1089,7 +1107,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
         rows,
         cols,
         seed,
-        colormode="randombroken",
+        colormode="random",
         nhseg=nhseg,
         nvseg=nvseg,
         jitterx=jitterx,
