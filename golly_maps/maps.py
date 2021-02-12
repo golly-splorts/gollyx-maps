@@ -277,8 +277,9 @@ def randompartition_twocolor(rows, cols, seed=None):
 
 
 def orchard_twocolor(rows, cols, seed=None):
+    count = random.choice([4, 9])
     return randommetheuselas_twocolor(
-        rows, cols, seed, metheusela_counts=[9], fixed_metheusela="acorn"
+        rows, cols, seed, metheusela_counts=[count], fixed_metheusela="acorn"
     )
 
 def _____orchard_twocolor(rows, cols, seed=None):
