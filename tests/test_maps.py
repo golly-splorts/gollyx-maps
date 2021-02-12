@@ -12,40 +12,41 @@ from golly_maps.maps import (
 HERE = os.path.split(os.path.abspath(__file__))[0]
 
 PATTERNS = [
-    "random",
-    "randompartition",
+    "bigsegment",
+    "eightpi",
+    "eightr",
+    "fourrabbits",
+    "orchard",
     "quadjustyna",
-    "spaceshipcrash",
+    "rabbitfarm",
+    "random",
+    "randommetheuselas",
+    "randompartition",
+    "randomsegment",
     "spaceshipcluster",
-    "twoacorn",
+    "spaceshipcrash",
+    "spaceshipsegment",
+    "switchengines",
     "timebomb",
     "timebombredux",
-    "fourrabbits",
-    "twospaceshipgenerators",
-    "eightr",
-    "eightpi",
+    "twoacorn",
     "twomultum",
-    "bigsegment",
-    "randomsegment",
-    "spaceshipsegment",
-    "randommetheuselas",
-    "switchengines",
+    "twospaceshipgenerators",
 ]
 
 PATTERNS_PRE10 = [
+    "eightpi",
+    "eightr",
+    "fourrabbits",
+    "quadjustyna",
     "random",
     "randompartition",
-    "quadjustyna",
-    "spaceshipcrash",
     "spaceshipcluster",
-    "twoacorn",
+    "spaceshipcrash",
     "timebomb",
-    "timebombredux",
-    "fourrabbits",
-    "twospaceshipgenerators",
-    "eightr",
-    "eightpi",
+    "twoacorn",
     "twomultum",
+    "twospaceshipgenerators",
 ]
 
 PATTERNS_PRE3 = [
@@ -94,11 +95,13 @@ class MapsTest(unittest.TestCase):
 
     def test_get_all_map_data(self):
         for pattern_name in PATTERNS:
-            for season in range(0, 10):
+            for season in range(0, 15):
                 map_data = get_all_map_data(season)
                 pattern_names = [m["patternName"] for m in map_data]
                 if season < 3:
                     self.assertEqual(sorted(pattern_names), sorted(PATTERNS_PRE3))
+                elif season < 10:
+                    self.assertEqual(sorted(pattern_names), sorted(PATTERNS_PRE10))
                 else:
                     self.assertEqual(sorted(pattern_names), sorted(PATTERNS))
 
@@ -112,6 +115,8 @@ class MapsTest(unittest.TestCase):
                 "mapZone2Name",
                 "mapZone3Name",
                 "mapZone4Name",
+                "mapDescription",
+                "mapSeason",
             ]
             for rk in req_keys:
                 self.assertIn(rk, dat.keys())

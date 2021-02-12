@@ -3,7 +3,7 @@ import random
 import os
 from glob import glob
 from .geom import hflip_pattern, vflip_pattern, rot_pattern
-from .errror import GollyPatternsError
+from .error import GollyPatternsError
 
 
 def get_patterns():

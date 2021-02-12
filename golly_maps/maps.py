@@ -100,6 +100,9 @@ def get_map(patternname, rows=100, cols=120):
     mapdat["columns"] = cols
     mapdat["cellSize"] = 7
 
+    del mapdat['mapSeason']
+    del mapdat['mapDescription']
+
     return mapdat
 
 
