@@ -2,6 +2,9 @@ from operator import itemgetter
 import json
 import os
 import random
+from .geom import (
+    hflip_pattern
+)
 from .patterns import (
     get_pattern_size,
     get_pattern_livecount,
@@ -18,24 +21,25 @@ from .utils import pattern2url
 
 def _get_patterns_map():
     patterns_map = {
-        "random": random_twocolor,
-        "randompartition": randompartition_twocolor,
+        "bigsegment": bigsegment_twocolor,
+        "eightpi": eightpi_twocolor,
+        "eightr": eightr_twocolor,
+        "fourrabbits": fourrabbits_twocolor,
+        "orchard": orchard_twocolor,
         "quadjustyna": quadjustyna_twocolor,
-        "spaceshipcrash": spaceshipcrash_twocolor,
+        "random": random_twocolor,
+        "randommetheuselas": randommetheuselas_twocolor,
+        "randompartition": randompartition_twocolor,
+        "randomsegment": randomsegment_twocolor,
         "spaceshipcluster": spaceshipcluster_twocolor,
-        "twoacorn": twoacorn_twocolor,
+        "spaceshipcrash": spaceshipcrash_twocolor,
+        "spaceshipsegment": spaceshipsegment_twocolor,
+        "switchengines": switchengines_twocolor,
         "timebomb": timebomb_oscillators_twocolor,
         "timebombredux": timebomb_randomoscillators_twocolor,
-        "fourrabbits": fourrabbits_twocolor,
-        "twospaceshipgenerators": twospaceshipgenerators_twocolor,
-        "eightr": eightr_twocolor,
-        "eightpi": eightpi_twocolor,
+        "twoacorn": twoacorn_twocolor,
         "twomultum": twomultum_twocolor,
-        "bigsegment": bigsegment_twocolor,
-        "randomsegment": randomsegment_twocolor,
-        "spaceshipsegment": spaceshipsegment_twocolor,
-        "randommetheuselas": randommetheuselas_twocolor,
-        "switchengines": switchengines_twocolor,
+        "twospaceshipgenerators": twospaceshipgenerators_twocolor,
     }
     return patterns_map
 
@@ -270,6 +274,54 @@ def randompartition_twocolor(rows, cols, seed=None):
     s2 = pattern2url(team2_pattern)
 
     return (s1, s2)
+
+
+def orchard_twocolor(rows, cols, seed=None):
+    return randommetheuselas_twocolor(
+        rows, cols, seed, metheusela_counts=[9], fixed_metheusela="acorn"
+    )
+
+def _____orchard_twocolor(rows, cols, seed=None):
+
+    nacorns = 8
+
+    # Distribute acorns randomly among the teams
+    ptacorns = nacorns//2
+    team_assignments = [1,]*ptacorns + [2,]*ptacorns
+    random.shuffle(team_assignments)
+
+    yloc = rows//2
+    xlocs = [i*cols//(nacorns+1) for i in range(nacorns+1)] + [cols]
+
+    jitterx = 3
+    jittery = 10
+
+    team1_acorns = []
+    team2_acorns = []
+
+    ta_ix = 0
+    for i in range(1, nacorns+1):
+
+        centerx = xlocs[i] + random.randint(-jitterx, jitterx)
+        centery = yloc + random.randint(-jittery, jittery)
+
+        acorn = get_grid_pattern(
+            "acorn", rows, cols, xoffset=centerx, yoffset=centery, 
+        )
+        if team_assignments[ta_ix]==1:
+            team1_acorns.append(acorn)
+        elif team_assignments[ta_ix]==2:
+            team2_acorns.append(acorn)
+        ta_ix += 1
+
+    team1_pattern = pattern_union(team1_acorns)
+    team2_pattern = pattern_union(team2_acorns)
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return (s1, s2)
+
 
 
 def quadjustyna_twocolor(rows, cols, seed=None):
@@ -1183,26 +1235,28 @@ def switchengines_twocolor(rows, cols, seed=None):
     )
 
 
-def orchard(rows, cols, seed=None):
-    pass
-
-
 def randommetheuselas_twocolor(
-    rows, cols, seed=None, metheusela_counts=[1, 2, 4], fixed_metheusela=None
+    rows, cols, seed=None, metheusela_counts=[1, 2, 3, 4, 9], fixed_metheusela=None
 ):
+    """
+    Returns a map with a cluster of metheuselas in each quadrant.
 
-    # Algorithm:
-    # - Randomly pair the quadrants
-    # - Decide how many to put in each quadrant pair (1, 2, or 4)
-    # - Choose random metheuselas
+    The methesela_counts parameter determines how many metheuselas
+    may be put in each corner.
 
-    # Grid confugration:
-    # - if one metheusela, add 1/4 of total width/height to get centerpoint
-    # - if two metheuselas, pick two opposite corners of a square,
-    #   whose corners are at +1/3 and +2/3 of the quadrant w/h
-    # - if four metheuselas, use all four corners of that square
+    Valid configurations:
+    1 (placed in center of quadrant)
+    2 (placed on opposite corners of a four-point square formed by cutting quadrant into thirds
+    4 (placed on all corners of four-point square)
+    3 (placed on diagonal of square with 3 points per edge, or 8 points)
+    9 (placed on all corners and center of 8-point square)
 
-    valid_mc = [1, 2, 4]
+    Procedure:
+    First randomly pair quadrants so their metheusela counts will match.
+    Next, place random metheusela patterns in each of the corners.
+    """
+
+    valid_mc = [1, 2, 3, 4, 9]
     for mc in metheusela_counts:
         if mc not in valid_mc:
             msg = "Invalid metheusela counts passed: must be in {', '.join(valid_mc)}\n"
@@ -1220,6 +1274,13 @@ def randommetheuselas_twocolor(
         "rpentomino",
         "timebomb",
         "switchengine",
+    ]
+    small_metheusela_names = [
+        "bheptomino",
+        "cheptomino",
+        "eheptomino",
+        "piheptomino",
+        "rpentomino"
     ]
 
     # Store each quadrant and its upper left corner in (rows from top, cols from left) format
@@ -1243,13 +1304,16 @@ def randommetheuselas_twocolor(
 
         if count == 1:
 
-            # Use the center of the quadrant
+            # Only one metheusela in this quadrant, so use the center
+
+            jitterx = 20
+            jittery = 15
 
             for bi in buddy_index:
                 corner = quadrants[bi][1]
 
-                y = corner[0] + rows // 4
-                x = corner[1] + cols // 4
+                y = corner[0] + rows // 4 + random.randint(-jittery, jittery)
+                x = corner[1] + cols // 4 + random.randint(-jitterx, jitterx)
 
                 if fixed_metheusela:
                     meth = fixed_metheusela
@@ -1270,29 +1334,85 @@ def randommetheuselas_twocolor(
 
         elif count == 2 or count == 4:
 
-            # Use a square whose corners are at 1/3 and 2/3 of the quadrant width/height
+            # Two or four metheuselas in this quadrant, so place at corners of a square
+            # Form the square by cutting the quadrant into thirds
+
+            jitterx = 12
+            jittery = 8
 
             for bi in buddy_index:
                 corner = quadrants[bi][1]
 
-                for a in range(1, 3):
-                    for b in range(1, 3):
+                # Slices and partitions form the inside square
+                nslices = 2
+                nparts = nslices + 1
+
+                posdiag = bool(random.getrandbits(1))
+
+                for a in range(1, nparts):
+                    for b in range(1, nparts):
 
                         proceed = False
                         if count == 2:
-                            if a == b:
+                            if (posdiag and a == b) or (not posdiag and a == (nslices - b + 1)):
                                 proceed = True
                         elif count == 4:
                             proceed = True
 
                         if proceed:
-                            y = corner[0] + a * rows // 6
-                            x = corner[1] + b * cols // 6
+                            y = corner[0] + a * ((rows // 2) // nparts)
+                            x = corner[1] + b * ((cols // 2) // nparts)
 
                             if fixed_metheusela:
                                 meth = fixed_metheusela
                             else:
                                 meth = random.choice(metheusela_names)
+                            try:
+                                pattern = get_grid_pattern(
+                                    meth,
+                                    rows,
+                                    cols,
+                                    xoffset=x,
+                                    yoffset=y,
+                                    hflip=bool(random.getrandbits(1)),
+                                    vflip=bool(random.getrandbits(1)),
+                                    rotdeg=random.choice(rotdegs),
+                                )
+                            except Exception:
+                                raise Exception(
+                                    f"Error with metheusela {meth}: cannot fit"
+                                )
+                            livecount = get_pattern_livecount(meth)
+                            all_metheuselas.append((livecount, pattern))
+
+        elif count == 3 or count == 9:
+
+            # Three or nine metheuselas, place these on a square with three points per side
+            # or eight points total
+
+            for bi in buddy_index:
+                corner = quadrants[bi][1]
+
+                nslices = 4
+
+                for a in range(1, nslices):
+                    for b in range(1, nslices):
+
+                        proceed = False
+                        if count == 3:
+                            if a == b:
+                                proceed = True
+                        elif count == 9:
+                            proceed = True
+
+                        if proceed:
+                            y = corner[0] + a * ((rows // 2) // nslices)
+                            x = corner[1] + b * ((cols // 2) // nslices)
+
+                            if fixed_metheusela:
+                                meth = fixed_metheusela
+                            else:
+                                meth = random.choice(small_metheusela_names)
                             try:
                                 pattern = get_grid_pattern(
                                     meth,
