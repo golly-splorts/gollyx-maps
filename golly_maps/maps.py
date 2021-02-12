@@ -2,9 +2,7 @@ from operator import itemgetter
 import json
 import os
 import random
-from .geom import (
-    hflip_pattern
-)
+from .geom import hflip_pattern
 from .patterns import (
     get_pattern_size,
     get_pattern_livecount,
@@ -14,6 +12,20 @@ from .patterns import (
 )
 from .utils import pattern2url
 
+
+def retry_on_failure(func, *args, **kwargs):
+    def wrap(*args, **kwargs):
+        done = False
+        maxcount = 10
+        count = 0
+        while (not done and count < maxcount):
+            try:
+                return func(*args, **kwargs)
+            except Exception:
+                count += 1
+                continue
+        raise Exception(f"Error: retry failure, tried {maxcount} times!")
+    return wrap
 
 #####################################################
 # Map patterns API
@@ -187,8 +199,8 @@ def random_twocolor(rows, cols, seed=None):
         points.add((randx, randy))
 
     points = list(points)
-    points1 = set(points[: len(points) // 2]) # noqa
-    points2 = set(points[len(points) // 2 :]) # noqa
+    points1 = set(points[: len(points) // 2])  # noqa
+    points2 = set(points[len(points) // 2 :])  # noqa
     pattern1 = []
     pattern2 = []
     for y in range(rows):
@@ -274,55 +286,6 @@ def randompartition_twocolor(rows, cols, seed=None):
     s2 = pattern2url(team2_pattern)
 
     return (s1, s2)
-
-
-def orchard_twocolor(rows, cols, seed=None):
-    count = random.choice([4, 9])
-    return randommetheuselas_twocolor(
-        rows, cols, seed, metheusela_counts=[count], fixed_metheusela="acorn"
-    )
-
-def _____orchard_twocolor(rows, cols, seed=None):
-
-    nacorns = 8
-
-    # Distribute acorns randomly among the teams
-    ptacorns = nacorns//2
-    team_assignments = [1,]*ptacorns + [2,]*ptacorns
-    random.shuffle(team_assignments)
-
-    yloc = rows//2
-    xlocs = [i*cols//(nacorns+1) for i in range(nacorns+1)] + [cols]
-
-    jitterx = 3
-    jittery = 10
-
-    team1_acorns = []
-    team2_acorns = []
-
-    ta_ix = 0
-    for i in range(1, nacorns+1):
-
-        centerx = xlocs[i] + random.randint(-jitterx, jitterx)
-        centery = yloc + random.randint(-jittery, jittery)
-
-        acorn = get_grid_pattern(
-            "acorn", rows, cols, xoffset=centerx, yoffset=centery, 
-        )
-        if team_assignments[ta_ix]==1:
-            team1_acorns.append(acorn)
-        elif team_assignments[ta_ix]==2:
-            team2_acorns.append(acorn)
-        ta_ix += 1
-
-    team1_pattern = pattern_union(team1_acorns)
-    team2_pattern = pattern_union(team2_acorns)
-
-    s1 = pattern2url(team1_pattern)
-    s2 = pattern2url(team2_pattern)
-
-    return (s1, s2)
-
 
 
 def quadjustyna_twocolor(rows, cols, seed=None):
@@ -1230,13 +1193,27 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
+@retry_on_failure
 def switchengines_twocolor(rows, cols, seed=None):
-    return randommetheuselas_twocolor(
+    return _metheusela_quadrants(
         rows, cols, seed, metheusela_counts=[2, 4], fixed_metheusela="switchengine"
     )
 
 
-def randommetheuselas_twocolor(
+@retry_on_failure
+def orchard_twocolor(rows, cols, seed=None):
+    count = random.choice([4, 9])
+    return _metheusela_quadrants(
+        rows, cols, seed, metheusela_counts=[count], fixed_metheusela="acorn"
+    )
+
+
+@retry_on_failure
+def randommetheuselas_twocolor(rows, cols, seed=None):
+    return _metheusela_quadrants(rows, cols, seed)
+
+
+def _metheusela_quadrants(
     rows, cols, seed=None, metheusela_counts=[1, 2, 3, 4, 9], fixed_metheusela=None
 ):
     """
@@ -1256,6 +1233,8 @@ def randommetheuselas_twocolor(
     First randomly pair quadrants so their metheusela counts will match.
     Next, place random metheusela patterns in each of the corners.
     """
+    if seed is not None:
+        random.seed(seed)
 
     valid_mc = [1, 2, 3, 4, 9]
     for mc in metheusela_counts:
@@ -1281,7 +1260,7 @@ def randommetheuselas_twocolor(
         "cheptomino",
         "eheptomino",
         "piheptomino",
-        "rpentomino"
+        "rpentomino",
     ]
 
     # Store each quadrant and its upper left corner in (rows from top, cols from left) format
@@ -1355,7 +1334,9 @@ def randommetheuselas_twocolor(
 
                         proceed = False
                         if count == 2:
-                            if (posdiag and a == b) or (not posdiag and a == (nslices - b + 1)):
+                            if (posdiag and a == b) or (
+                                not posdiag and a == (nslices - b + 1)
+                            ):
                                 proceed = True
                         elif count == 4:
                             proceed = True
