@@ -126,5 +126,21 @@
         "mapZone2Name": "vroom fast",
         "mapZone3Name": "honk honk",
         "mapZone4Name": "the bird"
+    },
+    {
+        "patternName": "randommetheuselas",
+        "mapName": "Fistfight at the Opera",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": ""
+    },
+    {
+        "patternName": "switchengines",
+        "mapName": "Engine Room",
+        "mapZone1Name": "75 RPM DEFAULT",
+        "mapZone2Name": "420 RPM NICE",
+        "mapZone3Name": "800 RPM WARNING",
+        "mapZone4Name": "5000 RPM DANGER"
     }
 ]
