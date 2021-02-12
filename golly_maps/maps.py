@@ -36,6 +36,7 @@ def _get_patterns_map():
         "randomsegment": randomsegment_twocolor,
         "spaceshipsegment": spaceshipsegment_twocolor,
         "randommetheuselas": randommetheuselas_twocolor,
+        "switchengines": switchengines_twocolor,
     }
     return patterns_map
 
@@ -1177,15 +1178,19 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def switchengine(rows, cols, seed=None):
-    return randommetheuselas_twocolor(rows, cols, seed, metheusela_counts=[2,4], fixed_metheusela="switchengine")
+def switchengines_twocolor(rows, cols, seed=None):
+    return randommetheuselas_twocolor(
+        rows, cols, seed, metheusela_counts=[2, 4], fixed_metheusela="switchengine"
+    )
 
 
 def orchard(rows, cols, seed=None):
     pass
 
 
-def randommetheuselas_twocolor(rows, cols, seed=None, metheusela_counts=[1,2,4], fixed_metheusela=None):
+def randommetheuselas_twocolor(
+    rows, cols, seed=None, metheusela_counts=[1, 2, 4], fixed_metheusela=None
+):
 
     # Algorithm:
     # - Randomly pair the quadrants
@@ -1197,10 +1202,12 @@ def randommetheuselas_twocolor(rows, cols, seed=None, metheusela_counts=[1,2,4],
     # - if two metheuselas, pick two opposite corners of a square, whose corners are at +1/3 and +2/3 of the quadrant w/h
     # - if four metheuselas, use all four corners of that square
 
-    valid_mc = [1,2,4]
+    valid_mc = [1, 2, 4]
     for mc in metheusela_counts:
         if mc not in valid_mc:
-            raise Exception("Invalid metheusela counts passed: must be in {', '.join(valid_mc)}, you specified {', '.join(metheusela_counts)}")
+            raise Exception(
+                "Invalid metheusela counts passed: must be in {', '.join(valid_mc)}, you specified {', '.join(metheusela_counts)}"
+            )
 
     metheusela_names = [
         "acorn",
@@ -1250,8 +1257,8 @@ def randommetheuselas_twocolor(rows, cols, seed=None, metheusela_counts=[1,2,4],
                     meth = random.choice(metheusela_names)
                 pattern = get_grid_pattern(
                     meth,
-                    rows,
                     cols,
+                    rows,
                     xoffset=x,
                     yoffset=y,
                     hflip=bool(random.getrandbits(1)),
@@ -1288,10 +1295,19 @@ def randommetheuselas_twocolor(rows, cols, seed=None, metheusela_counts=[1,2,4],
                                 meth = random.choice(metheusela_names)
                             try:
                                 pattern = get_grid_pattern(
-                                    meth, rows, cols, xoffset=x, yoffset=y
+                                    meth,
+                                    rows,
+                                    cols,
+                                    xoffset=x,
+                                    yoffset=y,
+                                    hflip=bool(random.getrandbits(1)),
+                                    vflip=bool(random.getrandbits(1)),
+                                    rotdeg=random.choice(rotdegs),
                                 )
                             except:
-                                raise Exception(f"Error with metheusela {random_metheusela}: cannot fit")
+                                raise Exception(
+                                    f"Error with metheusela {random_metheusela}: cannot fit"
+                                )
                             livecount = get_pattern_livecount(meth)
                             all_metheuselas.append((livecount, pattern))
 
