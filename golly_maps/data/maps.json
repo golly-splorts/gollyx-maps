@@ -72,6 +72,14 @@
         "mapZone4Name": "Bottomless Hole"
     },
     {
+        "patternName": "timebombredux",
+        "mapName": "West Hellmouth's Revenge",
+        "mapZone1Name": "Toxic Goop",
+        "mapZone2Name": "Ash Heap",
+        "mapZone3Name": "Underground Fire",
+        "mapZone4Name": "Mysterious Sinkhole"
+    },
+    {
         "patternName": "twoacorn",
         "mapName": "The Quad",
         "mapZone1Name": "Quadrant I",
@@ -94,5 +102,29 @@
         "mapZone2Name": "spaceyo",
         "mapZone3Name": "froyo",
         "mapZone4Name": "frotime"
+    },
+    {
+        "patternName": "bigsegment",
+        "mapName": "The Perimeter",
+        "mapZone1Name": "100 N 200 E",
+        "mapZone2Name": "800 S 800 E",
+        "mapZone3Name": "400 S 800 W",
+        "mapZone4Name": "200 N 400 E"
+    },
+    {
+        "patternName": "randomsegment",
+        "mapName": "Candy Palace",
+        "mapZone1Name": "wigglies",
+        "mapZone2Name": "moomoos",
+        "mapZone3Name": "bitcakes",
+        "mapZone4Name": "gumblesmocks"
+    },
+    {
+        "patternName": "spaceshipsegment",
+        "mapName": "Morning Commute",
+        "mapZone1Name": "lane change",
+        "mapZone2Name": "vroom fast",
+        "mapZone3Name": "honk honk",
+        "mapZone4Name": "the bird"
     }
 ]
