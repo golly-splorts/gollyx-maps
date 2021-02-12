@@ -12,18 +12,40 @@ from golly_maps.maps import (
 HERE = os.path.split(os.path.abspath(__file__))[0]
 
 PATTERNS = [
-    "eightpi",
-    "eightr",
-    "fourrabbits",
-    "quadjustyna",
     "random",
     "randompartition",
-    "spaceshipcluster",
+    "quadjustyna",
     "spaceshipcrash",
-    "timebomb",
+    "spaceshipcluster",
     "twoacorn",
-    "twomultum",
+    "timebomb",
+    "timebombredux",
+    "fourrabbits",
     "twospaceshipgenerators",
+    "eightr",
+    "eightpi",
+    "twomultum",
+    "bigsegment",
+    "randomsegment",
+    "spaceshipsegment",
+    "randommetheuselas",
+    "switchengines",
+]
+
+PATTERNS_PRE10 = [
+    "random",
+    "randompartition",
+    "quadjustyna",
+    "spaceshipcrash",
+    "spaceshipcluster",
+    "twoacorn",
+    "timebomb",
+    "timebombredux",
+    "fourrabbits",
+    "twospaceshipgenerators",
+    "eightr",
+    "eightpi",
+    "twomultum",
 ]
 
 PATTERNS_PRE3 = [
