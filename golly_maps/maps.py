@@ -12,6 +12,7 @@ from .patterns import (
     pattern_union,
 )
 from .utils import pattern2url
+from .error import GollyMapsError, GollyPatternsError
 
 
 def retry_on_failure(func, *args, **kwargs):
@@ -22,10 +23,10 @@ def retry_on_failure(func, *args, **kwargs):
         while not done and count < maxcount:
             try:
                 return func(*args, **kwargs)
-            except Exception:
+            except GollyPatternsError:
                 count += 1
                 continue
-        raise Exception(f"Error: retry failure, tried {maxcount} times!")
+        raise GollyMapsError(f"Error: retry failure, tried {maxcount} times!")
 
     return wrap
 
@@ -156,13 +157,6 @@ def get_map_data(patternname):
             return m
 
     # If we reach this point, we didn't find labels in data/maps.json
-
-    # Instead of throwing a fit...
-    # err = f"Error: did not find map labels for pattern {patternname} in data/maps.json\n"
-    # err += "Available patterns are: {', '.join([m['patternName'] for m in mapdat])}"
-    # raise Exception(err)
-
-    # We can just go with it
     m = {
         "patternName": patternname,
         "mapName": "Unnamed Map",

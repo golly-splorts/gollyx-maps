@@ -3,6 +3,7 @@ import random
 import os
 from glob import glob
 from .geom import hflip_pattern, vflip_pattern, rot_pattern
+from .errror import GollyPatternsError
 
 
 def get_patterns():
@@ -34,7 +35,7 @@ def get_pattern(pattern_name, hflip=False, vflip=False, rotdeg=0):
             pattern = rot_pattern(pattern, rotdeg)
         return pattern
     else:
-        raise Exception(f"Error: pattern {fname} does not exist!")
+        raise GollyPatternsError(f"Error: pattern {fname} does not exist!")
 
 
 def get_pattern_size(pattern_name, **kwargs):
@@ -61,7 +62,7 @@ def get_pattern_livecount(pattern_name, **kwargs):
 def get_grid_empty(rows, columns, flat=True):
     if columns < 1 or rows < 1:
         err = f"Error: invalid number of rows {rows} or columns {columns}, must be positive integers > 0"
-        raise Exception(err)
+        raise GollyPatternsError(err)
 
     blank_row = ["."] * columns
     blank_grid = [blank_row[:] for r in range(rows)]
@@ -94,7 +95,7 @@ def get_grid_pattern(
     # will actually fit on the specified grid size.
     if columns < 1 or rows < 1:
         err = f"Error: invalid number of rows {rows} or columns {columns}, must be positive integers > 0"
-        raise Exception(err)
+        raise GollyPatternsError(err)
 
     # convert list of strings to list of lists (for convenience)
     ogpattern = get_pattern(pattern_name, hflip=hflip, vflip=vflip, rotdeg=rotdeg)
@@ -113,19 +114,19 @@ def get_grid_pattern(
     # Check size of pattern
     if check_overflow:
         if xstart < 0:
-            raise Exception(
+            raise GollyPatternsError(
                 f"Error: specified offset {xoffset} is too small, need at least {pattern_w//2}"
             )
         if xend >= columns:
-            raise Exception(
+            raise GollyPatternsError(
                 f"Error: specified number of columns {columns} was too small, need at least {xend+1}"
             )
         if ystart < 0:
-            raise Exception(
+            raise GollyPatternsError(
                 f"Error: specified offset {yoffset} is too small, need at least {pattern_h//2}"
             )
         if yend >= rows:
-            raise Exception(
+            raise GollyPatternsError(
                 f"Error: specified number of rows {rows} was too small, need at least {yend+1}"
             )
 
@@ -149,7 +150,7 @@ def pattern_union(patterns):
             err += "\n"
             for i in range(patterns):
                 err += "Pattern {i+1}: rows = {len(patterns[i])}, cols = {len(patterns[i][0]}\n"
-            raise Exception(err)
+            raise GollyPatternsError(err)
 
     # Turn all patterns into lists of lists (for convenience)
     rows = len(patterns[0])
@@ -186,11 +187,11 @@ def segment_pattern(
     """
     valid_colormodes = ["classic", "classicbroken", "random", "randombroken"]
     if colormode not in valid_colormodes:
-        raise Exception(
+        raise GollyPatternsError(
             f"Error: invalid color mode {colormode} passed to _segment(), must be in {', '.join(valid_colormodes)}"
         )
     if nhseg == 0 and nvseg == 0:
-        raise Exception(
+        raise GollyPatternsError(
             "Error: invalid number of segments (0 horizontal and 0 vertical) passed to _segment()"
         )
 
@@ -345,7 +346,7 @@ def metheusela_quadrants_pattern(
         if mc not in valid_mc:
             msg = "Invalid metheusela counts passed: must be in {', '.join(valid_mc)}\n"
             msg += "you specified {', '.join(metheusela_counts)}"
-            raise Exception(msg)
+            raise GollyPatternsError(msg)
 
     metheusela_names = [
         "acorn",
@@ -464,8 +465,8 @@ def metheusela_quadrants_pattern(
                                     vflip=bool(random.getrandbits(1)),
                                     rotdeg=random.choice(rotdegs),
                                 )
-                            except Exception:
-                                raise Exception(
+                            except GollyPatternsError:
+                                raise GollyPatternsError(
                                     f"Error with metheusela {meth}: cannot fit"
                                 )
                             livecount = get_pattern_livecount(meth)
@@ -510,8 +511,8 @@ def metheusela_quadrants_pattern(
                                     vflip=bool(random.getrandbits(1)),
                                     rotdeg=random.choice(rotdegs),
                                 )
-                            except Exception:
-                                raise Exception(
+                            except GollyPatternsError:
+                                raise GollyPatternsError(
                                     f"Error with metheusela {meth}: cannot fit"
                                 )
                             livecount = get_pattern_livecount(meth)
