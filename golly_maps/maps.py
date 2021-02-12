@@ -1,8 +1,10 @@
+from operator import itemgetter
 import json
 import os
 import random
 from .patterns import (
     get_pattern_size,
+    get_pattern_livecount,
     get_grid_empty,
     get_grid_pattern,
     segment_pattern,
@@ -33,6 +35,7 @@ def _get_patterns_map():
         "bigsegment": bigsegment_twocolor,
         "randomsegment": randomsegment_twocolor,
         "spaceshipsegment": spaceshipsegment_twocolor,
+        "randommetheuselas": randommetheuselas_twocolor,
     }
     return patterns_map
 
@@ -106,7 +109,7 @@ def get_all_map_data(season=999):
             "twomultum",
         ]
         mapdat = [m for m in mapdat if m["patternName"] in filter_patterns]
-    elif season < 3:
+    elif season < 10:
         filter_patterns = [
             "random",
             "twoacorn",
@@ -116,6 +119,10 @@ def get_all_map_data(season=999):
             "eightr",
             "eightpi",
             "twomultum",
+            "randompartition",
+            "quadjustyna",
+            "spaceshipcrash",
+            "spaceshipcluster",
         ]
         mapdat = [m for m in mapdat if m["patternName"] in filter_patterns]
 
@@ -127,12 +134,15 @@ def get_map_data(patternname):
     for m in mapdat:
         if m["patternName"] == patternname:
             return m
+
+    # If we reach this point, we didn't find labels in data/maps.json
+
+    # Instead of throwing a fit...
     # err = f"Error: did not find map labels for pattern {patternname} in data/maps.json\n"
     # err += "Available patterns are: {', '.join([m['patternName'] for m in mapdat])}"
     # raise Exception(err)
-    warn = f"Warning: did not find map labels for pattern {patternname} in data/maps.json\n"
-    warn += "Making something up..."
-    print(warn)
+
+    # We can just go with it
     m = {
         "patternName": patternname,
         "mapName": "Unnamed Map",
@@ -1076,7 +1086,7 @@ def randomsegment_twocolor(rows, cols, seed=None):
     jittery = 12
 
     colormode = "random"
-    if random.random()<0.50:
+    if random.random() < 0.50:
         colormode = "randombroken"
 
     team1_pattern, team2_pattern = segment_pattern(
@@ -1168,15 +1178,145 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
 
 
 def switchengine(rows, cols, seed=None):
-    pass
+    return randommetheuselas_twocolor(rows, cols, seed, metheusela_counts=[2,4], fixed_metheusela="switchengine")
 
 
 def orchard(rows, cols, seed=None):
     pass
 
 
-def randommetheuselas(rows, cols, seed=None):
-    pass
+def randommetheuselas_twocolor(rows, cols, seed=None, metheusela_counts=[1,2,4], fixed_metheusela=None):
+
+    # Algorithm:
+    # - Randomly pair the quadrants
+    # - Decide how many to put in each quadrant pair (1, 2, or 4)
+    # - Choose random metheuselas
+
+    # Grid confugration:
+    # - if one metheusela, add 1/4 of total width/height to get centerpoint
+    # - if two metheuselas, pick two opposite corners of a square, whose corners are at +1/3 and +2/3 of the quadrant w/h
+    # - if four metheuselas, use all four corners of that square
+
+    valid_mc = [1,2,4]
+    for mc in metheusela_counts:
+        if mc not in valid_mc:
+            raise Exception("Invalid metheusela counts passed: must be in {', '.join(valid_mc)}, you specified {', '.join(metheusela_counts)}")
+
+    metheusela_names = [
+        "acorn",
+        "bheptomino",
+        "cheptomino",
+        "eheptomino",
+        "multuminparvo",
+        "piheptomino",
+        "rabbit",
+        "rpentomino",
+        "timebomb",
+        "switchengine",
+    ]
+
+    # Store each quadrant and its upper left corner in (rows from top, cols from left) format
+    quadrants = [
+        (1, (0, cols // 2)),
+        (2, (0, 0)),
+        (3, (rows // 2, 0)),
+        (4, (rows // 2, cols // 2)),
+    ]
+
+    # Shuffle quadrants, first two and second two are now buddies
+    random.shuffle(quadrants)
+
+    rotdegs = [0, 90, 180, 270]
+
+    all_metheuselas = []
+
+    for buddy_index in [[0, 1], [2, 3]]:
+        # Decide how many metheuselas in this quad pair
+        count = random.choice(metheusela_counts)
+
+        if count == 1:
+
+            # Use the center of the quadrant
+
+            for bi in buddy_index:
+                corner = quadrants[bi][1]
+
+                y = corner[0] + rows // 4
+                x = corner[1] + cols // 4
+
+                if fixed_metheusela:
+                    meth = fixed_metheusela
+                else:
+                    meth = random.choice(metheusela_names)
+                pattern = get_grid_pattern(
+                    meth,
+                    rows,
+                    cols,
+                    xoffset=x,
+                    yoffset=y,
+                    hflip=bool(random.getrandbits(1)),
+                    vflip=bool(random.getrandbits(1)),
+                    rotdeg=random.choice(rotdegs),
+                )
+                livecount = get_pattern_livecount(meth)
+                all_metheuselas.append((livecount, pattern))
+
+        elif count == 2 or count == 4:
+
+            # Use a square whose corners are at 1/3 and 2/3 of the quadrant width/height
+
+            for bi in buddy_index:
+                corner = quadrants[bi][1]
+
+                for a in range(1, 3):
+                    for b in range(1, 3):
+
+                        proceed = False
+                        if count == 2:
+                            if a == b:
+                                proceed = True
+                        elif count == 4:
+                            proceed = True
+
+                        if proceed:
+                            y = corner[0] + a * rows // 6
+                            x = corner[1] + b * cols // 6
+
+                            if fixed_metheusela:
+                                meth = fixed_metheusela
+                            else:
+                                meth = random.choice(metheusela_names)
+                            try:
+                                pattern = get_grid_pattern(
+                                    meth, rows, cols, xoffset=x, yoffset=y
+                                )
+                            except:
+                                raise Exception(f"Error with metheusela {random_metheusela}: cannot fit")
+                            livecount = get_pattern_livecount(meth)
+                            all_metheuselas.append((livecount, pattern))
+
+    random.shuffle(all_metheuselas)
+    all_metheuselas.sort(key=itemgetter(0), reverse=True)
+
+    team1_patterns = []
+    team2_patterns = []
+
+    serpentine_pattern = [1, 2, 2, 1]
+    for i, (_, metheusela_pattern) in enumerate(all_metheuselas):
+        serpix = i % len(serpentine_pattern)
+        serpteam = serpentine_pattern[serpix]
+        if serpteam == 1:
+            team1_patterns.append(metheusela_pattern)
+        elif serpteam == 2:
+            team2_patterns.append(metheusela_pattern)
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
+
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+
+    return pattern1_url, pattern2_url
 
 
 def rabbitfarm(rows, cols, seed=None):

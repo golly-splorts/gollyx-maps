@@ -44,6 +44,19 @@ def get_pattern_size(pattern_name, **kwargs):
     return (len(pattern), len(pattern[0]))
 
 
+def get_pattern_livecount(pattern_name, **kwargs):
+    """
+    Returns: count of live cells in the given pattern
+    """
+    pattern = get_pattern(pattern_name, **kwargs)
+    count = 0
+    for row in pattern:
+        for j in row:
+            if j=="o":
+                count += 1
+    return count
+
+
 def get_grid_empty(rows, columns, flat=True):
     if columns < 1 or rows < 1:
         err = f"Error: invalid number of rows {rows} or columns {columns}, must be positive integers > 0"
