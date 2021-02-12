@@ -1075,11 +1075,15 @@ def randomsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 12
 
+    colormode = "random"
+    if random.random()<0.50:
+        colormode = "randombroken"
+
     team1_pattern, team2_pattern = segment_pattern(
         rows,
         cols,
         seed,
-        colormode="random",
+        colormode=colormode,
         nhseg=nhseg,
         nvseg=nvseg,
         jitterx=jitterx,
