@@ -74,10 +74,10 @@
     {
         "patternName": "timebombredux",
         "mapName": "West Hellmouth's Revenge",
-        "mapZone1Name": "Toxic Goop",
-        "mapZone2Name": "Ash Heap",
-        "mapZone3Name": "Underground Fire",
-        "mapZone4Name": "Mysterious Sinkhole"
+        "mapZone1Name": "Hole On Fire",
+        "mapZone2Name": "Mysterious Sinkhole",
+        "mapZone3Name": "Ash Heap",
+        "mapZone4Name": "Visitor Center"
     },
     {
         "patternName": "twoacorn",
@@ -130,10 +130,10 @@
     {
         "patternName": "randommetheuselas",
         "mapName": "Fistfight at the Opera",
-        "mapZone1Name": "",
-        "mapZone2Name": "",
-        "mapZone3Name": "",
-        "mapZone4Name": ""
+        "mapZone1Name": "Box Seats",
+        "mapZone2Name": "Usher Punch",
+        "mapZone3Name": "Center Stage",
+        "mapZone4Name": "Green Room"
     },
     {
         "patternName": "switchengines",
@@ -141,6 +141,22 @@
         "mapZone1Name": "75 RPM DEFAULT",
         "mapZone2Name": "420 RPM NICE",
         "mapZone3Name": "800 RPM WARNING",
-        "mapZone4Name": "5000 RPM DANGER"
+        "mapZone4Name": "10000 RPM DANGER"
+    },
+    {
+        "patternName": "orchard",
+        "mapName": "The Orchard",
+        "mapZone1Name": "Oranges",
+        "mapZone2Name": "Almonds",
+        "mapZone3Name": "Peaches",
+        "mapZone4Name": "Plums"
+    },
+    {
+        "patternName": "rabbitfarm",
+        "mapName": "Rabbit Farm",
+        "mapZone1Name": "BEWARE OF RABBITS",
+        "mapZone2Name": "AVOID EYE CONTACT",
+        "mapZone3Name": "DO NOT PET",
+        "mapZone4Name": "DANGER: RABBITS"
     }
 ]
