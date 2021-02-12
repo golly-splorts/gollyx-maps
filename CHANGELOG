@@ -1,10 +1,15 @@
 Version 11.0:
 
 * Add 8 new maps!!!
-* bigsegment - The Perimeter
-* randomsegment - Candy Kingdom
-* spaceshipsegment - Morning Commute
-* timebombredux - West Hellmouth's Revenge
+	* bigsegment - The Perimeter
+	* randomsegment - Candy Kingdom
+	* spaceshipsegment - Morning Commute
+	* timebombredux - West Hellmouth's Revenge
+	* rabbitfarm - Rabbit Farm
+	* randommetheusela - Fistfight at the Opera
+	* orchard - The Orchard
+	* switchengines - Engine Room
+* Update tests, fix bugs in error-handling
 
 Version 8.0:
 
