@@ -8,6 +8,7 @@ from .patterns import (
     get_pattern_livecount,
     get_grid_pattern,
     segment_pattern,
+    metheusela_quadrants_pattern,
     pattern_union,
 )
 from .utils import pattern2url
@@ -18,14 +19,16 @@ def retry_on_failure(func, *args, **kwargs):
         done = False
         maxcount = 10
         count = 0
-        while (not done and count < maxcount):
+        while not done and count < maxcount:
             try:
                 return func(*args, **kwargs)
             except Exception:
                 count += 1
                 continue
         raise Exception(f"Error: retry failure, tried {maxcount} times!")
+
     return wrap
+
 
 #####################################################
 # Map patterns API
@@ -1223,12 +1226,11 @@ def randommetheuselas_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-@retry_on_failure
 def rabbitfarm_twocolor(rows, cols, seed=None):
 
     # Make the wabbits
     # -----------------
-    count = random.choice([4, 9])
+    count = 4  # random.choice([4, 9])
     team1_wabbits, team2_wabbits = metheusela_quadrants_pattern(
         rows, cols, seed, metheusela_counts=[count], fixed_metheusela="rabbit"
     )
@@ -1238,30 +1240,30 @@ def rabbitfarm_twocolor(rows, cols, seed=None):
 
     # Always 1 horizontal segment, optional vertical segment
     nhseg = 1
-    if random.rand()<0.33:
-        nvseg = 0
+    if random.random()<0.33:
+       nvseg = 0
     else:
-        nvseg = 1
+       nvseg = 1
 
     # Set amount of jitter for placement of segments
     jitterx = 8
     jittery = 8
 
     # Color mode should be broken
-    if random.rand()<0.33:
-        colormode = "classicbroken"
+    if random.random()<0.33:
+       colormode = "classicbroken"
     else:
-        colormode = "randombroken"
+       colormode = "randombroken"
 
     team1_fence, team2_fence = segment_pattern(
-        rows,
-        cols,
-        seed,
-        colormode=colormode,
-        nhseg=nhseg,
-        nvseg=nvseg,
-        jitterx=jitterx,
-        jittery=jittery,
+       rows,
+       cols,
+       seed,
+       colormode=colormode,
+       nhseg=nhseg,
+       nvseg=nvseg,
+       jitterx=jitterx,
+       jittery=jittery,
     )
 
     team1_pattern = pattern_union([team1_wabbits, team1_fence])
