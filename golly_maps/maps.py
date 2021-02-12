@@ -5,7 +5,6 @@ import random
 from .patterns import (
     get_pattern_size,
     get_pattern_livecount,
-    get_grid_empty,
     get_grid_pattern,
     segment_pattern,
     pattern_union,
@@ -184,8 +183,8 @@ def random_twocolor(rows, cols, seed=None):
         points.add((randx, randy))
 
     points = list(points)
-    points1 = set(points[: len(points) // 2])
-    points2 = set(points[len(points) // 2 :])
+    points1 = set(points[: len(points) // 2]) # noqa
+    points2 = set(points[len(points) // 2 :]) # noqa
     pattern1 = []
     pattern2 = []
     for y in range(rows):
@@ -1199,15 +1198,16 @@ def randommetheuselas_twocolor(
 
     # Grid confugration:
     # - if one metheusela, add 1/4 of total width/height to get centerpoint
-    # - if two metheuselas, pick two opposite corners of a square, whose corners are at +1/3 and +2/3 of the quadrant w/h
+    # - if two metheuselas, pick two opposite corners of a square,
+    #   whose corners are at +1/3 and +2/3 of the quadrant w/h
     # - if four metheuselas, use all four corners of that square
 
     valid_mc = [1, 2, 4]
     for mc in metheusela_counts:
         if mc not in valid_mc:
-            raise Exception(
-                "Invalid metheusela counts passed: must be in {', '.join(valid_mc)}, you specified {', '.join(metheusela_counts)}"
-            )
+            msg = "Invalid metheusela counts passed: must be in {', '.join(valid_mc)}\n"
+            msg += "you specified {', '.join(metheusela_counts)}"
+            raise Exception(msg)
 
     metheusela_names = [
         "acorn",
@@ -1304,9 +1304,9 @@ def randommetheuselas_twocolor(
                                     vflip=bool(random.getrandbits(1)),
                                     rotdeg=random.choice(rotdegs),
                                 )
-                            except:
+                            except Exception:
                                 raise Exception(
-                                    f"Error with metheusela {random_metheusela}: cannot fit"
+                                    f"Error with metheusela {meth}: cannot fit"
                                 )
                             livecount = get_pattern_livecount(meth)
                             all_metheuselas.append((livecount, pattern))
