@@ -1,3 +1,11 @@
+Version 11.0:
+
+* Add 8 new maps!!!
+* bigsegment - The Perimeter
+* randomsegment - Candy Kingdom
+* spaceshipsegment - Morning Commute
+* timebombredux - West Hellmouth's Revenge
+
 Version 8.0:
 
 * Add lint and type checking rules to makefile
