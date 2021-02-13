@@ -133,7 +133,7 @@ def get_all_map_data(season=999):
             "twomultum",
         ]
         mapdat = [m for m in mapdat if m["patternName"] in filter_patterns]
-    elif season < 9:
+    elif season < 10:
         filter_patterns = [
             "random",
             "twoacorn",
