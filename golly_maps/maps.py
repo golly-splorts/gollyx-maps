@@ -100,8 +100,8 @@ def get_map(patternname, rows=100, cols=120):
     mapdat["columns"] = cols
     mapdat["cellSize"] = 7
 
-    del mapdat['mapSeason']
-    del mapdat['mapDescription']
+    del mapdat["mapSeason"]
+    del mapdat["mapDescription"]
 
     return mapdat
 
@@ -1064,7 +1064,7 @@ def bigsegment_twocolor(rows, cols, seed=None):
 
     nhseg = 0
     nvseg = 0
-    while nhseg == 0 and nvseg == 0:
+    while (nhseg == 0 and nvseg == 0) or (nhseq % 2 != 0 and nvseq == 0):
         nhseg = random.choice([0, 1, 3])
         nvseg = random.choice([0, 1, 3])
 
@@ -1237,30 +1237,30 @@ def rabbitfarm_twocolor(rows, cols, seed=None):
 
     # Always 1 horizontal segment, optional vertical segment
     nhseg = 1
-    if random.random()<0.33:
-       nvseg = 0
+    if random.random() < 0.33:
+        nvseg = 0
     else:
-       nvseg = 1
+        nvseg = 1
 
     # Set amount of jitter for placement of segments
     jitterx = 8
     jittery = 8
 
     # Color mode should be broken
-    if random.random()<0.33:
-       colormode = "classicbroken"
+    if random.random() < 0.33:
+        colormode = "classicbroken"
     else:
-       colormode = "randombroken"
+        colormode = "randombroken"
 
     team1_fence, team2_fence = segment_pattern(
-       rows,
-       cols,
-       seed,
-       colormode=colormode,
-       nhseg=nhseg,
-       nvseg=nvseg,
-       jitterx=jitterx,
-       jittery=jittery,
+        rows,
+        cols,
+        seed,
+        colormode=colormode,
+        nhseg=nhseg,
+        nvseg=nvseg,
+        jitterx=jitterx,
+        jittery=jittery,
     )
 
     team1_pattern = pattern_union([team1_wabbits, team1_fence])
