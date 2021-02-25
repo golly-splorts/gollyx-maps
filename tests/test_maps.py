@@ -2,7 +2,7 @@ import json
 import os
 import unittest
 from golly_maps.maps import (
-    _get_all_map_patterns,
+    get_all_map_patterns,
     get_map_metadata,
     get_all_map_metadata,
     get_map_realization,
@@ -98,7 +98,7 @@ class MapsTest(unittest.TestCase):
     """
 
     def test_get_all_map_patterns(self):
-        all_patterns = _get_all_map_patterns()
+        all_patterns = get_all_map_patterns()
         self.assertEqual(sorted(all_patterns), sorted(PATTERNS))
 
     def test_get_map_metadata(self):

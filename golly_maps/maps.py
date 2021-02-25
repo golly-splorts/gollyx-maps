@@ -44,13 +44,13 @@ def _get_map_pattern_function_map():
     }
 
 
-def _get_all_map_patterns():
-    patterns_map = _get_map_pattern_function_map()
-    return list(patterns_map.keys())
-
-
 ########################
 # High-level API methods
+
+
+def get_all_map_patterns():
+    patterns_map = _get_map_pattern_function_map()
+    return list(patterns_map.keys())
 
 
 def get_map_realization(patternname, rows=100, columns=120):
