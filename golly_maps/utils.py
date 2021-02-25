@@ -1,5 +1,6 @@
 import re
 from .patterns import get_pattern
+from .error import GollyMapsError, GollyPatternsError
 
 
 def pattern2url(pattern, xoffset=0, yoffset=0):
@@ -57,3 +58,19 @@ def print_pattern_url(
                 url += "&"
             url += f"s{ip+1}={listLife}"
     print(url)
+
+
+def retry_on_failure(func, *args, **kwargs):
+    def wrap(*args, **kwargs):
+        done = False
+        maxcount = 10
+        count = 0
+        while not done and count < maxcount:
+            try:
+                return func(*args, **kwargs)
+            except GollyPatternsError:
+                count += 1
+                continue
+        raise GollyMapsError(f"Error: retry failure, tried {maxcount} times!")
+
+    return wrap

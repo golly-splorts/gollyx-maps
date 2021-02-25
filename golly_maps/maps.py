@@ -11,64 +11,44 @@ from .patterns import (
     metheusela_quadrants_pattern,
     pattern_union,
 )
-from .utils import pattern2url
-from .error import GollyMapsError, GollyPatternsError
+from .utils import pattern2url, retry_on_failure
+from .errors import GollyPatternsError
 
 
-def retry_on_failure(func, *args, **kwargs):
-    def wrap(*args, **kwargs):
-        done = False
-        maxcount = 10
-        count = 0
-        while not done and count < maxcount:
-            try:
-                return func(*args, **kwargs)
-            except GollyPatternsError:
-                count += 1
-                continue
-        raise GollyMapsError(f"Error: retry failure, tried {maxcount} times!")
-
-    return wrap
-
-
-#####################################################
-# Map patterns API
-
-
-def _get_patterns_map():
-    patterns_map = {
-        "bigsegment": bigsegment_twocolor,
-        "eightpi": eightpi_twocolor,
-        "eightr": eightr_twocolor,
-        "fourrabbits": fourrabbits_twocolor,
-        "orchard": orchard_twocolor,
-        "quadjustyna": quadjustyna_twocolor,
-        "rabbitfarm": rabbitfarm_twocolor,
-        "random": random_twocolor,
-        "randommetheuselas": randommetheuselas_twocolor,
-        "randompartition": randompartition_twocolor,
-        "randomsegment": randomsegment_twocolor,
-        "spaceshipcluster": spaceshipcluster_twocolor,
-        "spaceshipcrash": spaceshipcrash_twocolor,
-        "spaceshipsegment": spaceshipsegment_twocolor,
-        "switchengines": switchengines_twocolor,
-        "timebomb": timebomb_oscillators_twocolor,
-        "timebombredux": timebomb_randomoscillators_twocolor,
-        "twoacorn": twoacorn_twocolor,
-        "twomultum": twomultum_twocolor,
-        "twospaceshipgenerators": twospaceshipgenerators_twocolor,
-    }
-    return patterns_map
+PATTERNS_MAP = {
+    "bigsegment": bigsegment_twocolor,
+    "eightpi": eightpi_twocolor,
+    "eightr": eightr_twocolor,
+    "fourrabbits": fourrabbits_twocolor,
+    "orchard": orchard_twocolor,
+    "quadjustyna": quadjustyna_twocolor,
+    "rabbitfarm": rabbitfarm_twocolor,
+    "random": random_twocolor,
+    "randommetheuselas": randommetheuselas_twocolor,
+    "randompartition": randompartition_twocolor,
+    "randomsegment": randomsegment_twocolor,
+    "spaceshipcluster": spaceshipcluster_twocolor,
+    "spaceshipcrash": spaceshipcrash_twocolor,
+    "spaceshipsegment": spaceshipsegment_twocolor,
+    "switchengines": switchengines_twocolor,
+    "timebomb": timebomb_oscillators_twocolor,
+    "timebombredux": timebomb_randomoscillators_twocolor,
+    "twoacorn": twoacorn_twocolor,
+    "twomultum": twomultum_twocolor,
+    "twospaceshipgenerators": twospaceshipgenerators_twocolor,
+}
 
 
-def get_patterns():
-    return list(_get_patterns_map().keys())
+def _get_map_pattern_names():
+    return list(PATTERNS_MAP.keys())
 
 
-def get_map(patternname, rows=100, cols=120):
+########################
+# High-level API methods
+
+def get_map_realization(patternname, rows=100, columns=120):
     """.
     Return a JSON dict with map name, zone names, and initial conditions.
-    Use a default map size of 120 cols x 100 rows.
     Returns:
     {
         "patternName": y,
@@ -86,19 +66,14 @@ def get_map(patternname, rows=100, cols=120):
     }
     """
     # Get map data (pattern, name, zone names)
-    mapdat = get_map_data(patternname)
+    mapdat = get_map_metadata(patternname)
 
     # Get the initial conditions for this map
-    s1, s2 = get_pattern_by_name(patternname, rows, cols)
+    s1, s2 = get_map_realization(patternname, rows, cols)
     url = f"?s1={s1}&s2={s2}"
     mapdat["initialConditions1"] = s1
     mapdat["initialConditions2"] = s2
     mapdat["url"] = url
-
-    # Geometry
-    mapdat["rows"] = rows
-    mapdat["columns"] = cols
-    mapdat["cellSize"] = 7
 
     del mapdat["mapSeason"]
     del mapdat["mapDescription"]
@@ -106,55 +81,44 @@ def get_map(patternname, rows=100, cols=120):
     return mapdat
 
 
-#####################################################
-# Map patterns
+##################
+# Metadata methods
 
-
-def get_all_map_data(season=999):
-    """
-    Get all map data for the specified season.
-    Season is ZERO-INDEXED.
-    """
+def get_all_map_metadata(season=None):
     map_data_file = os.path.join(
         os.path.abspath(os.path.dirname(__file__)), "data", "maps.json"
     )
     with open(map_data_file, "r") as f:
         mapdat = json.load(f)
 
-    if season < 3:
-        filter_patterns = [
-            "random",
-            "twoacorn",
-            "timebomb",
-            "fourrabbits",
-            "twospaceshipgenerators",
-            "eightr",
-            "eightpi",
-            "twomultum",
-        ]
-        mapdat = [m for m in mapdat if m["patternName"] in filter_patterns]
-    elif season < 10:
-        filter_patterns = [
-            "random",
-            "twoacorn",
-            "timebomb",
-            "fourrabbits",
-            "twospaceshipgenerators",
-            "eightr",
-            "eightpi",
-            "twomultum",
-            "randompartition",
-            "quadjustyna",
-            "spaceshipcrash",
-            "spaceshipcluster",
-        ]
-        mapdat = [m for m in mapdat if m["patternName"] in filter_patterns]
+    # If the user does not specify a season, return every map's metadata
+    if season is None:
+        return mapdat
 
-    return mapdat
+    # If the user specifies a season, return only the maps for that specified season
+    keep_maps = []
+    for this_map in mapdat:
+        keep = False
+        if 'mapStartSeason' in this_map:
+            if this_map['mapStartSeason'] <= season:
+                keep = True
+        if 'mapEndSeason' in this_map:
+            if this_map['mapEndSeason'] <= season:
+                keep = False
+        if keep:
+            keep_maps.append(this_map)
+    return keep_maps
 
 
-def get_map_data(patternname):
-    mapdat = get_all_map_data()
+def get_map_metadata(patternname):
+    # Any patern must have a corresponding function to be valid
+    if patternname not in PATTERNS_MAP:
+        err = f"Error: map pattern {patternname} not found in valid patterns list: "
+        err += ", ".join(list(PATTERNS_MAP.keys()))
+        raise GollyPatternsError(err)
+        
+    # Filter known patterns to find the specified pattern
+    mapdat = get_all_map_metadata()
     for m in mapdat:
         if m["patternName"] == patternname:
             return m
@@ -171,9 +135,11 @@ def get_map_data(patternname):
     return m
 
 
-def get_pattern_by_name(patternname, rows, cols, seed=None):
-    patterns_map = _get_patterns_map()
-    f = patterns_map[patternname]
+##################
+# Map realizations
+
+def get_maps_realization(patternname, rows, columns):
+    f = PATTERNS_MAP[patternname]
     return f(rows, cols, seed=seed)
 
 
