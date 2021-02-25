@@ -12,39 +12,46 @@ from .patterns import (
     pattern_union,
 )
 from .utils import pattern2url, retry_on_failure
-from .errors import GollyPatternsError
+from .error import GollyPatternsError
 
 
-PATTERNS_MAP = {
-    "bigsegment": bigsegment_twocolor,
-    "eightpi": eightpi_twocolor,
-    "eightr": eightr_twocolor,
-    "fourrabbits": fourrabbits_twocolor,
-    "orchard": orchard_twocolor,
-    "quadjustyna": quadjustyna_twocolor,
-    "rabbitfarm": rabbitfarm_twocolor,
-    "random": random_twocolor,
-    "randommetheuselas": randommetheuselas_twocolor,
-    "randompartition": randompartition_twocolor,
-    "randomsegment": randomsegment_twocolor,
-    "spaceshipcluster": spaceshipcluster_twocolor,
-    "spaceshipcrash": spaceshipcrash_twocolor,
-    "spaceshipsegment": spaceshipsegment_twocolor,
-    "switchengines": switchengines_twocolor,
-    "timebomb": timebomb_oscillators_twocolor,
-    "timebombredux": timebomb_randomoscillators_twocolor,
-    "twoacorn": twoacorn_twocolor,
-    "twomultum": twomultum_twocolor,
-    "twospaceshipgenerators": twospaceshipgenerators_twocolor,
-}
+##############
+# Util methods
 
 
-def _get_map_pattern_names():
-    return list(PATTERNS_MAP.keys())
+def _get_map_pattern_function_map():
+    return {
+        "bigsegment": bigsegment_twocolor,
+        "eightpi": eightpi_twocolor,
+        "eightr": eightr_twocolor,
+        "fourrabbits": fourrabbits_twocolor,
+        "orchard": orchard_twocolor,
+        "quadjustyna": quadjustyna_twocolor,
+        "rabbitfarm": rabbitfarm_twocolor,
+        "random": random_twocolor,
+        "randommetheuselas": randommetheuselas_twocolor,
+        "randompartition": randompartition_twocolor,
+        "randomsegment": randomsegment_twocolor,
+        "spaceshipcluster": spaceshipcluster_twocolor,
+        "spaceshipcrash": spaceshipcrash_twocolor,
+        "spaceshipsegment": spaceshipsegment_twocolor,
+        "switchengines": switchengines_twocolor,
+        "timebomb": timebomb_oscillators_twocolor,
+        "timebombredux": timebomb_randomoscillators_twocolor,
+        "twoacorn": twoacorn_twocolor,
+        "twomultum": twomultum_twocolor,
+        "twospaceshipgenerators": twospaceshipgenerators_twocolor,
+    }
+
+
+def _get_all_map_patterns():
+    patterns_map = _get_map_pattern_function_map()
+    return list(patterns_map.keys())
 
 
 ########################
 # High-level API methods
+
 
 def get_map_realization(patternname, rows=100, columns=120):
     """.
@@ -69,20 +76,54 @@ def get_map_realization(patternname, rows=100, columns=120):
     mapdat = get_map_metadata(patternname)
 
     # Get the initial conditions for this map
-    s1, s2 = get_map_realization(patternname, rows, cols)
+    s1, s2 = render_map(patternname, rows, columns)
     url = f"?s1={s1}&s2={s2}"
     mapdat["initialConditions1"] = s1
     mapdat["initialConditions2"] = s2
     mapdat["url"] = url
 
-    del mapdat["mapSeason"]
-    del mapdat["mapDescription"]
+    # Include geometry info
+    maxdim = max(rows, columns)
+    if columns < 100:
+        cellSize = 10
+
+    elif columns < 125:
+        cellSize = 8
+
+    elif columns < 150:
+        cellSize = 7
+
+    elif columns < 175:
+        cellSize = 5
+
+    elif columns < 200:
+        cellSize = 4
+
+    elif columns < 275:
+        cellSize = 3
+
+    elif columns < 375:
+        cellSize = 2
+
+    else:
+        cellSize = 1
+
+    mapdat["rows"] = rows
+    mapdat["columns"] = columns
+    mapdat["cellSize"] = cellSize
+
+    # Remove these keys before returning realization for the API to serve up
+    remove_keys = ['mapSeasonStart', 'mapSeasonEnd', 'mapDescription']
+    for remk in remove_keys:
+        if remk in mapdat.keys():
+            del mapdat[remk]
 
     return mapdat
 
 
 ##################
 # Metadata methods
+
 
 def get_all_map_metadata(season=None):
     map_data_file = os.path.join(
@@ -99,11 +140,11 @@ def get_all_map_metadata(season=None):
     keep_maps = []
     for this_map in mapdat:
         keep = False
-        if 'mapStartSeason' in this_map:
-            if this_map['mapStartSeason'] <= season:
+        if "mapStartSeason" in this_map:
+            if this_map["mapStartSeason"] <= season:
                 keep = True
-        if 'mapEndSeason' in this_map:
-            if this_map['mapEndSeason'] <= season:
+        if "mapEndSeason" in this_map:
+            if this_map["mapEndSeason"] <= season:
                 keep = False
         if keep:
             keep_maps.append(this_map)
@@ -112,11 +153,12 @@ def get_all_map_metadata(season=None):
 
 def get_map_metadata(patternname):
     # Any patern must have a corresponding function to be valid
-    if patternname not in PATTERNS_MAP:
+    patterns_map = _get_map_pattern_function_map()
+    if patternname not in patterns_map:
         err = f"Error: map pattern {patternname} not found in valid patterns list: "
-        err += ", ".join(list(PATTERNS_MAP.keys()))
+        err += ", ".join(list(patterns_map.keys()))
         raise GollyPatternsError(err)
-        
+
     # Filter known patterns to find the specified pattern
     mapdat = get_all_map_metadata()
     for m in mapdat:
@@ -135,12 +177,14 @@ def get_map_metadata(patternname):
     return m
 
 
-##################
-# Map realizations
+####################################
+# Render the map for the realization
 
-def get_maps_realization(patternname, rows, columns):
-    f = PATTERNS_MAP[patternname]
-    return f(rows, cols, seed=seed)
+
+def render_map(patternname, rows, columns, seed=None):
+    patterns_map = _get_map_pattern_function_map()
+    f = patterns_map[patternname]
+    return f(rows, columns, seed=seed)
 
 
 def random_twocolor(rows, cols, seed=None):
@@ -1030,7 +1074,7 @@ def bigsegment_twocolor(rows, cols, seed=None):
 
     nhseg = 0
     nvseg = 0
-    while (nhseg == 0 and nvseg == 0) or (nhseq % 2 != 0 and nvseq == 0):
+    while (nhseg == 0 and nvseg == 0) or (nhseg % 2 != 0 and nvseg == 0):
         nhseg = random.choice([0, 1, 3])
         nvseg = random.choice([0, 1, 3])
 
