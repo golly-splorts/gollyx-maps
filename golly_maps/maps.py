@@ -785,24 +785,34 @@ def fourrabbits_twocolor(rows, cols, seed=None):
         ]
 
     npoints = len(rabbit_x_loc) * len(rabbit_y_loc)
-    team_assignments = [1,] * (npoints // 2)
-    team_assignments += [2,] * (npoints - npoints // 2)
+    team_assignments = [
+        1,
+    ] * (npoints // 2)
+    team_assignments += [
+        2,
+    ] * (npoints - npoints // 2)
+    random.shuffle(team_assignments)
 
     team1_patterns = []
     team2_patterns = []
     for i, (x, y) in enumerate(itertools.product(rabbit_x_loc, rabbit_y_loc)):
-        x += random.randint(-5, 5)
-        y += random.randint(-5, 5)
         do_vflip = bool(random.getrandbits(1))
         do_hflip = bool(random.getrandbits(1))
+        xjitter = 5
+        yjitter = 5
         rabbit = get_grid_pattern(
-            "rabbit", rows, cols, xoffset=x, yoffset=y, vflip=do_vflip, hflip=do_hflip
+            "rabbit",
+            rows,
+            cols,
+            xoffset=x + random.randint(-xjitter, xjitter),
+            yoffset=y + random.randint(-yjitter, yjitter),
+            vflip=do_vflip,
+            hflip=do_hflip,
         )
-        if team_assignments[i]==1:
-            team1_patterns += rabbit
+        if team_assignments[i] == 1:
+            team1_patterns.append(rabbit)
         else:
-            team2_patterns += rabbit
-
+            team2_patterns.append(rabbit)
 
     p1 = pattern_union(team1_patterns)
     p2 = pattern_union(team2_patterns)
