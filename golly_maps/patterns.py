@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from operator import itemgetter
 import random
 import os
@@ -268,7 +269,9 @@ def segment_pattern(
             elif colormode == "classicbroken":
                 magon = 24 * mag // 25
                 rem = mag - magon
-                team_assignments = [serpteam,] * magon + [ 0, ] * rem # noqa
+                team_assignments = [serpteam,] * magon + [
+                    0,
+                ] * rem  # noqa
                 random.shuffle(team_assignments)
 
             ta_ix = 0
@@ -291,13 +294,28 @@ def segment_pattern(
             if colormode == "random":
                 magh = mag // 2
                 magoh = mag - mag // 2
-                team_assignments = [1,] * magh + [ 2, ] * magoh # noqa
+                team_assignments = [1,] * magh + [
+                    2,
+                ] * magoh  # noqa
                 random.shuffle(team_assignments)
             elif colormode == "randombroken":
                 magh = 12 * mag // 25
                 magoh = 12 * mag // 25
                 rem = mag - magh - magoh
-                team_assignments = ( [ 1, ] * magh + [ 2, ] * magoh + [ 0, ] * rem) # noqa
+                team_assignments = (
+                    [
+                        1,
+                    ]
+                    * magh
+                    + [
+                        2,
+                    ]
+                    * magoh
+                    + [
+                        0,
+                    ]
+                    * rem
+                )  # noqa
                 random.shuffle(team_assignments)
 
             ta_ix = 0
@@ -538,3 +556,104 @@ def metheusela_quadrants_pattern(
     team2_pattern = pattern_union(team2_patterns)
 
     return team1_pattern, team2_pattern
+
+
+def cloud_region(which_pattern, dims, xlim, ylim, margins, jitter, flip):
+    """
+    Given a square region defined by the x and y limits, tile the region
+    with copies of the specified pattern, plus jitter.
+
+    Parameters:
+    dims            (rows, cols) list/tuple
+    xlim            (xstart, xend) list/tuple
+    ylim            (ystart, yend) list/tuple
+    margins         integer or (N, E, S, W) list/tuple
+    jitter          (xjitter, yjitter) list/tuple
+    flip            (do_hflip, do_vflip) list/tuple
+    """
+    if len(dims) != 2:
+        err = "Error: could not understand dimensions input, provide (rows, cols)"
+        raise Exception(err)
+    rows, cols = dims[0], dims[1]
+
+    if len(xlim) != 2 or len(ylim) != 2:
+        err = "Error: could not understand xlim/ylim input, provide (xstart, xend) and (ystart, yend)"
+        raise Exception(err)
+
+    # Unpack margins
+    if isinstance(margins, Iterable):
+        if len(margins) != 4:
+            err = "Error: could not understand margins input, provide single value or list of 4 values"
+            raise Exception(err)
+        # list of 4 values in order N E S W
+        north = margins[0]
+        east = margins[1]
+        south = margins[2]
+        west = margins[3]
+    else:
+        # single value, uniform margin
+        margins = int(margins)
+        north = east = south = west = margins
+
+    # Unpack jitter
+    if isinstance(jitter, Iterable):
+        if len(jitter) != 2:
+            err = "Error: could not understand jitter input, provide two values (xjitter, yjitter)"
+            raise Exception(err)
+        x_jitter = jitter[0]
+        y_jitter = jitter[1]
+    else:
+        jitter = int(jitter)
+        x_jitter = y_jitter = jitter
+
+    # Get whether to hflip or vflip
+    if len(flip) != 2:
+        err = "Error: could not understand flip input, provide two values (do_hflip, do_vflip)"
+        raise Exception(err)
+    do_hflip = flip[0]
+    do_vflip = flip[1]
+
+    # Determine the core xlim and ylim
+    core_xlim = [xlim[0] + west, xlim[1] - east]
+    core_w = core_xlim[1] - core_xlim[0]
+    if core_w < 0:
+        t = core_xlim[1]
+        core_xlim[1] = core_xlim[0]
+        core_xlim[0] = t
+        core_w = abs(core_w)
+
+    core_ylim = [ylim[0] + north, ylim[1] - south]
+    core_h = core_ylim[1] - core_ylim[0]
+    if core_h < 0:
+        t = core_ylim[1]
+        core_ylim[1] = core_ylim[0]
+        core_ylim[0] = t
+        core_h = abs(core_h)
+
+    # Tile the pattern
+    (pattern_h, pattern_w) = get_pattern_size(which_pattern)
+    (tile_h, tile_w) = (pattern_h + 2 * y_jitter, pattern_w + 2 * x_jitter)
+    tiling_nx = core_w // tile_w
+    tiling_ny = core_h // tile_h
+
+    tileset = []
+    for i in range(tiling_nx):
+        for j in range(tiling_ny):
+
+            xoffset = core_xlim[0] + i * (tile_w // 2)
+            yoffset = core_ylim[0] + j * (tile_h // 2)
+
+            tileset.append(
+                get_grid_pattern(
+                    which_pattern,
+                    rows,
+                    cols,
+                    xoffset=xoffset + random.randint(-x_jitter, x_jitter),
+                    yoffset=yoffset + random.randint(-y_jitter, y_jitter),
+                    hflip=do_hflip,
+                    vflip=do_vflip,
+                    check_overflow=False,
+                )
+            )
+    tileset_pattern = pattern_union(tileset)
+    return tileset_pattern

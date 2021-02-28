@@ -11,6 +11,7 @@ from .patterns import (
     segment_pattern,
     metheusela_quadrants_pattern,
     pattern_union,
+    cloud_region,
 )
 from .utils import pattern2url, retry_on_failure
 from .error import GollyPatternsError, GollyMapsError
@@ -471,111 +472,96 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    # Spacing between spaceships
-    w = 12
+    # Decide on how to distribute spaceships among quadrants
+    quadrant_assignments = [1, 1, 2, 2]
+    random.shuffle(quadrant_assignments)
 
-    # Spaceship locations for team 1
+    # Assemble parameters needed to create a cloud region in each quadrant
+    left_xlim = (0, cols // 2)
+    right_xlim = (cols // 2, cols)
+    top_ylim = (0, rows // 2)
+    bot_ylim = (rows // 2, rows)
 
-    # NW corner
-    s_centerx1 = cols // 4
-    s_centery1 = rows // 3
-    s1_nw_locations = []
-    # for i in [-2, -1, 0, 1]:
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-2, -1, 0, 1]:
-            xx = s_centerx1 + i * w + random.randint(-4, 4)
-            yy = s_centery1 + j * w + random.randint(-3, 3)
-            s1_nw_locations.append((xx, yy))
+    jitter = [3, 3]
 
-    # SE corner
-    s_centerx1 = 3 * cols // 4
-    s_centery1 = 2 * rows // 3
-    s1_se_locations = []
-    # for i in [-1, 0, 1, 2]:
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-1, 0, 1, 2]:
-            xx = s_centerx1 + i * w + random.randint(-4, 4)
-            yy = s_centery1 + j * w + random.randint(-3, 3)
-            s1_se_locations.append((xx, yy))
+    # Use margins to shift the cloud forward/backward (how depends on which quadrant)
+    lo_value = max(min(rows, cols) // 20, 1)
+    hi_value = max(min(rows, cols) // 10, 5)
 
-    # Spaceship locations for team 2
+    # This will hold four items: one glider cloud pattern for each quadrant
+    quadrant_clouds = []
 
-    # NE corner
-    s_centerx2 = 3 * cols // 4
-    s_centery2 = rows // 3
-    s2_ne_locations = []
-    # for i in [-1, 0, 1, 2]:
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-2, -1, 0, 1]:
-            xx = s_centerx2 + i * w + random.randint(-4, 4)
-            yy = s_centery2 + j * w + random.randint(-3, 3)
-            s2_ne_locations.append((xx, yy))
+    # quadrant 1
+    if random.random() < 0.50:
+        # Slide cloud forward by padding north and east
+        q1margin = [hi_value, hi_value, lo_value, lo_value]
+    else:
+        # Slide cloud backward by padding south and west
+        q1margin = [lo_value, lo_value, hi_value, hi_value]
+    q1flip = [True, False]
 
-    # SW corner
-    s_centerx2 = cols // 4
-    s_centery2 = 2 * rows // 3
-    s2_sw_locations = []
-    # for i in [-2, -1, 0 ,1]:
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-1, 0, 1, 2]:
-            xx = s_centerx2 + i * w + random.randint(-4, 4)
-            yy = s_centery2 + j * w + random.randint(-3, 3)
-            s2_sw_locations.append((xx, yy))
-
-    # Assemble and combine spaceship patterns for team 1
-    team1_pattern_list = []
-
-    for i in range(len(s1_nw_locations)):
-        xx, yy = s1_nw_locations[i]
-        p = get_grid_pattern(
-            "glider", rows, cols, xoffset=xx, yoffset=yy, check_overflow=False
+    quadrant_clouds.append(
+        cloud_region(
+            "glider", (rows, cols), left_xlim, top_ylim, q1margin, jitter, q1flip
         )
-        team1_pattern_list.append(p)
+    )
 
-    for i in range(len(s1_se_locations)):
-        xx, yy = s1_se_locations[i]
-        p = get_grid_pattern(
-            "glider",
-            rows,
-            cols,
-            xoffset=xx,
-            yoffset=yy,
-            rotdeg=180,
-            check_overflow=False,
+    # quadrant 2
+    if random.random() < 0.50:
+        # Slide cloud forward by padding north and west
+        q2margin = [hi_value, lo_value, lo_value, hi_value]
+    else:
+        # Slide cloud backward by padding south and east
+        q2margin = [lo_value, hi_value, hi_value, lo_value]
+    q2flip = [False, False]
+
+    quadrant_clouds.append(
+        cloud_region(
+            "glider", (rows, cols), left_xlim, top_ylim, q2margin, jitter, q2flip
         )
-        team1_pattern_list.append(p)
+    )
 
-    # Assemble and combine spaceship patterns for team 2
-    team2_pattern_list = []
-    for i in range(len(s2_ne_locations)):
-        xx, yy = s2_ne_locations[i]
-        p = get_grid_pattern(
-            "glider",
-            rows,
-            cols,
-            xoffset=xx,
-            yoffset=yy,
-            hflip=True,
-            check_overflow=False,
+    # quadrant 3
+    if random.random() < 0.50:
+        # Slide cloud forward by padding south and west
+        q3margin = [lo_value, lo_value, hi_value, hi_value]
+    else:
+        # Slide cloud backward by padding north and east
+        q3margin = [hi_value, hi_value, lo_value, lo_value]
+    q3flip = [False, True]
+
+    quadrant_clouds.append(
+        cloud_region(
+            "glider", (rows, cols), left_xlim, top_ylim, q3margin, jitter, q3flip
         )
-        team2_pattern_list.append(p)
+    )
 
-    for i in range(len(s2_sw_locations)):
-        xx, yy = s2_sw_locations[i]
-        p = get_grid_pattern(
-            "glider",
-            rows,
-            cols,
-            xoffset=xx,
-            yoffset=yy,
-            hflip=True,
-            rotdeg=180,
-            check_overflow=False,
+    # quadrant 4
+    if random.random() < 0.50:
+        # Slide cloud forward by padding south and east
+        q4margin = [lo_value, hi_value, hi_value, lo_value]
+    else:
+        # Slide cloud backward by padding north and west
+        q4margin = [hi_value, lo_value, lo_value, hi_value]
+    q4flip = [True, True]
+
+    quadrant_clouds.append(
+        cloud_region(
+            "glider", (rows, cols), left_xlim, top_ylim, q4margin, jitter, q4flip
         )
-        team2_pattern_list.append(p)
+    )
 
-    team1_pattern = pattern_union(team1_pattern_list)
-    team2_pattern = pattern_union(team2_pattern_list)
+    team1_patterns = []
+    team2_patterns = []
+
+    for k, qa in enumerate(quadrant_assignments):
+        if qa == 1:
+            team1_patterns.append(quadrant_clouds[k])
+        else:
+            team2_patterns.append(quadrant_clouds[k])
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
 
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
@@ -785,8 +771,12 @@ def fourrabbits_twocolor(rows, cols, seed=None):
         ]
 
     npoints = len(rabbit_x_loc) * len(rabbit_y_loc)
-    team_assignments = [1,] * (npoints // 2) 
-    team_assignments += [2,] * (npoints - npoints // 2)
+    team_assignments = [
+        1,
+    ] * (npoints // 2)
+    team_assignments += [
+        2,
+    ] * (npoints - npoints // 2)
     random.shuffle(team_assignments)
 
     team1_patterns = []
@@ -971,17 +961,21 @@ def twomultum_twocolor(rows, cols, seed=None):
     mindim = min(rows, cols)
     if mindim < 200:
         L = 15
-        multum_x_loc = [cols//2]
-        multum_y_loc = [rows//2 - L, rows//2 + L]
+        multum_x_loc = [cols // 2]
+        multum_y_loc = [rows // 2 - L, rows // 2 + L]
 
     else:
         L = 25
-        multum_x_loc = [cols//2 - L, cols//2 + L]
-        multum_y_loc = [rows//2 - L, rows//2 + L] 
+        multum_x_loc = [cols // 2 - L, cols // 2 + L]
+        multum_y_loc = [rows // 2 - L, rows // 2 + L]
 
-    npoints = len(multum_x_loc)*len(multum_y_loc)
-    team_assignments = [1,] * (npoints // 2) 
-    team_assignments += [2,] * (npoints - npoints // 2)
+    npoints = len(multum_x_loc) * len(multum_y_loc)
+    team_assignments = [
+        1,
+    ] * (npoints // 2)
+    team_assignments += [
+        2,
+    ] * (npoints - npoints // 2)
     random.shuffle(team_assignments)
 
     jitter = 5
@@ -995,9 +989,9 @@ def twomultum_twocolor(rows, cols, seed=None):
             cols,
             xoffset=x + random.randint(-jitter, jitter),
             yoffset=y + random.randint(-jitter, jitter),
-            vflip=(y<rows//2 or random.random()<0.25)
+            vflip=(y < rows // 2 or random.random() < 0.25),
         )
-        if team_assignments[i]==1:
+        if team_assignments[i] == 1:
             team1_patterns.append(m)
         else:
             team2_patterns.append(m)

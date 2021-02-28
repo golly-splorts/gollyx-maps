@@ -158,7 +158,14 @@ class MapsTest(unittest.TestCase):
             for rk in map_realization_req_keys:
                 self.assertIn(rk, m.keys())
 
-    def test_get_map_no_exceptions(self):
+    def test_get_map_01_basicget(self):
+        for pattern_name in PATTERNS:
+            # Standard size
+            r = 100
+            c = 120
+            get_map_realization(pattern_name, rows=r, columns=c)
+
+    def test_get_map_02_no_exceptions(self):
         # Get each map 25 times
         # This ensures there are no corner cases to raise exceptions
         for pattern_name in PATTERNS:
