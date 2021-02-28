@@ -491,6 +491,9 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
     # This will hold four items: one glider cloud pattern for each quadrant
     quadrant_clouds = []
 
+    # This will turn better-spaced grids on/off
+    distancing = random.getrandbits(1)
+
     # quadrant 1
     if random.random() < 0.50:
         # Slide cloud forward by padding north and east
@@ -502,7 +505,14 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
 
     quadrant_clouds.append(
         cloud_region(
-            "glider", (rows, cols), left_xlim, top_ylim, q1margin, jitter, q1flip
+            "glider",
+            (rows, cols),
+            right_xlim,
+            top_ylim,
+            q1margin,
+            jitter,
+            q1flip,
+            distancing,
         )
     )
 
@@ -517,7 +527,14 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
 
     quadrant_clouds.append(
         cloud_region(
-            "glider", (rows, cols), left_xlim, top_ylim, q2margin, jitter, q2flip
+            "glider",
+            (rows, cols),
+            left_xlim,
+            top_ylim,
+            q2margin,
+            jitter,
+            q2flip,
+            distancing,
         )
     )
 
@@ -532,7 +549,14 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
 
     quadrant_clouds.append(
         cloud_region(
-            "glider", (rows, cols), left_xlim, top_ylim, q3margin, jitter, q3flip
+            "glider",
+            (rows, cols),
+            left_xlim,
+            bot_ylim,
+            q3margin,
+            jitter,
+            q3flip,
+            distancing,
         )
     )
 
@@ -547,7 +571,14 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
 
     quadrant_clouds.append(
         cloud_region(
-            "glider", (rows, cols), left_xlim, top_ylim, q4margin, jitter, q4flip
+            "glider",
+            (rows, cols),
+            right_xlim,
+            bot_ylim,
+            q4margin,
+            jitter,
+            q4flip,
+            distancing,
         )
     )
 

@@ -558,7 +558,9 @@ def metheusela_quadrants_pattern(
     return team1_pattern, team2_pattern
 
 
-def cloud_region(which_pattern, dims, xlim, ylim, margins, jitter, flip):
+def cloud_region(
+    which_pattern, dims, xlim, ylim, margins, jitter, flip, distancing=True
+):
     """
     Given a square region defined by the x and y limits, tile the region
     with copies of the specified pattern, plus jitter.
@@ -570,6 +572,9 @@ def cloud_region(which_pattern, dims, xlim, ylim, margins, jitter, flip):
     margins         integer or (N, E, S, W) list/tuple
     jitter          (xjitter, yjitter) list/tuple
     flip            (do_hflip, do_vflip) list/tuple
+    distancing      boolean: if true, add an extra margin of cells
+                    (eliminates overlap in starting positions)
+                    (off is more chaotic, on is more ordered)
     """
     if len(dims) != 2:
         err = "Error: could not understand dimensions input, provide (rows, cols)"
@@ -633,6 +638,9 @@ def cloud_region(which_pattern, dims, xlim, ylim, margins, jitter, flip):
     # Tile the pattern
     (pattern_h, pattern_w) = get_pattern_size(which_pattern)
     (tile_h, tile_w) = (pattern_h + 2 * y_jitter, pattern_w + 2 * x_jitter)
+    if distancing:
+        tile_h += 2
+        tile_w += 2
     tiling_nx = core_w // tile_w
     tiling_ny = core_h // tile_h
 
@@ -640,8 +648,12 @@ def cloud_region(which_pattern, dims, xlim, ylim, margins, jitter, flip):
     for i in range(tiling_nx):
         for j in range(tiling_ny):
 
-            xoffset = core_xlim[0] + i * (tile_w // 2)
-            yoffset = core_ylim[0] + j * (tile_h // 2)
+            if distancing:
+                xoffset = core_xlim[0] + (tile_w // 2) + i * (tile_w + 2) + 1
+                yoffset = core_ylim[0] + (tile_h // 2) + j * (tile_h + 2) + 1
+            else:
+                xoffset = core_xlim[0] + (tile_w // 2) + i * tile_w
+                yoffset = core_ylim[0] + (tile_h // 2) + j * tile_h
 
             tileset.append(
                 get_grid_pattern(
