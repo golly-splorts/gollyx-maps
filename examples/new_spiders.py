@@ -25,15 +25,15 @@ def make_map(seed=None):
 
     # Give ourselves a small margin on the edge of the map
     # (give the wickstretchers as much space as possible)
-    margin = 4
+    margin = random.randint(2,5)
     xbuff = wick_w // 2 + margin
 
     # Use this to jitter the vertical placement of both wickstretchers
-    y_rel_jitter = wick_h // 3
+    y_rel_jitter = wick_h // 2 - 2
 
     # Determine absolute y offset for both wickstretchers
     ybuff = y_rel_jitter
-    y_abs_jitter = rows // 2 - wick_h
+    y_abs_jitter = rows // 3 - 2*wick_h
     y_abs_offset = random.randint(-y_abs_jitter, y_abs_jitter)
 
     team1_pattern = []
@@ -61,7 +61,7 @@ def make_map(seed=None):
         vflip=bool(random.getrandbits(1)),
     )
 
-    roll = 0.01  # random.random()
+    roll = 0.30  # random.random()
     print(abs(y_abs_offset), "versus", wick_h)
     if roll < 0.15 and abs(y_abs_offset > wick_h):
 
@@ -145,62 +145,66 @@ def make_map(seed=None):
             "heavyweightspaceship",
             "x66",
         ]
-        top_ss = random.choice(sschoices)
-        bottom_ss = random.choice(sschoices)
+        top_ss = "lightweightspaceship" # random.choice(sschoices)
+        bot_ss = "x66" # random.choice(sschoices)
 
         top_ssh, top_ssw = get_pattern_size(top_ss)
-        top_ssjitter = top_ssh
+        top_ssjitter = top_ssh//2
         top_spaceship_y = (
             rows // 2
             + y_abs_offset
-            - h
-            - 1
+            - wick_h
             - top_ssh
             + random.randint(-top_ssjitter, top_ssjitter)
         )
 
         bot_ssh, bot_ssw = get_pattern_size(bot_ss)
-        bot_ssjitter = bot_ssh
+        bot_ssjitter = bot_ssh//2
         bot_spaceship_y = (
             rows // 2
             + y_abs_offset
-            + h
-            + 1
+            + wick_h
             + bot_ssh
             + random.randint(-bot_ssjitter, bot_ssjitter)
         )
+
+        xbuff_ss = max(top_ssw, bot_ssw)
 
         team1_top_ss = get_grid_pattern(
             top_ss,
             rows,
             cols,
-            xoffset=team1_xoffset + random.randint(0, w),
-            yoffset=top_spaceship_y,
+            xoffset=xbuff_ss + random.randint(0, top_ssw),
+            yoffset=top_spaceship_y + random.randint(-5, 0),
+            hflip=True,
         )
         team1_bot_ss = get_grid_pattern(
             bot_ss,
             rows,
             cols,
-            xoffset=team1_xoffset + random.randint(0, w),
-            yoffset=top_spaceship_y,
+            xoffset=xbuff_ss + random.randint(0, bot_ssw),
+            yoffset=bot_spaceship_y + random.randint(-5, 0),
+            hflip=True,
         )
-        team1_pattern = pattern_union([team1_wickstretcher, team1_top_ss, team1_bot_ss])
+        team1_pattern = pattern_union([team1_wickstretcher, team1_bot_ss, team1_top_ss])
+        #team1_pattern = pattern_union([team1_wickstretcher, team1_top_ss])
 
         team2_top_ss = get_grid_pattern(
             top_ss,
             rows,
             cols,
-            xoffset=team2_xoffset - random.randint(0, w),
-            yoffset=top_spaceship_y,
+            xoffset=cols - xbuff_ss - random.randint(0, top_ssw),
+            yoffset=top_spaceship_y + random.randint(-5, 0),
         )
         team2_bot_ss = get_grid_pattern(
             bot_ss,
             rows,
             cols,
-            xoffset=team2_xoffset - random.randint(0, w),
-            yoffset=top_spaceship_y,
+            xoffset=cols - xbuff_ss - random.randint(0, bot_ssw),
+            yoffset=bot_spaceship_y + random.randint(-5, 0),
         )
-        team2_pattern = pattern_union([team2_wickstretcher, team2_top_ss, team2_bot_ss])
+        team2_pattern = pattern_union([team2_wickstretcher, team2_bot_ss, team2_top_ss])
+        #team2_pattern = pattern_union([team2_wickstretcher, team2_top_ss])
 
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
