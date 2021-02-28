@@ -785,12 +785,8 @@ def fourrabbits_twocolor(rows, cols, seed=None):
         ]
 
     npoints = len(rabbit_x_loc) * len(rabbit_y_loc)
-    team_assignments = [
-        1,
-    ] * (npoints // 2)
-    team_assignments += [
-        2,
-    ] * (npoints - npoints // 2)
+    team_assignments = [1,] * (npoints // 2) 
+    team_assignments += [2,] * (npoints - npoints // 2)
     random.shuffle(team_assignments)
 
     team1_patterns = []
@@ -972,30 +968,41 @@ def twomultum_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    centerx = cols // 2
-    centery1 = rows // 2
-    centery2 = rows // 2  # 2*rows//3
+    mindim = min(rows, cols)
+    if mindim < 200:
+        L = 15
+        multum_x_loc = [cols//2]
+        multum_y_loc = [rows//2 - L, rows//2 + L]
 
-    p1 = get_grid_pattern(
-        "multuminparvo",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(-10, 10),
-        yoffset=centery1 + random.randint(10, 30),
-        vflip=False,
-    )
+    else:
+        L = 25
+        multum_x_loc = [cols//2 - L, cols//2 + L]
+        multum_y_loc = [rows//2 - L, rows//2 + L] 
 
-    p2 = get_grid_pattern(
-        "multuminparvo",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(-10, 10),
-        yoffset=centery2 - random.randint(10, 30),
-        vflip=True,
-    )
+    npoints = len(multum_x_loc)*len(multum_y_loc)
+    team_assignments = [1,] * (npoints // 2) 
+    team_assignments += [2,] * (npoints - npoints // 2)
 
-    pattern1_url = pattern2url(p1)
-    pattern2_url = pattern2url(p2)
+    jitter = 5
+
+    team1_patterns = []
+    team2_patterns = []
+    for i, (x, y) in enumerate(itertools.product(multum_x_loc, multum_y_loc)):
+        m = get_grid_pattern(
+            "multuminparvo",
+            rows,
+            cols,
+            xoffset=x + random.randint(-jitter, jitter),
+            yoffset=y + random.randint(-jitter, jitter),
+            vflip=y < rows
+        )
+        if team_assignments[i]==1:
+            team1_patterns.append(m)
+        else:
+            team2_patterns.append(m)
+
+    pattern1_url = pattern2url(team1_patterns)
+    pattern2_url = pattern2url(team1_patterns)
 
     return pattern1_url, pattern2_url
 
