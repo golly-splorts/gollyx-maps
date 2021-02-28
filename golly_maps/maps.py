@@ -1,3 +1,4 @@
+import itertools
 from operator import itemgetter
 import json
 import os
@@ -763,41 +764,51 @@ def fourrabbits_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    rabbit_locations1 = [
-        (cols // 4, rows // 4),
-        (cols // 2 + cols // 4, rows // 4),
-    ]
-    rabbits1 = []
-    for (x, y) in rabbit_locations1:
+    mindim = min(rows, cols)
+
+    if mindim < 200:
+        rabbit_x_loc = [cols // 4, cols // 2 + cols // 4]
+        rabbit_y_loc = [rows // 4, rows // 2 + rows // 4]
+
+    else:
+        rabbit_x_loc = [
+            cols // 4 - cols // 8,
+            cols // 4 + cols // 8,
+            cols // 2 + cols // 4 + cols // 8,
+            cols // 2 + cols // 4 - cols // 8,
+        ]
+        rabbit_y_loc = [
+            rows // 4 - rows // 8,
+            rows // 4 + rows // 8,
+            rows // 2 + rows // 4 + rows // 8,
+            rows // 2 + rows // 4 - rows // 8,
+        ]
+
+    npoints = len(rabbit_x_loc) * len(rabbit_y_loc)
+    team_assignments = [1,] * (npoints // 2)
+    team_assignments += [2,] * (npoints - npoints // 2)
+
+    team1_patterns = []
+    team2_patterns = []
+    for i, (x, y) in enumerate(itertools.product(rabbit_x_loc, rabbit_y_loc)):
         x += random.randint(-5, 5)
         y += random.randint(-5, 5)
-        vflipopt = bool(random.getrandbits(1))
-        hflipopt = bool(random.getrandbits(1))
+        do_vflip = bool(random.getrandbits(1))
+        do_hflip = bool(random.getrandbits(1))
         rabbit = get_grid_pattern(
-            "rabbit", rows, cols, xoffset=x, yoffset=y, vflip=vflipopt, hflip=hflipopt
+            "rabbit", rows, cols, xoffset=x, yoffset=y, vflip=do_vflip, hflip=do_hflip
         )
-        rabbits1.append(rabbit)
+        if team_assignments[i]==1:
+            team1_patterns += rabbit
+        else:
+            team2_patterns += rabbit
 
-    rabbit_locations2 = [
-        (cols // 4, rows // 2 + rows // 4),
-        (cols // 2 + cols // 4, rows // 2 + rows // 4),
-    ]
-    rabbits2 = []
-    for (x, y) in rabbit_locations2:
-        x += random.randint(-5, 5)
-        y += random.randint(-5, 5)
-        vflipopt = bool(random.getrandbits(1))
-        hflipopt = bool(random.getrandbits(1))
-        rabbit = get_grid_pattern(
-            "rabbit", rows, cols, xoffset=x, yoffset=y, vflip=vflipopt, hflip=hflipopt
-        )
-        rabbits2.append(rabbit)
 
-    rabbits_pattern1 = pattern_union(rabbits1)
-    rabbits_pattern2 = pattern_union(rabbits2)
+    p1 = pattern_union(team1_patterns)
+    p2 = pattern_union(team2_patterns)
 
-    pattern1_url = pattern2url(rabbits_pattern1)
-    pattern2_url = pattern2url(rabbits_pattern2)
+    pattern1_url = pattern2url(p1)
+    pattern2_url = pattern2url(p2)
 
     return pattern1_url, pattern2_url
 
