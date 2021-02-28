@@ -641,8 +641,8 @@ def cloud_region(
     if distancing:
         tile_h += 2
         tile_w += 2
-    tiling_nx = core_w // tile_w
-    tiling_ny = core_h // tile_h
+    tiling_nx = core_w // tile_w - 1
+    tiling_ny = core_h // tile_h - 1
 
     tileset = []
     for i in range(tiling_nx):
@@ -667,5 +667,6 @@ def cloud_region(
                     check_overflow=False,
                 )
             )
+
     tileset_pattern = pattern_union(tileset)
     return tileset_pattern

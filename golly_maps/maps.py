@@ -383,81 +383,167 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    # Spacing between spaceships
-    w = 12
+    # Decide on how to distribute shapes among quadrants
+    ss_quadrant_assignments = [1, 2]
+    random.shuffle(ss_quadrant_assignments)
+    quadrant_clouds = []
 
-    # Spaceship locations for team 1
-    s_centerx1 = cols // 4
-    s_centery1 = rows // 3
-    s1_locations = []
-    for i in [-2, -1, 0, 1]:
-        for j in [-2, -1, 0, 1]:
-            xx = s_centerx1 + i * w + random.randint(-4, 4)
-            yy = s_centery1 + j * w + random.randint(-3, 3)
-            s1_locations.append((xx, yy))
+    osc_quadrant_assignments = [1, 2]
+    random.shuffle(osc_quadrant_assignments)
+    quadrant_osc = []
 
-    # Spaceship locations for team 2
-    s_centerx2 = cols // 2 + cols // 4
-    s_centery2 = rows // 3
-    s2_locations = []
-    for i in [-1, 0, 1, 2]:
-        for j in [-3, -2, -1, 0]:
-            xx = s_centerx2 + i * w + random.randint(-4, 4)
-            yy = s_centery2 + j * w + random.randint(-3, 3)
-            s2_locations.append((xx, yy))
+    # Assemble parameters needed to create a cloud region
+    left_xlim = (0, cols // 2)
+    right_xlim = (cols // 2, cols)
+    top_ylim = (0, rows // 2)
+    bot_ylim = (rows // 2, rows)
 
-    # aferimeter locations for team 1
-    b_centerx1 = cols // 3 + random.randint(-15, 5)
-    b_centery1 = 3 * rows // 4 + random.randint(0, 8)
+    jitter = [3, 3]
 
-    # aferimeter locations for team 2
-    b_centerx2 = 2 * cols // 3 + random.randint(-15, 5)
-    b_centery2 = 3 * rows // 4 + random.randint(0, 8)
+    # This will turn better-spaced grids on/off
+    distancing = True  # random.getrandbits(1)
 
-    # Assemble and combine spaceship patterns for team 1
-    team1_pattern_list = []
-    for i in range(len(s1_locations)):
-        xx, yy = s1_locations[i]
-        p = get_grid_pattern(
-            "glider", rows, cols, xoffset=xx, yoffset=yy, check_overflow=False
-        )
-        team1_pattern_list.append(p)
+    # Use margins to shift the cloud forward/backward (how depends on which quadrant)
+    lo_value = max(min(rows, cols) // 20, 1)
+    hi_value = max(min(rows, cols) // 10, 5)
 
-    p = get_grid_pattern(
-        "quadrupleburloaferimeter",
-        rows,
-        cols,
-        xoffset=b_centerx1,
-        yoffset=b_centery1,
-    )
-    team1_pattern_list.append(p)
+    # quadrant 1
+    if random.random() < 0.50:
+        # Slide cloud forward by padding north and east
+        q1margin = [hi_value, hi_value, lo_value, lo_value]
+    else:
+        # Slide cloud backward by padding south and west
+        q1margin = [lo_value, lo_value, hi_value, hi_value]
+    q1flip = [True, False]
 
-    # Assemble and combine spaceship patterns for team 2
-    team2_pattern_list = []
-    for i in range(len(s2_locations)):
-        xx, yy = s2_locations[i]
-        p = get_grid_pattern(
+    quadrant_clouds.append(
+        cloud_region(
             "glider",
-            rows,
-            cols,
-            xoffset=xx,
-            yoffset=yy,
-            hflip=True,
-            check_overflow=False,
+            (rows, cols),
+            right_xlim,
+            top_ylim,
+            q1margin,
+            jitter,
+            q1flip,
+            distancing,
         )
-        team2_pattern_list.append(p)
-
-    p = get_grid_pattern(
-        "quadrupleburloaferimeter",
-        rows,
-        cols,
-        xoffset=b_centerx2,
-        yoffset=b_centery2,
     )
-    team2_pattern_list.append(p)
 
-    team1_pattern = pattern_union(team1_pattern_list)
-    team2_pattern = pattern_union(team2_pattern_list)
+    # quadrant 2
+    if random.random() < 0.50:
+        # Slide cloud forward by padding north and west
+        q2margin = [hi_value, lo_value, lo_value, hi_value]
+    else:
+        # Slide cloud backward by padding south and east
+        q2margin = [lo_value, hi_value, hi_value, lo_value]
+    q2flip = [False, False]
+
+    quadrant_clouds.append(
+        cloud_region(
+            "glider",
+            (rows, cols),
+            left_xlim,
+            top_ylim,
+            q2margin,
+            jitter,
+            q2flip,
+            distancing,
+        )
+    )
+
+    mindim = min(rows, cols)
+
+    osc_names = ["vring64", "quadrupleburloaferimeter"]
+    osc_jitter = 10
+
+    # quadrant 3
+    if mindim < 200:
+        # bottom left oscillator
+        quadrant_osc.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 4,
+                yoffset=rows // 2 + rows // 4,
+            )
+        )
+        # bottom right oscillator
+        quadrant_osc.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 2 + cols // 4,
+                yoffset=rows // 2 + rows // 4,
+            )
+        )
+
+    else:
+        # bottom left oscillators: located in upper left corner and bottom right corner of quadrant
+        left_oscillators = []
+        left_oscillators.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 4 + random.randint(-osc_jitter, osc_jitter),
+                yoffset=rows // 2 + rows // 4 - rows // 8,
+            )
+        )
+        left_oscillators.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 4 + random.randint(-osc_jitter, osc_jitter),
+                yoffset=rows // 2 + rows // 4 + rows // 6,
+            )
+        )
+        quadrant_osc.append(pattern_union(left_oscillators))
+
+        # bottom right oscillators:
+        right_oscillators = []
+        right_oscillators.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 2 + cols // 4 + random.randint(-osc_jitter, osc_jitter),
+                yoffset=rows // 2 + rows // 4 - rows // 8,
+            )
+        )
+        right_oscillators.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 2 + cols // 4 + random.randint(-osc_jitter, osc_jitter),
+                yoffset=rows // 2 + rows // 4  + rows//6,
+            )
+        )
+        quadrant_osc.append(pattern_union(right_oscillators))
+
+    team1_patterns = []
+    team2_patterns = []
+
+    for k, (ss_qa, osc_qa) in enumerate(
+        zip(ss_quadrant_assignments, osc_quadrant_assignments)
+    ):
+        # Deal with spaceships
+        if ss_qa == 1:
+            team1_patterns.append(quadrant_clouds[k])
+        else:
+            team2_patterns.append(quadrant_clouds[k])
+
+        # Deal with oscillators
+        if osc_qa == 1:
+            team1_patterns.append(quadrant_osc[k])
+        else:
+            team2_patterns.append(quadrant_osc[k])
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
 
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
@@ -492,7 +578,7 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
     quadrant_clouds = []
 
     # This will turn better-spaced grids on/off
-    distancing = random.getrandbits(1)
+    distancing = True  # random.getrandbits(1)
 
     # quadrant 1
     if random.random() < 0.50:
@@ -1148,7 +1234,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
             + random.randint(-ssjitterx, ssjitterx)
         )
         p = get_grid_pattern(
-            ss_name, rows, cols, xoffset=x, yoffset=y, check_overflow=False
+            ss_name, rows, cols, xoffset=x, yoffset=y, check_overflow=True
         )
         team1_spaceships.append(p)
 
@@ -1160,7 +1246,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
         # find center x, starting from far left
         x = 0 + hbuff + 2 * i * ssw + ssw // 2 + random.randint(-ssjitterx, ssjitterx)
         p = get_grid_pattern(
-            ss_name, rows, cols, xoffset=x, yoffset=y, hflip=True, check_overflow=False
+            ss_name, rows, cols, xoffset=x, yoffset=y, hflip=True, check_overflow=True
         )
         team2_spaceships.append(p)
 
