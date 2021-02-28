@@ -26,8 +26,10 @@ def onepattern_onecolor(seed=None):
     #pattern1 = get_grid_pattern('unidimensionalinfinitegrowth', rows, cols, xoffset=centerx, yoffset=centery)
     #pattern1 = get_grid_pattern('ring64', rows, cols, xoffset=centerx, yoffset=centery)
     #pattern1 = get_grid_pattern('cthulhu', rows, cols, xoffset=centerx, yoffset=centery)
-    pattern1 = get_grid_pattern('78p70', rows, cols, xoffset=centerx, yoffset=centery)
+    #pattern1 = get_grid_pattern('78p70', rows, cols, xoffset=centerx, yoffset=centery)
     #pattern1 = get_grid_pattern('justyna', rows, cols, xoffset=centerx, yoffset=centery)
+    #pattern1 = get_grid_pattern('crabstretcher', rows, cols, xoffset=centerx, yoffset=centery)
+    pattern1 = get_grid_pattern('wickstretcher', rows, cols, xoffset=centerx, yoffset=centery)
 
     s1 = pattern2url(pattern1)
     url = f"?s1={s1}"
