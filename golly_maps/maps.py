@@ -115,7 +115,7 @@ def get_map_realization(patternname, rows=100, columns=120):
     mapdat["cellSize"] = cellSize
 
     # Remove these keys before returning realization for the API to serve up
-    remove_keys = ['mapSeasonStart', 'mapSeasonEnd', 'mapDescription']
+    remove_keys = ["mapSeasonStart", "mapSeasonEnd", "mapDescription"]
     for remk in remove_keys:
         if remk in mapdat.keys():
             del mapdat[remk]
@@ -952,37 +952,35 @@ def eightpi_twocolor(rows, cols, seed=None):
     centerx = cols // 2
     centery = rows // 2
 
-
     # Place one pi omino every 10 grid spaces,
     # maximum number - 1
-    max_ominoes = centerx//10
+    maxshapes = centerx // 10
     c1patterns = []
-    for i in range(max_omnoes-1):
+    c2patterns = []
+    for i in range(maxshapes - 1):
+        end = (i + 1) * 10
+        start = end - 5
         pattern1 = get_grid_pattern(
             "piheptomino",
             rows,
             cols,
-            end = (i+1)*10
-            start = end-5
-            xoffset=centerx - random.randint(start, end)
+            xoffset=centerx - random.randint(start, end),
             yoffset=centery + random.randint(-10, 10),
             hflip=bool(random.getrandbits(1)),
             vflip=bool(random.getrandbits(1)),
         )
-        c1patterns.append(pattern)
+        c1patterns.append(pattern1)
 
         pattern2 = get_grid_pattern(
             "piheptomino",
             rows,
             cols,
-            end = (i+1)*10
-            start = end-5
-            xoffset=centerx + random.randint(start, end)
+            xoffset=centerx + random.randint(start, end),
             yoffset=centery + random.randint(-10, 10),
             hflip=bool(random.getrandbits(1)),
             vflip=bool(random.getrandbits(1)),
         )
-        c2patterns.append(pattern)
+        c2patterns.append(pattern2)
 
     s1 = pattern_union(c1patterns)
     s2 = pattern_union(c2patterns)
