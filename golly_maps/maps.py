@@ -982,6 +982,7 @@ def twomultum_twocolor(rows, cols, seed=None):
     npoints = len(multum_x_loc)*len(multum_y_loc)
     team_assignments = [1,] * (npoints // 2) 
     team_assignments += [2,] * (npoints - npoints // 2)
+    random.shuffle(team_assignments)
 
     jitter = 5
 
@@ -994,15 +995,18 @@ def twomultum_twocolor(rows, cols, seed=None):
             cols,
             xoffset=x + random.randint(-jitter, jitter),
             yoffset=y + random.randint(-jitter, jitter),
-            vflip=y < rows
+            vflip=(y<rows//2 or random.random()<0.25)
         )
         if team_assignments[i]==1:
             team1_patterns.append(m)
         else:
             team2_patterns.append(m)
 
-    pattern1_url = pattern2url(team1_patterns)
-    pattern2_url = pattern2url(team1_patterns)
+    s1 = pattern_union(team1_patterns)
+    s2 = pattern_union(team2_patterns)
+
+    pattern1_url = pattern2url(s1)
+    pattern2_url = pattern2url(s2)
 
     return pattern1_url, pattern2_url
 
