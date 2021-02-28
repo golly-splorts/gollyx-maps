@@ -860,83 +860,38 @@ def eightr_twocolor(rows, cols, seed=None):
     centerx = cols // 2
     centery = rows // 2
 
-    # color 1
-    r1a = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(5, 10),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r1b = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(15, 20),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r1c = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(25, 30),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r1d = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(35, 40),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    s1 = pattern_union([r1a, r1b, r1c, r1d])
+    # Place one r omino every 10 grid spaces,
+    # maximum number - 1
+    maxshapes = centerx // 10
+    c1patterns = []
+    c2patterns = []
+    for i in range(maxshapes - 1):
+        end = (i + 1) * 10
+        start = end - 5
+        pattern1 = get_grid_pattern(
+            "rpentomino",
+            rows,
+            cols,
+            xoffset=centerx - random.randint(start, end),
+            yoffset=centery + random.randint(-10, 10),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c1patterns.append(pattern1)
 
-    # color 2
-    r2a = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(5, 10),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r2b = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(15, 20),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r2c = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(25, 30),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r2d = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(35, 40),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    s2 = pattern_union([r2a, r2b, r2c, r2d])
+        pattern2 = get_grid_pattern(
+            "rpentomino",
+            rows,
+            cols,
+            xoffset=centerx + random.randint(start, end),
+            yoffset=centery + random.randint(-10, 10),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c2patterns.append(pattern2)
+
+    s1 = pattern_union(c1patterns)
+    s2 = pattern_union(c2patterns)
 
     pattern1_url = pattern2url(s1)
     pattern2_url = pattern2url(s2)
