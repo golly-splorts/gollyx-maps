@@ -3,8 +3,8 @@ from golly_maps.utils import pattern2url
 import random
 
 
-ROWS = 100
-COLS = 120
+ROWS = 200
+COLS = 240
 
 
 def make_map(seed=None):
@@ -209,7 +209,7 @@ def make_map(seed=None):
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
 
-    url = f"http://192.168.30.20:8888/simulator/index.html?s1={s1}&s2={s2}"
+    url = f"http://192.168.30.20:8888/simulator/index.html?s1={s1}&s2={s2}&rows={rows}&cols={cols}&cellSize=5"
     print(url)
 
 
