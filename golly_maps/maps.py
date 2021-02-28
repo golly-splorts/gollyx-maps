@@ -952,83 +952,40 @@ def eightpi_twocolor(rows, cols, seed=None):
     centerx = cols // 2
     centery = rows // 2
 
-    # color 1
-    p1a = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(5, 10),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p1b = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(15, 20),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p1c = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(25, 30),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p1d = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(35, 40),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    s1 = pattern_union([p1a, p1b, p1c, p1d])
 
-    # color 2
-    p2a = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(5, 10),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p2b = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(15, 20),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p2c = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(25, 30),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p2d = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(35, 40),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    s2 = pattern_union([p2a, p2b, p2c, p2d])
+    # Place one pi omino every 10 grid spaces,
+    # maximum number - 1
+    max_ominoes = centerx//10
+    c1patterns = []
+    for i in range(max_omnoes-1):
+        pattern1 = get_grid_pattern(
+            "piheptomino",
+            rows,
+            cols,
+            end = (i+1)*10
+            start = end-5
+            xoffset=centerx - random.randint(start, end)
+            yoffset=centery + random.randint(-10, 10),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c1patterns.append(pattern)
+
+        pattern2 = get_grid_pattern(
+            "piheptomino",
+            rows,
+            cols,
+            end = (i+1)*10
+            start = end-5
+            xoffset=centerx + random.randint(start, end)
+            yoffset=centery + random.randint(-10, 10),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c2patterns.append(pattern)
+
+    s1 = pattern_union(c1patterns)
+    s2 = pattern_union(c2patterns)
 
     pattern1_url = pattern2url(s1)
     pattern2_url = pattern2url(s2)
