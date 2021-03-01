@@ -1,3 +1,9 @@
+Version 13.0:
+
+* Rearrange and clean up internal API
+* Update map metadata to prepare for map retirement
+	* mapStartSeason and mapEndSeason
+
 Version 11.0:
 
 * Add 8 new maps!!!
