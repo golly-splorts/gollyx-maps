@@ -519,7 +519,7 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
                 rows,
                 cols,
                 xoffset=cols // 2 + cols // 4 + random.randint(-osc_jitter, osc_jitter),
-                yoffset=rows // 2 + rows // 4  + rows//6,
+                yoffset=rows // 2 + rows // 4 + rows // 6,
             )
         )
         quadrant_osc.append(pattern_union(right_oscillators))
@@ -746,121 +746,185 @@ def twoacorn_twocolor(rows, cols, seed=None):
 
 
 def timebomb_oscillators_twocolor(rows, cols, seed=None):
-    if seed is not None:
-        random.seed(seed)
-
-    centerx1a = cols // 2 + cols // 4
-    centerx1b = cols // 4
-    centerx1c = cols // 2
-
-    centery1a = rows // 4
-    centery1b = centery1a
-    centery1c = centery1a
-
-    centerx1a += random.randint(-8, 8)
-    centerx1b += random.randint(-8, 8)
-    centerx1c += random.randint(-4, 4)
-    centery1a += random.randint(-8, 8)
-    centery1b += random.randint(-8, 8)
-    centery1c += random.randint(-4, 4)
-
-    osc1a = get_grid_pattern(
-        "quadrupleburloaferimeter", rows, cols, xoffset=centerx1a, yoffset=centery1a
-    )
-    osc1b = get_grid_pattern(
-        "quadrupleburloaferimeter", rows, cols, xoffset=centerx1b, yoffset=centery1b
-    )
-    osc1c = get_grid_pattern(
-        "quadrupleburloaferimeter", rows, cols, xoffset=centerx1c, yoffset=centery1c
-    )
-
-    osc_pattern = pattern_union([osc1a, osc1b, osc1c])
-
-    centerx2 = cols // 2
-    centery2 = 2 * rows // 3
-
-    centerx2 += random.randint(-8, 8)
-    centery2 += random.randint(-8, 8)
-
-    vflipopt = bool(random.getrandbits(1))
-    hflipopt = bool(random.getrandbits(1))
-    rotdegs = [0, 90, 180, 270, 0]
-    timebomb = get_grid_pattern(
-        "timebomb",
-        rows,
-        cols,
-        xoffset=centerx2,
-        yoffset=centery2,
-        hflip=hflipopt,
-        vflip=vflipopt,
-        rotdeg=random.choice(rotdegs),
-    )
-
-    pattern1_url = pattern2url(osc_pattern)
-    pattern2_url = pattern2url(timebomb)
-
-    return pattern1_url, pattern2_url
+    return _timebomb_oscillators_twocolor(rows, cols, revenge=False, seed=seed)
 
 
 def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
+    return _timebomb_oscillators_twocolor(rows, cols, revenge=True, seed=seed)
+
+
+def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
 
     if seed is not None:
         random.seed(seed)
 
-    oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
+    mindim = min(rows, cols)
 
-    # Flip a coin to decide on random oscillators or all the same oscillators
-    random_oscillators = False
-    if random.random() < 0.33:
-        random_oscillators = True
+    # Geometry
+    lengthscale = 28
+    centerx = cols // 2
+    centery = rows // 2
 
-    oscillator_name = random.choice(oscillators)
+    if mindim < 200:
+        # Three oscillators versus one timebomb
 
-    centerxs = [
-        (cols // 2) + (cols // 4) + random.randint(-4, 4),
-        cols // 4 + random.randint(-4, 4),
-        cols // 2 + random.randint(-4, 4),
-    ]
-    centerys = [
-        (rows // 3),
-    ] * 3
-    centerys = [j + random.randint(-4, 4) for j in centerys]
+        # Timebomb locations
+        timebomb_x = [centerx]
+        timebomb_y = [centery + lengthscale]
+        hflip_timebomb = bool(random.getrandbits(1))
 
-    osc_patterns = []
-    for centerx, centery in zip(centerxs, centerys):
-        if random_oscillators:
-            oscillator_name = random.choice(oscillators)
-        osc = get_grid_pattern(
-            oscillator_name, rows, cols, xoffset=centerx, yoffset=centery
+        # Oscillator locations
+        osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
+        osc_y = [centery - lengthscale]
+
+    else:
+        # Six oscillators versus two timebombs
+
+        # Timebomb locations
+        timebomb_x = [centerx, centerx]
+        timebomb_y = [centery + lengthscale, centery - lengthscale]
+        hflip_timebomb = [False, True]
+
+        # Bottom oscillator locations
+        osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
+        osc_y = [
+            timebomb_y[0] + lengthscale,
+        ] * 3
+
+        # Top oscillator locations
+        osc_x += [centerx - lengthscale, centerx, centerx + lengthscale]
+        osc_y += [
+            timebomb_y[1] - lengthscale,
+        ] * 3
+
+    def _get_oscillator_name():
+        if revenge:
+            oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
+            which_oscillator = random.choice(oscillators)
+        else:
+            which_oscillator = "quadrupleburloaferimeter"
+        return which_oscillator
+
+    # jitter for patterns
+    osc_jitter_x = lengthscale // 8
+    osc_jitter_y = lengthscale // 4
+    timebomb_jitter_x = lengthscale // 2
+    timebomb_jitter_y = lengthscale // 4
+
+    # Decide whether this is an even matchup (each team has 1 timebomb and 3 oscillators)
+    # or a lopsided matchup (one team has both timebombs)
+    if random.random() < 0.25:
+        # Even
+        osc_team_ass = [1, 1, 1, 2, 2, 2]
+        timebomb_team_ass = [2, 1]
+    else:
+        # Lopsided
+        osc_team_ass = [1, 1, 1, 1, 1, 1]
+        timebomb_team_ass = [2, 2]
+
+    # Assemble the team patterns
+    team1_patterns = []
+    team2_patterns = []
+
+    # Assemble the oscillator patterns
+    for k, (oscxx, oscyy, team_ass) in enumerate(zip(osc_x, osc_y, osc_team_ass)):
+        pattern = get_grid_pattern(
+            _get_oscillator_name(),
+            rows,
+            cols,
+            xoffset=oscxx + random.randint(-osc_jitter_x, osc_jitter_x),
+            yoffset=oscyy + random.randint(-osc_jitter_y, 0),
         )
-        osc_patterns.append(osc)
+        if team_ass == 1:
+            team1_patterns.append(pattern)
+        else:
+            team2_patterns.append(pattern)
 
-    osc_pattern = pattern_union(osc_patterns)
+    # Assemble the timebomb patterns
+    for k, (timebombxx, timebombyy, team_ass, do_hflip) in enumerate(zip(timebomb_x, timebomb_y, timebomb_team_ass, hflip_timebomb)):
+        do_hflip = k == 1
+        pattern = get_grid_pattern(
+            "timebomb",
+            rows,
+            cols,
+            xoffset=timebombxx
+            + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
+            yoffset=timebombyy + random.randint(0, timebomb_jitter_y),
+            hflip=do_hflip,
+        )
+        if team_ass == 1:
+            team1_patterns.append(pattern)
+        else:
+            team2_patterns.append(pattern)
 
-    centerx2 = cols // 2
-    centery2 = 2 * rows // 3
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
 
-    centerx2 += random.randint(-12, 12)
-    centery2 += random.randint(-8, 8)
-
-    vflipopt = bool(random.getrandbits(1))
-    hflipopt = bool(random.getrandbits(1))
-    rotdegs = [0, 90, 180, 270, 0]
-    timebomb = get_grid_pattern(
-        "timebomb",
-        rows,
-        cols,
-        xoffset=centerx2,
-        yoffset=centery2,
-        hflip=hflipopt,
-        vflip=vflipopt,
-        rotdeg=random.choice(rotdegs),
-    )
-
-    pattern1_url = pattern2url(osc_pattern)
-    pattern2_url = pattern2url(timebomb)
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
 
     return pattern1_url, pattern2_url
+
+
+# def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
+#
+#    if seed is not None:
+#        random.seed(seed)
+#
+#    oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
+#
+#    # Flip a coin to decide on random oscillators or all the same oscillators
+#    random_oscillators = False
+#    if random.random() < 0.33:
+#        random_oscillators = True
+#
+#    oscillator_name = random.choice(oscillators)
+#
+#    centerxs = [
+#        (cols // 2) + (cols // 4) + random.randint(-4, 4),
+#        cols // 4 + random.randint(-4, 4),
+#        cols // 2 + random.randint(-4, 4),
+#    ]
+#    centerys = [
+#        (rows // 3),
+#    ] * 3
+#    centerys = [j + random.randint(-4, 4) for j in centerys]
+#
+#    osc_patterns = []
+#    for centerx, centery in zip(centerxs, centerys):
+#        if random_oscillators:
+#            oscillator_name = random.choice(oscillators)
+#        osc = get_grid_pattern(
+#            oscillator_name, rows, cols, xoffset=centerx, yoffset=centery
+#        )
+#        osc_patterns.append(osc)
+#
+#    osc_pattern = pattern_union(osc_patterns)
+#
+#    centerx2 = cols // 2
+#    centery2 = 2 * rows // 3
+#
+#    centerx2 += random.randint(-12, 12)
+#    centery2 += random.randint(-8, 8)
+#
+#    vflipopt = bool(random.getrandbits(1))
+#    hflipopt = bool(random.getrandbits(1))
+#    rotdegs = [0, 90, 180, 270, 0]
+#    timebomb = get_grid_pattern(
+#        "timebomb",
+#        rows,
+#        cols,
+#        xoffset=centerx2,
+#        yoffset=centery2,
+#        hflip=hflipopt,
+#        vflip=vflipopt,
+#        rotdeg=random.choice(rotdegs),
+#    )
+#
+#    pattern1_url = pattern2url(osc_pattern)
+#    pattern2_url = pattern2url(timebomb)
+#
+#    return pattern1_url, pattern2_url
 
 
 def fourrabbits_twocolor(rows, cols, seed=None):
