@@ -349,7 +349,7 @@ def segment_pattern(
 
 
 def metheusela_quadrants_pattern(
-    rows, cols, seed=None, metheusela_counts=[1, 2, 3, 4, 9, 16], fixed_metheusela=None
+    rows, cols, seed=None, metheusela_counts=None, fixed_metheusela=None
 ):
     """
     Returns a map with a cluster of metheuselas in each quadrant.
@@ -363,6 +363,7 @@ def metheusela_quadrants_pattern(
     4 (placed on all corners of four-point square)
     3 (placed on diagonal of square with 3 points per edge, or 8 points)
     9 (placed on all corners and center of 8-point square)
+    16 (placed on a 4x4 grid)
 
     Procedure:
     First randomly pair quadrants so their metheusela counts will match.
@@ -371,6 +372,16 @@ def metheusela_quadrants_pattern(
     if seed is not None:
         random.seed(seed)
 
+    # Basic checks
+    BIGDIMLIMIT = 150
+    mindim = min(rows, cols)
+
+    if metheusela_counts is None:
+        if mindim < BIGDIMLIMIT:
+            metheusela_counts = [1, 2, 3, 4, 9]
+        else:
+            metheusela_counts = [1, 2, 3, 4, 9, 16]
+
     valid_mc = [1, 2, 3, 4, 9, 16]
     for mc in metheusela_counts:
         if mc not in valid_mc:
@@ -378,8 +389,6 @@ def metheusela_quadrants_pattern(
             msg += "you specified {', '.join(metheusela_counts)}"
             raise GollyPatternsError(msg)
 
-    # Basic size checks
-    BIGDIMLIMIT = 150
     if 16 in metheusela_counts and min(rows, cols) < BIGDIMLIMIT:
         msg = "Invalid metheusela count specified: grid size too small for 4x4!"
         raise GollyPatternsError(msg)
@@ -440,10 +449,11 @@ def metheusela_quadrants_pattern(
                     meth = fixed_metheusela
                 else:
                     meth = random.choice(metheusela_names)
+
                 pattern = get_grid_pattern(
                     meth,
-                    cols,
                     rows,
+                    cols,
                     xoffset=x,
                     yoffset=y,
                     hflip=bool(random.getrandbits(1)),
