@@ -71,6 +71,6 @@ def retry_on_failure(func, *args, **kwargs):
             except GollyPatternsError:
                 count += 1
                 continue
-        raise GollyMapsError(f"Error: retry failure, tried {maxcount} times!")
+        raise GollyMapsError(f"Error: retry failure for function {func.__name__}, tried {maxcount} times!")
 
     return wrap

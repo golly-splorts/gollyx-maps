@@ -771,7 +771,7 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
         # Timebomb locations
         timebomb_x = [centerx]
         timebomb_y = [centery + lengthscale]
-        hflip_timebomb = bool(random.getrandbits(1))
+        hflip_timebomb = [bool(random.getrandbits(1))]
 
         # Oscillator locations
         osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
@@ -841,14 +841,15 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
             team2_patterns.append(pattern)
 
     # Assemble the timebomb patterns
-    for k, (timebombxx, timebombyy, team_ass, do_hflip) in enumerate(zip(timebomb_x, timebomb_y, timebomb_team_ass, hflip_timebomb)):
+    for k, (timebombxx, timebombyy, team_ass, do_hflip) in enumerate(
+        zip(timebomb_x, timebomb_y, timebomb_team_ass, hflip_timebomb)
+    ):
         do_hflip = k == 1
         pattern = get_grid_pattern(
             "timebomb",
             rows,
             cols,
-            xoffset=timebombxx
-            + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
+            xoffset=timebombxx + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
             yoffset=timebombyy + random.randint(0, timebomb_jitter_y),
             hflip=do_hflip,
         )
@@ -1191,11 +1192,39 @@ def bigsegment_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
+    if rows < 50:
+        possible_nhseg = [0, 1]
+    if rows < 150:
+        possible_nhseg = [0, 1, 3]
+    if rows < 200:
+        possible_nhseg = [2, 3, 4]
+    else:
+        possible_nhseg = [3, 4]
+
+    if cols < 50:
+        possible_nvseg = [0, 1]
+    elif rows < 150:
+        possible_nvseg = [0, 1, 3]
+    elif rows < 200:
+        possible_nvseg = [2, 3, 5]
+    else:
+        possible_nvseg = [3, 5]
+
+    maxdim = max(rows, cols)
+    if maxdim < 50:
+        gap_probability = random.random() * 0.03
+    elif maxdim < 150:
+        gap_probability = random.random() * 0.06
+    elif maxdim < 200:
+        gap_probability = random.random() * 0.12
+    else:
+        gap_probability = random.random() * 0.18
+
     nhseg = 0
     nvseg = 0
     while (nhseg == 0 and nvseg == 0) or (nhseg % 2 != 0 and nvseg == 0):
-        nhseg = random.choice([0, 1, 3])
-        nvseg = random.choice([0, 1, 3])
+        nhseg = random.choice(possible_nhseg)
+        nvseg = random.choice(possible_nvseg)
 
     jitterx = 15
     jittery = 15
@@ -1204,11 +1233,12 @@ def bigsegment_twocolor(rows, cols, seed=None):
         rows,
         cols,
         seed,
-        colormode="classicbroken",
+        colormode="classic",
         nhseg=nhseg,
         nvseg=nvseg,
         jitterx=jitterx,
         jittery=jittery,
+        gap_probability=gap_probability,
     )
 
     pattern1_url = pattern2url(team1_pattern)
@@ -1231,19 +1261,18 @@ def randomsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 12
 
-    colormode = "random"
-    if random.random() < 0.50:
-        colormode = "randombroken"
+    gap_probability = random.random() * 0.08
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
         cols,
         seed,
-        colormode=colormode,
+        colormode="random",
         nhseg=nhseg,
         nvseg=nvseg,
         jitterx=jitterx,
         jittery=jittery,
+        gap_probability=gap_probability,
     )
 
     pattern1_url = pattern2url(team1_pattern)
@@ -1263,6 +1292,8 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 5
 
+    gap_probability = random.random() * 0.04
+
     team1_segment, team2_segment = segment_pattern(
         rows,
         cols,
@@ -1272,6 +1303,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
         nvseg=nvseg,
         jitterx=jitterx,
         jittery=jittery,
+        gap_probability=gap_probability,
     )
 
     ss_name = "lightweightspaceship"
@@ -1325,8 +1357,13 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
 
 @retry_on_failure
 def switchengines_twocolor(rows, cols, seed=None):
+    mindim = min(rows, cols)
+    if mindim < 150:
+        mc = [2, 4]
+    else:
+        mc = [3, 4, 9]
     team1_pattern, team2_pattern = metheusela_quadrants_pattern(
-        rows, cols, seed, metheusela_counts=[2, 4], fixed_metheusela="switchengine"
+        rows, cols, seed, metheusela_counts=mc, fixed_metheusela="switchengine"
     )
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
@@ -1335,7 +1372,13 @@ def switchengines_twocolor(rows, cols, seed=None):
 
 @retry_on_failure
 def orchard_twocolor(rows, cols, seed=None):
-    count = random.choice([4, 9])
+    mindim = min(rows, cols)
+    if mindim < 150:
+        mc = [4, 9]
+    else:
+        mc = [4, 9, 16]
+
+    count = random.choice(mc)
     team1_pattern, team2_pattern = metheusela_quadrants_pattern(
         rows, cols, seed, metheusela_counts=[count], fixed_metheusela="acorn"
     )
@@ -1356,9 +1399,14 @@ def rabbitfarm_twocolor(rows, cols, seed=None):
 
     # Make the wabbits
     # -----------------
-    count = 4  # random.choice([4, 9])
+    mindim = min(rows, cols)
+    if mindim < 150:
+        mc = [4]
+    else:
+        mc = [4, 9]
+
     team1_wabbits, team2_wabbits = metheusela_quadrants_pattern(
-        rows, cols, seed, metheusela_counts=[count], fixed_metheusela="rabbit"
+        rows, cols, seed, metheusela_counts=mc, fixed_metheusela="rabbit"
     )
 
     # Make the fence
