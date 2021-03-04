@@ -1214,7 +1214,7 @@ def bigsegment_twocolor(rows, cols, seed=None):
     jitterx = 15
     jittery = 15
 
-    gap_probability = random.random()*0.06
+    gap_probability = random.random()*0.08
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
@@ -1248,7 +1248,7 @@ def randomsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 12
 
-    gap_probability = random.random()*0.06
+    gap_probability = random.random()*0.08
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
@@ -1279,7 +1279,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 5
 
-    gap_probability = random.random()*0.06
+    gap_probability = random.random()*0.04
 
     team1_segment, team2_segment = segment_pattern(
         rows,
