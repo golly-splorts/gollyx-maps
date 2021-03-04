@@ -160,10 +160,11 @@ class MapsTest(unittest.TestCase):
 
     def test_get_map_01_basicget(self):
         for pattern_name in PATTERNS:
-            # Standard size
-            r = 100
-            c = 120
-            get_map_realization(pattern_name, rows=r, columns=c)
+            with self.subTest(pattern_name=pattern_name):
+                # Standard size
+                r = 100
+                c = 120
+                get_map_realization(pattern_name, rows=r, columns=c)
 
     def test_get_map_02_no_exceptions(self):
         # Get each map 25 times
