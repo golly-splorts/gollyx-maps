@@ -841,14 +841,15 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
             team2_patterns.append(pattern)
 
     # Assemble the timebomb patterns
-    for k, (timebombxx, timebombyy, team_ass, do_hflip) in enumerate(zip(timebomb_x, timebomb_y, timebomb_team_ass, hflip_timebomb)):
+    for k, (timebombxx, timebombyy, team_ass, do_hflip) in enumerate(
+        zip(timebomb_x, timebomb_y, timebomb_team_ass, hflip_timebomb)
+    ):
         do_hflip = k == 1
         pattern = get_grid_pattern(
             "timebomb",
             rows,
             cols,
-            xoffset=timebombxx
-            + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
+            xoffset=timebombxx + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
             yoffset=timebombyy + random.randint(0, timebomb_jitter_y),
             hflip=do_hflip,
         )
@@ -1211,14 +1212,13 @@ def bigsegment_twocolor(rows, cols, seed=None):
 
     maxdim = max(rows, cols)
     if maxdim < 50:
-        gap_probability = random.random()*0.03
+        gap_probability = random.random() * 0.03
     elif maxdim < 150:
-        gap_probability = random.random()*0.06
+        gap_probability = random.random() * 0.06
     elif maxdim < 200:
-        gap_probability = random.random()*0.12
+        gap_probability = random.random() * 0.12
     else:
-        gap_probability = random.random()*0.18
-
+        gap_probability = random.random() * 0.18
 
     nhseg = 0
     nvseg = 0
@@ -1261,7 +1261,7 @@ def randomsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 12
 
-    gap_probability = random.random()*0.08
+    gap_probability = random.random() * 0.08
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
@@ -1292,7 +1292,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 5
 
-    gap_probability = random.random()*0.04
+    gap_probability = random.random() * 0.04
 
     team1_segment, team2_segment = segment_pattern(
         rows,
@@ -1303,7 +1303,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
         nvseg=nvseg,
         jitterx=jitterx,
         jittery=jittery,
-        gap_probability=gap_probability
+        gap_probability=gap_probability,
     )
 
     ss_name = "lightweightspaceship"
