@@ -1,3 +1,4 @@
+import itertools
 from operator import itemgetter
 import json
 import os
@@ -10,9 +11,10 @@ from .patterns import (
     segment_pattern,
     metheusela_quadrants_pattern,
     pattern_union,
+    cloud_region,
 )
 from .utils import pattern2url, retry_on_failure
-from .error import GollyPatternsError
+from .error import GollyPatternsError, GollyMapsError
 
 
 ##############
@@ -72,6 +74,8 @@ def get_map_realization(patternname, rows=100, columns=120):
         "cellSize:" k
     }
     """
+    if rows < 100 or columns < 120:
+        raise GollyMapsError(f"Error: you must have at least 100 rows and 120 columns")
     # Get map data (pattern, name, zone names)
     mapdat = get_map_metadata(patternname)
 
@@ -113,7 +117,7 @@ def get_map_realization(patternname, rows=100, columns=120):
     mapdat["cellSize"] = cellSize
 
     # Remove these keys before returning realization for the API to serve up
-    remove_keys = ['mapSeasonStart', 'mapSeasonEnd', 'mapDescription']
+    remove_keys = ["mapSeasonStart", "mapSeasonEnd", "mapDescription"]
     for remk in remove_keys:
         if remk in mapdat.keys():
             del mapdat[remk]
@@ -379,81 +383,167 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    # Spacing between spaceships
-    w = 12
+    # Decide on how to distribute shapes among quadrants
+    ss_quadrant_assignments = [1, 2]
+    random.shuffle(ss_quadrant_assignments)
+    quadrant_clouds = []
 
-    # Spaceship locations for team 1
-    s_centerx1 = cols // 4
-    s_centery1 = rows // 3
-    s1_locations = []
-    for i in [-2, -1, 0, 1]:
-        for j in [-2, -1, 0, 1]:
-            xx = s_centerx1 + i * w + random.randint(-4, 4)
-            yy = s_centery1 + j * w + random.randint(-3, 3)
-            s1_locations.append((xx, yy))
+    osc_quadrant_assignments = [1, 2]
+    random.shuffle(osc_quadrant_assignments)
+    quadrant_osc = []
 
-    # Spaceship locations for team 2
-    s_centerx2 = cols // 2 + cols // 4
-    s_centery2 = rows // 3
-    s2_locations = []
-    for i in [-1, 0, 1, 2]:
-        for j in [-3, -2, -1, 0]:
-            xx = s_centerx2 + i * w + random.randint(-4, 4)
-            yy = s_centery2 + j * w + random.randint(-3, 3)
-            s2_locations.append((xx, yy))
+    # Assemble parameters needed to create a cloud region
+    left_xlim = (0, cols // 2)
+    right_xlim = (cols // 2, cols)
+    top_ylim = (0, rows // 2)
+    bot_ylim = (rows // 2, rows)
 
-    # aferimeter locations for team 1
-    b_centerx1 = cols // 3 + random.randint(-15, 5)
-    b_centery1 = 3 * rows // 4 + random.randint(0, 8)
+    jitter = [3, 3]
 
-    # aferimeter locations for team 2
-    b_centerx2 = 2 * cols // 3 + random.randint(-15, 5)
-    b_centery2 = 3 * rows // 4 + random.randint(0, 8)
+    # This will turn better-spaced grids on/off
+    distancing = True  # random.getrandbits(1)
 
-    # Assemble and combine spaceship patterns for team 1
-    team1_pattern_list = []
-    for i in range(len(s1_locations)):
-        xx, yy = s1_locations[i]
-        p = get_grid_pattern(
-            "glider", rows, cols, xoffset=xx, yoffset=yy, check_overflow=False
-        )
-        team1_pattern_list.append(p)
+    # Use margins to shift the cloud forward/backward (how depends on which quadrant)
+    lo_value = max(min(rows, cols) // 20, 1)
+    hi_value = max(min(rows, cols) // 10, 5)
 
-    p = get_grid_pattern(
-        "quadrupleburloaferimeter",
-        rows,
-        cols,
-        xoffset=b_centerx1,
-        yoffset=b_centery1,
-    )
-    team1_pattern_list.append(p)
+    # quadrant 1
+    if random.random() < 0.50:
+        # Slide cloud forward by padding north and east
+        q1margin = [hi_value, hi_value, lo_value, lo_value]
+    else:
+        # Slide cloud backward by padding south and west
+        q1margin = [lo_value, lo_value, hi_value, hi_value]
+    q1flip = [True, False]
 
-    # Assemble and combine spaceship patterns for team 2
-    team2_pattern_list = []
-    for i in range(len(s2_locations)):
-        xx, yy = s2_locations[i]
-        p = get_grid_pattern(
+    quadrant_clouds.append(
+        cloud_region(
             "glider",
-            rows,
-            cols,
-            xoffset=xx,
-            yoffset=yy,
-            hflip=True,
-            check_overflow=False,
+            (rows, cols),
+            right_xlim,
+            top_ylim,
+            q1margin,
+            jitter,
+            q1flip,
+            distancing,
         )
-        team2_pattern_list.append(p)
-
-    p = get_grid_pattern(
-        "quadrupleburloaferimeter",
-        rows,
-        cols,
-        xoffset=b_centerx2,
-        yoffset=b_centery2,
     )
-    team2_pattern_list.append(p)
 
-    team1_pattern = pattern_union(team1_pattern_list)
-    team2_pattern = pattern_union(team2_pattern_list)
+    # quadrant 2
+    if random.random() < 0.50:
+        # Slide cloud forward by padding north and west
+        q2margin = [hi_value, lo_value, lo_value, hi_value]
+    else:
+        # Slide cloud backward by padding south and east
+        q2margin = [lo_value, hi_value, hi_value, lo_value]
+    q2flip = [False, False]
+
+    quadrant_clouds.append(
+        cloud_region(
+            "glider",
+            (rows, cols),
+            left_xlim,
+            top_ylim,
+            q2margin,
+            jitter,
+            q2flip,
+            distancing,
+        )
+    )
+
+    mindim = min(rows, cols)
+
+    osc_names = ["vring64", "quadrupleburloaferimeter"]
+    osc_jitter = 10
+
+    # quadrant 3
+    if mindim < 200:
+        # bottom left oscillator
+        quadrant_osc.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 4,
+                yoffset=rows // 2 + rows // 4,
+            )
+        )
+        # bottom right oscillator
+        quadrant_osc.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 2 + cols // 4,
+                yoffset=rows // 2 + rows // 4,
+            )
+        )
+
+    else:
+        # bottom left oscillators: located in upper left corner and bottom right corner of quadrant
+        left_oscillators = []
+        left_oscillators.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 4 + random.randint(-osc_jitter, osc_jitter),
+                yoffset=rows // 2 + rows // 4 - rows // 8,
+            )
+        )
+        left_oscillators.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 4 + random.randint(-osc_jitter, osc_jitter),
+                yoffset=rows // 2 + rows // 4 + rows // 6,
+            )
+        )
+        quadrant_osc.append(pattern_union(left_oscillators))
+
+        # bottom right oscillators:
+        right_oscillators = []
+        right_oscillators.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 2 + cols // 4 + random.randint(-osc_jitter, osc_jitter),
+                yoffset=rows // 2 + rows // 4 - rows // 8,
+            )
+        )
+        right_oscillators.append(
+            get_grid_pattern(
+                random.choice(osc_names),
+                rows,
+                cols,
+                xoffset=cols // 2 + cols // 4 + random.randint(-osc_jitter, osc_jitter),
+                yoffset=rows // 2 + rows // 4 + rows // 6,
+            )
+        )
+        quadrant_osc.append(pattern_union(right_oscillators))
+
+    team1_patterns = []
+    team2_patterns = []
+
+    for k, (ss_qa, osc_qa) in enumerate(
+        zip(ss_quadrant_assignments, osc_quadrant_assignments)
+    ):
+        # Deal with spaceships
+        if ss_qa == 1:
+            team1_patterns.append(quadrant_clouds[k])
+        else:
+            team2_patterns.append(quadrant_clouds[k])
+
+        # Deal with oscillators
+        if osc_qa == 1:
+            team1_patterns.append(quadrant_osc[k])
+        else:
+            team2_patterns.append(quadrant_osc[k])
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
 
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
@@ -468,111 +558,127 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    # Spacing between spaceships
-    w = 12
+    # Decide on how to distribute spaceships among quadrants
+    quadrant_assignments = [1, 1, 2, 2]
+    random.shuffle(quadrant_assignments)
 
-    # Spaceship locations for team 1
+    # Assemble parameters needed to create a cloud region in each quadrant
+    left_xlim = (0, cols // 2)
+    right_xlim = (cols // 2, cols)
+    top_ylim = (0, rows // 2)
+    bot_ylim = (rows // 2, rows)
 
-    # NW corner
-    s_centerx1 = cols // 4
-    s_centery1 = rows // 3
-    s1_nw_locations = []
-    # for i in [-2, -1, 0, 1]:
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-2, -1, 0, 1]:
-            xx = s_centerx1 + i * w + random.randint(-4, 4)
-            yy = s_centery1 + j * w + random.randint(-3, 3)
-            s1_nw_locations.append((xx, yy))
+    jitter = [3, 3]
 
-    # SE corner
-    s_centerx1 = 3 * cols // 4
-    s_centery1 = 2 * rows // 3
-    s1_se_locations = []
-    # for i in [-1, 0, 1, 2]:
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-1, 0, 1, 2]:
-            xx = s_centerx1 + i * w + random.randint(-4, 4)
-            yy = s_centery1 + j * w + random.randint(-3, 3)
-            s1_se_locations.append((xx, yy))
+    # Use margins to shift the cloud forward/backward (how depends on which quadrant)
+    lo_value = max(min(rows, cols) // 20, 1)
+    hi_value = max(min(rows, cols) // 10, 5)
 
-    # Spaceship locations for team 2
+    # This will hold four items: one glider cloud pattern for each quadrant
+    quadrant_clouds = []
 
-    # NE corner
-    s_centerx2 = 3 * cols // 4
-    s_centery2 = rows // 3
-    s2_ne_locations = []
-    # for i in [-1, 0, 1, 2]:
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-2, -1, 0, 1]:
-            xx = s_centerx2 + i * w + random.randint(-4, 4)
-            yy = s_centery2 + j * w + random.randint(-3, 3)
-            s2_ne_locations.append((xx, yy))
+    # This will turn better-spaced grids on/off
+    distancing = True  # random.getrandbits(1)
 
-    # SW corner
-    s_centerx2 = cols // 4
-    s_centery2 = 2 * rows // 3
-    s2_sw_locations = []
-    # for i in [-2, -1, 0 ,1]:
-    for i in [-2, -1, 0, 1, 2]:
-        for j in [-1, 0, 1, 2]:
-            xx = s_centerx2 + i * w + random.randint(-4, 4)
-            yy = s_centery2 + j * w + random.randint(-3, 3)
-            s2_sw_locations.append((xx, yy))
+    # quadrant 1
+    if random.random() < 0.50:
+        # Slide cloud forward by padding north and east
+        q1margin = [hi_value, hi_value, lo_value, lo_value]
+    else:
+        # Slide cloud backward by padding south and west
+        q1margin = [lo_value, lo_value, hi_value, hi_value]
+    q1flip = [True, False]
 
-    # Assemble and combine spaceship patterns for team 1
-    team1_pattern_list = []
-
-    for i in range(len(s1_nw_locations)):
-        xx, yy = s1_nw_locations[i]
-        p = get_grid_pattern(
-            "glider", rows, cols, xoffset=xx, yoffset=yy, check_overflow=False
-        )
-        team1_pattern_list.append(p)
-
-    for i in range(len(s1_se_locations)):
-        xx, yy = s1_se_locations[i]
-        p = get_grid_pattern(
+    quadrant_clouds.append(
+        cloud_region(
             "glider",
-            rows,
-            cols,
-            xoffset=xx,
-            yoffset=yy,
-            rotdeg=180,
-            check_overflow=False,
+            (rows, cols),
+            right_xlim,
+            top_ylim,
+            q1margin,
+            jitter,
+            q1flip,
+            distancing,
         )
-        team1_pattern_list.append(p)
+    )
 
-    # Assemble and combine spaceship patterns for team 2
-    team2_pattern_list = []
-    for i in range(len(s2_ne_locations)):
-        xx, yy = s2_ne_locations[i]
-        p = get_grid_pattern(
+    # quadrant 2
+    if random.random() < 0.50:
+        # Slide cloud forward by padding north and west
+        q2margin = [hi_value, lo_value, lo_value, hi_value]
+    else:
+        # Slide cloud backward by padding south and east
+        q2margin = [lo_value, hi_value, hi_value, lo_value]
+    q2flip = [False, False]
+
+    quadrant_clouds.append(
+        cloud_region(
             "glider",
-            rows,
-            cols,
-            xoffset=xx,
-            yoffset=yy,
-            hflip=True,
-            check_overflow=False,
+            (rows, cols),
+            left_xlim,
+            top_ylim,
+            q2margin,
+            jitter,
+            q2flip,
+            distancing,
         )
-        team2_pattern_list.append(p)
+    )
 
-    for i in range(len(s2_sw_locations)):
-        xx, yy = s2_sw_locations[i]
-        p = get_grid_pattern(
+    # quadrant 3
+    if random.random() < 0.50:
+        # Slide cloud forward by padding south and west
+        q3margin = [lo_value, lo_value, hi_value, hi_value]
+    else:
+        # Slide cloud backward by padding north and east
+        q3margin = [hi_value, hi_value, lo_value, lo_value]
+    q3flip = [False, True]
+
+    quadrant_clouds.append(
+        cloud_region(
             "glider",
-            rows,
-            cols,
-            xoffset=xx,
-            yoffset=yy,
-            hflip=True,
-            rotdeg=180,
-            check_overflow=False,
+            (rows, cols),
+            left_xlim,
+            bot_ylim,
+            q3margin,
+            jitter,
+            q3flip,
+            distancing,
         )
-        team2_pattern_list.append(p)
+    )
 
-    team1_pattern = pattern_union(team1_pattern_list)
-    team2_pattern = pattern_union(team2_pattern_list)
+    # quadrant 4
+    if random.random() < 0.50:
+        # Slide cloud forward by padding south and east
+        q4margin = [lo_value, hi_value, hi_value, lo_value]
+    else:
+        # Slide cloud backward by padding north and west
+        q4margin = [hi_value, lo_value, lo_value, hi_value]
+    q4flip = [True, True]
+
+    quadrant_clouds.append(
+        cloud_region(
+            "glider",
+            (rows, cols),
+            right_xlim,
+            bot_ylim,
+            q4margin,
+            jitter,
+            q4flip,
+            distancing,
+        )
+    )
+
+    team1_patterns = []
+    team2_patterns = []
+
+    for k, qa in enumerate(quadrant_assignments):
+        if qa == 1:
+            team1_patterns.append(quadrant_clouds[k])
+        else:
+            team2_patterns.append(quadrant_clouds[k])
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
 
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
@@ -640,162 +746,246 @@ def twoacorn_twocolor(rows, cols, seed=None):
 
 
 def timebomb_oscillators_twocolor(rows, cols, seed=None):
-    if seed is not None:
-        random.seed(seed)
-
-    centerx1a = cols // 2 + cols // 4
-    centerx1b = cols // 4
-    centerx1c = cols // 2
-
-    centery1a = rows // 4
-    centery1b = centery1a
-    centery1c = centery1a
-
-    centerx1a += random.randint(-8, 8)
-    centerx1b += random.randint(-8, 8)
-    centerx1c += random.randint(-4, 4)
-    centery1a += random.randint(-8, 8)
-    centery1b += random.randint(-8, 8)
-    centery1c += random.randint(-4, 4)
-
-    osc1a = get_grid_pattern(
-        "quadrupleburloaferimeter", rows, cols, xoffset=centerx1a, yoffset=centery1a
-    )
-    osc1b = get_grid_pattern(
-        "quadrupleburloaferimeter", rows, cols, xoffset=centerx1b, yoffset=centery1b
-    )
-    osc1c = get_grid_pattern(
-        "quadrupleburloaferimeter", rows, cols, xoffset=centerx1c, yoffset=centery1c
-    )
-
-    osc_pattern = pattern_union([osc1a, osc1b, osc1c])
-
-    centerx2 = cols // 2
-    centery2 = 2 * rows // 3
-
-    centerx2 += random.randint(-8, 8)
-    centery2 += random.randint(-8, 8)
-
-    vflipopt = bool(random.getrandbits(1))
-    hflipopt = bool(random.getrandbits(1))
-    rotdegs = [0, 90, 180, 270, 0]
-    timebomb = get_grid_pattern(
-        "timebomb",
-        rows,
-        cols,
-        xoffset=centerx2,
-        yoffset=centery2,
-        hflip=hflipopt,
-        vflip=vflipopt,
-        rotdeg=random.choice(rotdegs),
-    )
-
-    pattern1_url = pattern2url(osc_pattern)
-    pattern2_url = pattern2url(timebomb)
-
-    return pattern1_url, pattern2_url
+    return _timebomb_oscillators_twocolor(rows, cols, revenge=False, seed=seed)
 
 
 def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
+    return _timebomb_oscillators_twocolor(rows, cols, revenge=True, seed=seed)
+
+
+def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
 
     if seed is not None:
         random.seed(seed)
 
-    oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
+    mindim = min(rows, cols)
 
-    # Flip a coin to decide on random oscillators or all the same oscillators
-    random_oscillators = False
-    if random.random() < 0.33:
-        random_oscillators = True
+    # Geometry
+    lengthscale = 28
+    centerx = cols // 2
+    centery = rows // 2
 
-    oscillator_name = random.choice(oscillators)
+    if mindim < 200:
+        # Three oscillators versus one timebomb
 
-    centerxs = [
-        (cols // 2) + (cols // 4) + random.randint(-4, 4),
-        cols // 4 + random.randint(-4, 4),
-        cols // 2 + random.randint(-4, 4),
-    ]
-    centerys = [
-        (rows // 3),
-    ] * 3
-    centerys = [j + random.randint(-4, 4) for j in centerys]
+        # Timebomb locations
+        timebomb_x = [centerx]
+        timebomb_y = [centery + lengthscale]
+        hflip_timebomb = bool(random.getrandbits(1))
 
-    osc_patterns = []
-    for centerx, centery in zip(centerxs, centerys):
-        if random_oscillators:
-            oscillator_name = random.choice(oscillators)
-        osc = get_grid_pattern(
-            oscillator_name, rows, cols, xoffset=centerx, yoffset=centery
+        # Oscillator locations
+        osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
+        osc_y = [centery - lengthscale]
+
+    else:
+        # Six oscillators versus two timebombs
+
+        # Timebomb locations
+        timebomb_x = [centerx, centerx]
+        timebomb_y = [centery + lengthscale, centery - lengthscale]
+        hflip_timebomb = [False, True]
+
+        # Bottom oscillator locations
+        osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
+        osc_y = [
+            timebomb_y[0] + lengthscale,
+        ] * 3
+
+        # Top oscillator locations
+        osc_x += [centerx - lengthscale, centerx, centerx + lengthscale]
+        osc_y += [
+            timebomb_y[1] - lengthscale,
+        ] * 3
+
+    def _get_oscillator_name():
+        if revenge:
+            oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
+            which_oscillator = random.choice(oscillators)
+        else:
+            which_oscillator = "quadrupleburloaferimeter"
+        return which_oscillator
+
+    # jitter for patterns
+    osc_jitter_x = lengthscale // 8
+    osc_jitter_y = lengthscale // 4
+    timebomb_jitter_x = lengthscale // 2
+    timebomb_jitter_y = lengthscale // 4
+
+    # Decide whether this is an even matchup (each team has 1 timebomb and 3 oscillators)
+    # or a lopsided matchup (one team has both timebombs)
+    if random.random() < 0.25:
+        # Even
+        osc_team_ass = [1, 1, 1, 2, 2, 2]
+        timebomb_team_ass = [2, 1]
+    else:
+        # Lopsided
+        osc_team_ass = [1, 1, 1, 1, 1, 1]
+        timebomb_team_ass = [2, 2]
+
+    # Assemble the team patterns
+    team1_patterns = []
+    team2_patterns = []
+
+    # Assemble the oscillator patterns
+    for k, (oscxx, oscyy, team_ass) in enumerate(zip(osc_x, osc_y, osc_team_ass)):
+        pattern = get_grid_pattern(
+            _get_oscillator_name(),
+            rows,
+            cols,
+            xoffset=oscxx + random.randint(-osc_jitter_x, osc_jitter_x),
+            yoffset=oscyy + random.randint(-osc_jitter_y, 0),
         )
-        osc_patterns.append(osc)
+        if team_ass == 1:
+            team1_patterns.append(pattern)
+        else:
+            team2_patterns.append(pattern)
 
-    osc_pattern = pattern_union(osc_patterns)
+    # Assemble the timebomb patterns
+    for k, (timebombxx, timebombyy, team_ass, do_hflip) in enumerate(zip(timebomb_x, timebomb_y, timebomb_team_ass, hflip_timebomb)):
+        do_hflip = k == 1
+        pattern = get_grid_pattern(
+            "timebomb",
+            rows,
+            cols,
+            xoffset=timebombxx
+            + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
+            yoffset=timebombyy + random.randint(0, timebomb_jitter_y),
+            hflip=do_hflip,
+        )
+        if team_ass == 1:
+            team1_patterns.append(pattern)
+        else:
+            team2_patterns.append(pattern)
 
-    centerx2 = cols // 2
-    centery2 = 2 * rows // 3
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
 
-    centerx2 += random.randint(-12, 12)
-    centery2 += random.randint(-8, 8)
-
-    vflipopt = bool(random.getrandbits(1))
-    hflipopt = bool(random.getrandbits(1))
-    rotdegs = [0, 90, 180, 270, 0]
-    timebomb = get_grid_pattern(
-        "timebomb",
-        rows,
-        cols,
-        xoffset=centerx2,
-        yoffset=centery2,
-        hflip=hflipopt,
-        vflip=vflipopt,
-        rotdeg=random.choice(rotdegs),
-    )
-
-    pattern1_url = pattern2url(osc_pattern)
-    pattern2_url = pattern2url(timebomb)
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
 
     return pattern1_url, pattern2_url
+
+
+# def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
+#
+#    if seed is not None:
+#        random.seed(seed)
+#
+#    oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
+#
+#    # Flip a coin to decide on random oscillators or all the same oscillators
+#    random_oscillators = False
+#    if random.random() < 0.33:
+#        random_oscillators = True
+#
+#    oscillator_name = random.choice(oscillators)
+#
+#    centerxs = [
+#        (cols // 2) + (cols // 4) + random.randint(-4, 4),
+#        cols // 4 + random.randint(-4, 4),
+#        cols // 2 + random.randint(-4, 4),
+#    ]
+#    centerys = [
+#        (rows // 3),
+#    ] * 3
+#    centerys = [j + random.randint(-4, 4) for j in centerys]
+#
+#    osc_patterns = []
+#    for centerx, centery in zip(centerxs, centerys):
+#        if random_oscillators:
+#            oscillator_name = random.choice(oscillators)
+#        osc = get_grid_pattern(
+#            oscillator_name, rows, cols, xoffset=centerx, yoffset=centery
+#        )
+#        osc_patterns.append(osc)
+#
+#    osc_pattern = pattern_union(osc_patterns)
+#
+#    centerx2 = cols // 2
+#    centery2 = 2 * rows // 3
+#
+#    centerx2 += random.randint(-12, 12)
+#    centery2 += random.randint(-8, 8)
+#
+#    vflipopt = bool(random.getrandbits(1))
+#    hflipopt = bool(random.getrandbits(1))
+#    rotdegs = [0, 90, 180, 270, 0]
+#    timebomb = get_grid_pattern(
+#        "timebomb",
+#        rows,
+#        cols,
+#        xoffset=centerx2,
+#        yoffset=centery2,
+#        hflip=hflipopt,
+#        vflip=vflipopt,
+#        rotdeg=random.choice(rotdegs),
+#    )
+#
+#    pattern1_url = pattern2url(osc_pattern)
+#    pattern2_url = pattern2url(timebomb)
+#
+#    return pattern1_url, pattern2_url
 
 
 def fourrabbits_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    rabbit_locations1 = [
-        (cols // 4, rows // 4),
-        (cols // 2 + cols // 4, rows // 4),
-    ]
-    rabbits1 = []
-    for (x, y) in rabbit_locations1:
-        x += random.randint(-5, 5)
-        y += random.randint(-5, 5)
-        vflipopt = bool(random.getrandbits(1))
-        hflipopt = bool(random.getrandbits(1))
+    mindim = min(rows, cols)
+
+    if mindim < 200:
+        rabbit_x_loc = [cols // 4, cols // 2 + cols // 4]
+        rabbit_y_loc = [rows // 4, rows // 2 + rows // 4]
+
+    else:
+        rabbit_x_loc = [
+            cols // 4 - cols // 8,
+            cols // 4 + cols // 8,
+            cols // 2 + cols // 4 + cols // 8,
+            cols // 2 + cols // 4 - cols // 8,
+        ]
+        rabbit_y_loc = [
+            rows // 4 - rows // 8,
+            rows // 4 + rows // 8,
+            rows // 2 + rows // 4 + rows // 8,
+            rows // 2 + rows // 4 - rows // 8,
+        ]
+
+    npoints = len(rabbit_x_loc) * len(rabbit_y_loc)
+    team_assignments = [
+        1,
+    ] * (npoints // 2)
+    team_assignments += [
+        2,
+    ] * (npoints - npoints // 2)
+    random.shuffle(team_assignments)
+
+    team1_patterns = []
+    team2_patterns = []
+    for i, (x, y) in enumerate(itertools.product(rabbit_x_loc, rabbit_y_loc)):
+        do_vflip = bool(random.getrandbits(1))
+        do_hflip = bool(random.getrandbits(1))
+        xjitter = 5
+        yjitter = 5
         rabbit = get_grid_pattern(
-            "rabbit", rows, cols, xoffset=x, yoffset=y, vflip=vflipopt, hflip=hflipopt
+            "rabbit",
+            rows,
+            cols,
+            xoffset=x + random.randint(-xjitter, xjitter),
+            yoffset=y + random.randint(-yjitter, yjitter),
+            vflip=do_vflip,
+            hflip=do_hflip,
         )
-        rabbits1.append(rabbit)
+        if team_assignments[i] == 1:
+            team1_patterns.append(rabbit)
+        else:
+            team2_patterns.append(rabbit)
 
-    rabbit_locations2 = [
-        (cols // 4, rows // 2 + rows // 4),
-        (cols // 2 + cols // 4, rows // 2 + rows // 4),
-    ]
-    rabbits2 = []
-    for (x, y) in rabbit_locations2:
-        x += random.randint(-5, 5)
-        y += random.randint(-5, 5)
-        vflipopt = bool(random.getrandbits(1))
-        hflipopt = bool(random.getrandbits(1))
-        rabbit = get_grid_pattern(
-            "rabbit", rows, cols, xoffset=x, yoffset=y, vflip=vflipopt, hflip=hflipopt
-        )
-        rabbits2.append(rabbit)
+    p1 = pattern_union(team1_patterns)
+    p2 = pattern_union(team2_patterns)
 
-    rabbits_pattern1 = pattern_union(rabbits1)
-    rabbits_pattern2 = pattern_union(rabbits2)
-
-    pattern1_url = pattern2url(rabbits_pattern1)
-    pattern2_url = pattern2url(rabbits_pattern2)
+    pattern1_url = pattern2url(p1)
+    pattern2_url = pattern2url(p2)
 
     return pattern1_url, pattern2_url
 
@@ -858,83 +1048,38 @@ def eightr_twocolor(rows, cols, seed=None):
     centerx = cols // 2
     centery = rows // 2
 
-    # color 1
-    r1a = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(5, 10),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r1b = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(15, 20),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r1c = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(25, 30),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r1d = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(35, 40),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    s1 = pattern_union([r1a, r1b, r1c, r1d])
+    # Place one r omino every 10 grid spaces,
+    # maximum number - 1
+    maxshapes = centerx // 10
+    c1patterns = []
+    c2patterns = []
+    for i in range(maxshapes - 1):
+        end = (i + 1) * 10
+        start = end - 5
+        pattern1 = get_grid_pattern(
+            "rpentomino",
+            rows,
+            cols,
+            xoffset=centerx - random.randint(start, end),
+            yoffset=centery + random.randint(-10, 10),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c1patterns.append(pattern1)
 
-    # color 2
-    r2a = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(5, 10),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r2b = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(15, 20),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r2c = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(25, 30),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    r2d = get_grid_pattern(
-        "rpentomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(35, 40),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    s2 = pattern_union([r2a, r2b, r2c, r2d])
+        pattern2 = get_grid_pattern(
+            "rpentomino",
+            rows,
+            cols,
+            xoffset=centerx + random.randint(start, end),
+            yoffset=centery + random.randint(-10, 10),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c2patterns.append(pattern2)
+
+    s1 = pattern_union(c1patterns)
+    s2 = pattern_union(c2patterns)
 
     pattern1_url = pattern2url(s1)
     pattern2_url = pattern2url(s2)
@@ -950,83 +1095,38 @@ def eightpi_twocolor(rows, cols, seed=None):
     centerx = cols // 2
     centery = rows // 2
 
-    # color 1
-    p1a = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(5, 10),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p1b = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(15, 20),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p1c = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(25, 30),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p1d = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx - random.randint(35, 40),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    s1 = pattern_union([p1a, p1b, p1c, p1d])
+    # Place one pi omino every 10 grid spaces,
+    # maximum number - 1
+    maxshapes = centerx // 10
+    c1patterns = []
+    c2patterns = []
+    for i in range(maxshapes - 1):
+        end = (i + 1) * 10
+        start = end - 5
+        pattern1 = get_grid_pattern(
+            "piheptomino",
+            rows,
+            cols,
+            xoffset=centerx - random.randint(start, end),
+            yoffset=centery + random.randint(-10, 10),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c1patterns.append(pattern1)
 
-    # color 2
-    p2a = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(5, 10),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p2b = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(15, 20),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p2c = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(25, 30),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    p2d = get_grid_pattern(
-        "piheptomino",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(35, 40),
-        yoffset=centery + random.randint(-10, 10),
-        hflip=bool(random.getrandbits(1)),
-        vflip=bool(random.getrandbits(1)),
-    )
-    s2 = pattern_union([p2a, p2b, p2c, p2d])
+        pattern2 = get_grid_pattern(
+            "piheptomino",
+            rows,
+            cols,
+            xoffset=centerx + random.randint(start, end),
+            yoffset=centery + random.randint(-10, 10),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c2patterns.append(pattern2)
+
+    s1 = pattern_union(c1patterns)
+    s2 = pattern_union(c2patterns)
 
     pattern1_url = pattern2url(s1)
     pattern2_url = pattern2url(s2)
@@ -1039,30 +1139,49 @@ def twomultum_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    centerx = cols // 2
-    centery1 = rows // 2
-    centery2 = rows // 2  # 2*rows//3
+    mindim = min(rows, cols)
+    if mindim < 200:
+        L = 15
+        multum_x_loc = [cols // 2]
+        multum_y_loc = [rows // 2 - L, rows // 2 + L]
 
-    p1 = get_grid_pattern(
-        "multuminparvo",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(-10, 10),
-        yoffset=centery1 + random.randint(10, 30),
-        vflip=False,
-    )
+    else:
+        L = 25
+        multum_x_loc = [cols // 2 - L, cols // 2 + L]
+        multum_y_loc = [rows // 2 - L, rows // 2 + L]
 
-    p2 = get_grid_pattern(
-        "multuminparvo",
-        rows,
-        cols,
-        xoffset=centerx + random.randint(-10, 10),
-        yoffset=centery2 - random.randint(10, 30),
-        vflip=True,
-    )
+    npoints = len(multum_x_loc) * len(multum_y_loc)
+    team_assignments = [
+        1,
+    ] * (npoints // 2)
+    team_assignments += [
+        2,
+    ] * (npoints - npoints // 2)
+    random.shuffle(team_assignments)
 
-    pattern1_url = pattern2url(p1)
-    pattern2_url = pattern2url(p2)
+    jitter = 5
+
+    team1_patterns = []
+    team2_patterns = []
+    for i, (x, y) in enumerate(itertools.product(multum_x_loc, multum_y_loc)):
+        m = get_grid_pattern(
+            "multuminparvo",
+            rows,
+            cols,
+            xoffset=x + random.randint(-jitter, jitter),
+            yoffset=y + random.randint(-jitter, jitter),
+            vflip=(y < rows // 2 or random.random() < 0.25),
+        )
+        if team_assignments[i] == 1:
+            team1_patterns.append(m)
+        else:
+            team2_patterns.append(m)
+
+    s1 = pattern_union(team1_patterns)
+    s2 = pattern_union(team2_patterns)
+
+    pattern1_url = pattern2url(s1)
+    pattern2_url = pattern2url(s2)
 
     return pattern1_url, pattern2_url
 
@@ -1179,7 +1298,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
             + random.randint(-ssjitterx, ssjitterx)
         )
         p = get_grid_pattern(
-            ss_name, rows, cols, xoffset=x, yoffset=y, check_overflow=False
+            ss_name, rows, cols, xoffset=x, yoffset=y, check_overflow=True
         )
         team1_spaceships.append(p)
 
@@ -1191,7 +1310,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
         # find center x, starting from far left
         x = 0 + hbuff + 2 * i * ssw + ssw // 2 + random.randint(-ssjitterx, ssjitterx)
         p = get_grid_pattern(
-            ss_name, rows, cols, xoffset=x, yoffset=y, hflip=True, check_overflow=False
+            ss_name, rows, cols, xoffset=x, yoffset=y, hflip=True, check_overflow=True
         )
         team2_spaceships.append(p)
 
