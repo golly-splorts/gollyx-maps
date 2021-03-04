@@ -1399,9 +1399,14 @@ def rabbitfarm_twocolor(rows, cols, seed=None):
 
     # Make the wabbits
     # -----------------
-    count = 4  # random.choice([4, 9])
+    mindim = min(rows, cols)
+    if mindim < 150:
+        mc = [4]
+    else:
+        mc = [4, 9]
+
     team1_wabbits, team2_wabbits = metheusela_quadrants_pattern(
-        rows, cols, seed, metheusela_counts=[count], fixed_metheusela="rabbit"
+        rows, cols, seed, metheusela_counts=mc, fixed_metheusela="rabbit"
     )
 
     # Make the fence
