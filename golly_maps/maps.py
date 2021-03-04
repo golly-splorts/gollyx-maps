@@ -1195,15 +1195,30 @@ def bigsegment_twocolor(rows, cols, seed=None):
         possible_nhseg = [0, 1]
     if rows < 150:
         possible_nhseg = [0, 1, 3]
-    else:
+    if rows < 200:
         possible_nhseg = [2, 3, 4]
+    else:
+        possible_nhseg = [3, 4]
 
     if cols < 50:
         possible_nvseg = [0, 1]
     elif rows < 150:
         possible_nvseg = [0, 1, 3]
-    else:
+    elif rows < 200:
         possible_nvseg = [2, 3, 5]
+    else:
+        possible_nvseg = [3, 5]
+
+    maxdim = max(rows, cols)
+    if maxdim < 50:
+        gap_probability = random.random()*0.03
+    elif maxdim < 150:
+        gap_probability = random.random()*0.06
+    elif maxdim < 200:
+        gap_probability = random.random()*0.12
+    else:
+        gap_probability = random.random()*0.18
+
 
     nhseg = 0
     nvseg = 0
@@ -1213,8 +1228,6 @@ def bigsegment_twocolor(rows, cols, seed=None):
 
     jitterx = 15
     jittery = 15
-
-    gap_probability = random.random()*0.08
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
