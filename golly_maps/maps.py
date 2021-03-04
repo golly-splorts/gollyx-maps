@@ -771,7 +771,7 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
         # Timebomb locations
         timebomb_x = [centerx]
         timebomb_y = [centery + lengthscale]
-        hflip_timebomb = bool(random.getrandbits(1))
+        hflip_timebomb = [bool(random.getrandbits(1))]
 
         # Oscillator locations
         osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
@@ -1191,24 +1191,41 @@ def bigsegment_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
+    if rows < 50:
+        possible_nhseg = [0, 1]
+    if rows < 150:
+        possible_nhseg = [0, 1, 3]
+    else:
+        possible_nhseg = [2, 3, 4]
+
+    if cols < 50:
+        possible_nvseg = [0, 1]
+    elif rows < 150:
+        possible_nvseg = [0, 1, 3]
+    else:
+        possible_nvseg = [2, 3, 5]
+
     nhseg = 0
     nvseg = 0
     while (nhseg == 0 and nvseg == 0) or (nhseg % 2 != 0 and nvseg == 0):
-        nhseg = random.choice([0, 1, 3])
-        nvseg = random.choice([0, 1, 3])
+        nhseg = random.choice(possible_nhseg)
+        nvseg = random.choice(possible_nvseg)
 
     jitterx = 15
     jittery = 15
+
+    gap_probability = random.random()*0.06
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
         cols,
         seed,
-        colormode="classicbroken",
+        colormode="classic",
         nhseg=nhseg,
         nvseg=nvseg,
         jitterx=jitterx,
         jittery=jittery,
+        gap_probability=gap_probability,
     )
 
     pattern1_url = pattern2url(team1_pattern)
@@ -1231,19 +1248,18 @@ def randomsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 12
 
-    colormode = "random"
-    if random.random() < 0.50:
-        colormode = "randombroken"
+    gap_probability = random.random()*0.06
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
         cols,
         seed,
-        colormode=colormode,
+        colormode="random",
         nhseg=nhseg,
         nvseg=nvseg,
         jitterx=jitterx,
         jittery=jittery,
+        gap_probability=gap_probability,
     )
 
     pattern1_url = pattern2url(team1_pattern)
@@ -1263,6 +1279,8 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
     jitterx = 0
     jittery = 5
 
+    gap_probability = random.random()*0.06
+
     team1_segment, team2_segment = segment_pattern(
         rows,
         cols,
@@ -1272,6 +1290,7 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
         nvseg=nvseg,
         jitterx=jitterx,
         jittery=jittery,
+        gap_probability=gap_probability
     )
 
     ss_name = "lightweightspaceship"

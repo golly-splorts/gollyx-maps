@@ -1,3 +1,4 @@
+import math
 from collections.abc import Iterable
 from operator import itemgetter
 import random
@@ -178,14 +179,25 @@ def pattern_union(patterns):
 
 
 def segment_pattern(
-    rows, cols, seed=None, colormode=None, jitterx=0, jittery=0, nhseg=0, nvseg=0
+    rows,
+    cols,
+    seed=None,
+    colormode=None,
+    jitterx=0,
+    jittery=0,
+    nhseg=0,
+    nvseg=0,
+    gap_probability=None,
 ):
     """
     Return a two-color pattern consisting of nhseg horizontal segments and nvseg vertical segments.
 
     In classic color mode, each segment piece is assigned to a single team.
+    In classic broken mode, each segment piece is assigned to a single team, with some dead cells.
     In random color mode, each segment cell is assigned random teams.
-    In random broken mode, each segment cell is assigned random teams or is not alive.
+    In random broken mode, each segment cell is assigned random teams, with some dead cells.
+
+    gap probability dictates how often gaps occur. If there are too many gaps, maps get boring!
     """
     valid_colormodes = ["classic", "classicbroken", "random", "randombroken"]
     if colormode not in valid_colormodes:
@@ -195,6 +207,16 @@ def segment_pattern(
     if nhseg == 0 and nvseg == 0:
         raise GollyPatternsError(
             "Error: invalid number of segments (0 horizontal and 0 vertical) passed to _segment()"
+        )
+    if gap_probability is None:
+        # Defaults for gap probability
+        if colormode in ["classicbroken", "randombroken"]:
+            gap_probability = 0.05
+        else:
+            gap_probability = 0.0
+    elif gap_probability < 0 or gap_probability > 1:
+        raise GollyPatternsError(
+            f"Error: specified gap probability for segment is invalid: {gap_probability}"
         )
 
     # Get the snap-to-grid centers
@@ -244,7 +266,7 @@ def segment_pattern(
     # We have a list of segments, coordinates and lengths,
     # now the way we populate the map depends on the color mode.
 
-    if colormode == "classic" or colormode == "classicbroken":
+    if colormode in ["classic", "classicbroken"]:
 
         # Classic/classic broken color mode:
         # Each segment is a single solid color,
@@ -262,17 +284,13 @@ def segment_pattern(
             serpix = i % len(serpentine_pattern)
             serpteam = serpentine_pattern[serpix]
 
-            if colormode == "classic":
-                team_assignments = [
-                    serpteam,
-                ] * mag
-            elif colormode == "classicbroken":
-                magon = 24 * mag // 25
-                rem = mag - magon
-                team_assignments = [serpteam,] * magon + [
-                    0,
-                ] * rem  # noqa
-                random.shuffle(team_assignments)
+            magon = math.floor((1 - gap_probability) * mag)
+            rem = mag - magon
+
+            team_assignments = [serpteam,] * magon + [
+                0,
+            ] * rem  # noqa
+            random.shuffle(team_assignments)
 
             ta_ix = 0
             for y in range(starty, endy + 1):
@@ -283,7 +301,7 @@ def segment_pattern(
                         team2_pattern[y][x] = "o"
                     ta_ix += 1
 
-    elif colormode == "random" or colormode == "randombroken":
+    elif colormode in ["random", "randombroken"]:
 
         # Random/random broken color mode:
         # For each segment of length N,
@@ -291,32 +309,25 @@ def segment_pattern(
         # shuffle it, use it to assign colors.
         # If broken, include 0s to represent dead cells
         for i, (starty, endy, startx, endx, mag) in enumerate(loclenlist):
-            if colormode == "random":
-                magh = mag // 2
-                magoh = mag - mag // 2
-                team_assignments = [1,] * magh + [
+
+            magh = math.floor(0.5 * (1 - gap_probability) * mag)
+            rem = mag - (2*magh)
+            
+            team_assignments = (
+                [
+                    1,
+                ]
+                * magh
+                + [
                     2,
-                ] * magoh  # noqa
-                random.shuffle(team_assignments)
-            elif colormode == "randombroken":
-                magh = 12 * mag // 25
-                magoh = 12 * mag // 25
-                rem = mag - magh - magoh
-                team_assignments = (
-                    [
-                        1,
-                    ]
-                    * magh
-                    + [
-                        2,
-                    ]
-                    * magoh
-                    + [
-                        0,
-                    ]
-                    * rem
-                )  # noqa
-                random.shuffle(team_assignments)
+                ]
+                * magh
+                + [
+                    0,
+                ]
+                * rem
+            )  # noqa
+            random.shuffle(team_assignments)
 
             ta_ix = 0
             for y in range(starty, endy + 1):
