@@ -349,7 +349,7 @@ def segment_pattern(
 
 
 def metheusela_quadrants_pattern(
-    rows, cols, seed=None, metheusela_counts=[1, 2, 3, 4, 9], fixed_metheusela=None
+    rows, cols, seed=None, metheusela_counts=[1, 2, 3, 4, 9, 16], fixed_metheusela=None
 ):
     """
     Returns a map with a cluster of metheuselas in each quadrant.
@@ -371,12 +371,18 @@ def metheusela_quadrants_pattern(
     if seed is not None:
         random.seed(seed)
 
-    valid_mc = [1, 2, 3, 4, 9]
+    valid_mc = [1, 2, 3, 4, 9, 16]
     for mc in metheusela_counts:
         if mc not in valid_mc:
             msg = "Invalid metheusela counts passed: must be in {', '.join(valid_mc)}\n"
             msg += "you specified {', '.join(metheusela_counts)}"
             raise GollyPatternsError(msg)
+
+    # Basic size checks
+    BIGDIMLIMIT = 150
+    if 16 in metheusela_counts and min(rows, cols) < BIGDIMLIMIT:
+        msg = "Invalid metheusela count specified: grid size too small for 4x4!"
+        raise GollyPatternsError(msg)
 
     metheusela_names = [
         "acorn",
@@ -406,7 +412,7 @@ def metheusela_quadrants_pattern(
         (4, (rows // 2, cols // 2)),
     ]
 
-    # Shuffle quadrants, first two and second two are now buddies
+    # Shuffle quadrants, first two and second two are now paired up as buddies
     random.shuffle(quadrants)
 
     rotdegs = [0, 90, 180, 270]
@@ -484,6 +490,7 @@ def metheusela_quadrants_pattern(
                                 meth = fixed_metheusela
                             else:
                                 meth = random.choice(metheusela_names)
+
                             try:
                                 pattern = get_grid_pattern(
                                     meth,
@@ -528,8 +535,11 @@ def metheusela_quadrants_pattern(
 
                             if fixed_metheusela:
                                 meth = fixed_metheusela
-                            else:
+                            elif min(rows, cols) < BIGDIMLIMIT:
                                 meth = random.choice(small_metheusela_names)
+                            else:
+                                meth = random.choice(metheusela_names)
+
                             try:
                                 pattern = get_grid_pattern(
                                     meth,
@@ -547,6 +557,43 @@ def metheusela_quadrants_pattern(
                                 )
                             livecount = get_pattern_livecount(meth)
                             all_metheuselas.append((livecount, pattern))
+
+        elif count == 16:
+
+            # Sixteen metheuselas, place these on a 4x4 square
+
+            for bi in buddy_index:
+                corner = quadrants[bi][1]
+
+                nslices = 5
+
+                for a in range(1, nslices):
+                    for b in range(1, nslices):
+
+                        y = corner[0] + a * ((rows // 2) // nslices)
+                        x = corner[1] + b * ((cols // 2) // nslices)
+
+                        if fixed_metheusela:
+                            meth = fixed_metheusela
+                        else:
+                            meth = random.choice(small_metheusela_names)
+                        try:
+                            pattern = get_grid_pattern(
+                                meth,
+                                rows,
+                                cols,
+                                xoffset=x,
+                                yoffset=y,
+                                hflip=bool(random.getrandbits(1)),
+                                vflip=bool(random.getrandbits(1)),
+                                rotdeg=random.choice(rotdegs),
+                            )
+                        except GollyPatternsError:
+                            raise GollyPatternsError(
+                                f"Error with metheusela {meth}: cannot fit"
+                            )
+                        livecount = get_pattern_livecount(meth)
+                        all_metheuselas.append((livecount, pattern))
 
     random.shuffle(all_metheuselas)
     all_metheuselas.sort(key=itemgetter(0), reverse=True)
