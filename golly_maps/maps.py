@@ -1357,8 +1357,13 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
 
 @retry_on_failure
 def switchengines_twocolor(rows, cols, seed=None):
+    mindim = min(rows, cols)
+    if mindim < 150:
+        mc = [2, 4]
+    else:
+        mc = [3, 4, 9]
     team1_pattern, team2_pattern = metheusela_quadrants_pattern(
-        rows, cols, seed, metheusela_counts=[2, 4], fixed_metheusela="switchengine"
+        rows, cols, seed, metheusela_counts=mc, fixed_metheusela="switchengine"
     )
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
@@ -1367,7 +1372,13 @@ def switchengines_twocolor(rows, cols, seed=None):
 
 @retry_on_failure
 def orchard_twocolor(rows, cols, seed=None):
-    count = random.choice([4, 9])
+    mindim = min(rows, cols)
+    if mindim < 150:
+        mc = [4, 9]
+    else:
+        mc = [4, 9, 16]
+
+    count = random.choice(mc)
     team1_pattern, team2_pattern = metheusela_quadrants_pattern(
         rows, cols, seed, metheusela_counts=[count], fixed_metheusela="acorn"
     )
