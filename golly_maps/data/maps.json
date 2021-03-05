@@ -108,7 +108,7 @@
         "mapZone4Name": "Quadrant IV",
         "mapDescription": "Two fast-growing acorn metheuselas placed in the top and bottom halves of the grid.",
         "mapStartSeason": 0,
-        "mapEndSeason": 10
+        "mapEndSeason": 12
     },
     {
         "patternName": "twomultum",
@@ -129,7 +129,7 @@
         "mapZone4Name": "frotime",
         "mapDescription": "Two spaceship generators sending spaceships across fields of boxes.",
         "mapStartSeason": 0,
-        "mapEndSeason": 10
+        "mapEndSeason": 12
     },
     {
         "patternName": "bigsegment",
