@@ -6,7 +6,7 @@
         "mapZone2Name": "air birds",
         "mapZone3Name": "air reptiles",
         "mapZone4Name": "land reptiles",
-        "mapDescription": "A row of eight Pi pentominos with some vertical jitter.",
+        "mapDescription": "A row of Pi pentominos with some vertical jitter.",
         "mapStartSeason": 0
     },
     {
@@ -16,7 +16,7 @@
         "mapZone2Name": "moonbeam",
         "mapZone3Name": "moondog",
         "mapZone4Name": "sundog",
-        "mapDescription": "A row of eight R pentominos with some vertical jitter.",
+        "mapDescription": "A row of R pentominos with some vertical jitter.",
         "mapStartSeason": 0
     },
     {
@@ -26,7 +26,7 @@
         "mapZone2Name": "Level 2B",
         "mapZone3Name": "Level 1B",
         "mapZone4Name": "Level 1A",
-        "mapDescription": "Four fast-growing rabbits, one in each quadrant.",
+        "mapDescription": "Fast-growing rabbit methuselahs, one in each quadrant.",
         "mapStartSeason": 0
     },
     {
@@ -36,7 +36,7 @@
         "mapZone2Name": "Sugar No Cream",
         "mapZone3Name": "Cream and Sugar",
         "mapZone4Name": "Cream No Sugar",
-        "mapDescription": "Four justyna metheuselas, randomly oriented.",
+        "mapDescription": "Four justyna methuselahs, randomly oriented.",
         "mapStartSeason": 3
     },
     {
@@ -86,7 +86,7 @@
         "mapZone2Name": "Colorful Ponds",
         "mapZone3Name": "Slag Heap",
         "mapZone4Name": "Bottomless Hole",
-        "mapDescription": "Three quadruple burloaferimeters holding defensive positions against a timebomb metheusela.",
+        "mapDescription": "Three quadruple burloaferimeters holding defensive positions against timebomb methuselahs.",
         "mapStartSeason": 0
     },
     {
@@ -96,7 +96,7 @@
         "mapZone2Name": "Mysterious Sinkhole",
         "mapZone3Name": "Ash Heap",
         "mapZone4Name": "Visitor Center",
-        "mapDescription": "Three large oscillators holding defensive positions against a timebomb metheusela.",
+        "mapDescription": "Three large oscillators holding defensive positions against timebomb methuselahs.",
         "mapStartSeason": 10
     },
     {
@@ -117,7 +117,7 @@
         "mapZone2Name": "Rainbow Cave",
         "mapZone3Name": "Spider Cave",
         "mapZone4Name": "Underwater Cave",
-        "mapDescription": "Two multum in parvo metheuselas performing acts of reverse disappearing.",
+        "mapDescription": "Multum in parvo methuselahs performing acts of reverse disappearing.",
         "mapStartSeason": 0
     },
     {
@@ -168,7 +168,7 @@
         "mapZone2Name": "Usher Punch",
         "mapZone3Name": "Center Stage",
         "mapZone4Name": "Green Room",
-        "mapDescription": "A map littered with various fast-growing metheuselas.",
+        "mapDescription": "A map littered with various fast-growing methuselahs.",
         "mapStartSeason": 10
     },
     {
@@ -188,7 +188,7 @@
         "mapZone2Name": "Almonds",
         "mapZone3Name": "Peaches",
         "mapZone4Name": "Plums",
-        "mapDescription": "A cluster of acorn metheuselas placed in each quadrant.",
+        "mapDescription": "A cluster of acorn methuselahs placed in each quadrant.",
         "mapStartSeason": 10
     },
     {
@@ -198,7 +198,27 @@
         "mapZone2Name": "AVOID EYE CONTACT",
         "mapZone3Name": "DO NOT PET",
         "mapZone4Name": "DANGER: RABBITS",
-        "mapDescription": "A cluster of fenced-in rabbit metheuselas in each quadrant.",
+        "mapDescription": "A cluster of fenced-in rabbit methuselahs in each quadrant.",
         "mapStartSeason": 10
+    },
+    {
+        "patternName": "spiders",
+        "mapName": "Spider Cave",
+        "mapZone1Name": "the tunnel of confusion",
+        "mapZone2Name": "the spider nursery",
+        "mapZone3Name": "the feeding chamber",
+        "mapZone4Name": "the throne room",
+        "mapDescription": "Spiders weave their webs whilst spaceships and crabs clash above and below.",
+        "mapStartSeason": 13
+    },
+    {
+        "patternName": "crabs",
+        "mapName": "Carcinization",
+        "mapZone1Name": "crabs good",
+        "mapZone2Name": "crabs bad",
+        "mapZone3Name": "evolve crabs",
+        "mapZone4Name": "crabs ascend",
+        "mapDescription": "Crabstretchers in each corner.",
+        "mapStartSeason": 13
     }
 ]
