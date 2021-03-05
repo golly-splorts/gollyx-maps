@@ -14,6 +14,54 @@ HERE = os.path.split(os.path.abspath(__file__))[0]
 # A list of all patterns ever
 PATTERNS = [
     "bigsegment",
+    "crabs",
+    "eightpi",
+    "eightr",
+    "fourrabbits",
+    "orchard",
+    "quadjustyna",
+    "rabbitfarm",
+    "random",
+    "randommetheuselas",
+    "randompartition",
+    "randomsegment",
+    "spaceshipcluster",
+    "spaceshipcrash",
+    "spaceshipsegment",
+    "spiders",
+    "switchengines",
+    "timebomb",
+    "timebombredux",
+    "twoacorn",
+    "twomultum",
+    "twospaceshipgenerators",
+]
+
+PATTERNS_S13 = [
+    "bigsegment",
+    "crabs",
+    "eightpi",
+    "eightr",
+    "fourrabbits",
+    "orchard",
+    "quadjustyna",
+    "rabbitfarm",
+    "random",
+    "randommetheuselas",
+    "randompartition",
+    "randomsegment",
+    "spaceshipcluster",
+    "spaceshipcrash",
+    "spaceshipsegment",
+    "spiders",
+    "switchengines",
+    "timebomb",
+    "timebombredux",
+    "twomultum",
+]
+
+PATTERNS_S11 = [
+    "bigsegment",
     "eightpi",
     "eightr",
     "fourrabbits",
@@ -148,7 +196,21 @@ class MapsTest(unittest.TestCase):
 
         # Check the patterns returned
         patternsX = [m['patternName'] for m in map_dataX]
-        self.assertEqual(sorted(patternsX), sorted(PATTERNS))
+        self.assertEqual(sorted(patternsX), sorted(PATTERNS_S11))
+
+        # -----
+        # Check fourth batch of maps (Season 13)
+        seasonY = 13
+        map_dataY = get_all_map_metadata(seasonY)
+
+        # Check the metadata returned
+        for m in map_dataY:
+            for rk in map_metadata_req_keys:
+                self.assertIn(rk, m)
+
+        # Check the patterns returned
+        patternsY = [m['patternName'] for m in map_dataY]
+        self.assertEqual(sorted(patternsY), sorted(PATTERNS_S13))
 
     def test_get_map_realization(self):
         for pattern_name in PATTERNS:

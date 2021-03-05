@@ -20,6 +20,7 @@ ALL_PATTERNS = [
     "block",
     "cheptomino",
     "coespaceship",
+    "crabstretcher",
     "cthulhu",
     "dinnertable",
     "dinnertablecenter",
@@ -45,8 +46,9 @@ ALL_PATTERNS = [
     "twoglidermess",
     "unidimensionalinfinitegrowth",
     "unidimensionalsixgliders",
-    "x66",
     "vring64",
+    "wickstretcher",
+    "x66",
 ]
 
 # [nrows, ncols]
