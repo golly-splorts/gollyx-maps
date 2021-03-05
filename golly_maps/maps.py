@@ -43,6 +43,8 @@ def _get_map_pattern_function_map():
         "twoacorn": twoacorn_twocolor,
         "twomultum": twomultum_twocolor,
         "twospaceshipgenerators": twospaceshipgenerators_twocolor,
+        "spiders": spiders_twocolor,
+        "crabs": crabs_twocolor,
     }
 
 
@@ -1357,6 +1359,10 @@ def spaceshipsegment_twocolor(rows, cols, seed=None):
 
 @retry_on_failure
 def switchengines_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
+
     mindim = min(rows, cols)
     if mindim < 150:
         mc = [2, 4]
@@ -1372,6 +1378,10 @@ def switchengines_twocolor(rows, cols, seed=None):
 
 @retry_on_failure
 def orchard_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
+
     mindim = min(rows, cols)
     if mindim < 150:
         mc = [4, 9]
@@ -1389,13 +1399,21 @@ def orchard_twocolor(rows, cols, seed=None):
 
 @retry_on_failure
 def randommetheuselas_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
+
     team1_pattern, team2_pattern = metheusela_quadrants_pattern(rows, cols, seed)
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
     return pattern1_url, pattern2_url
 
 
+@retry_on_failure
 def rabbitfarm_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
 
     # Make the wabbits
     # -----------------
@@ -1447,3 +1465,281 @@ def rabbitfarm_twocolor(rows, cols, seed=None):
     pattern2_url = pattern2url(team2_pattern)
 
     return pattern1_url, pattern2_url
+
+
+@retry_on_failure
+def spiders_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
+
+    # Place two wickstretchers at edge of map, facing each other
+    # Small amount of vertical jitter relative to each other,
+    # large amount of (coordinated) jitter
+
+    (wick_h, wick_w) = get_pattern_size("wickstretcher")
+
+    # Give ourselves a small margin on the edge of the map
+    # (give the wickstretchers as much space as possible)
+    margin = random.randint(2, 5)
+    xbuff = wick_w // 2 + margin
+
+    # Use this to jitter the vertical placement of both wickstretchers
+    y_rel_jitter = wick_h // 2 - 2
+
+    # Determine absolute y offset for both wickstretchers
+    ybuff = y_rel_jitter
+    y_abs_jitter = rows // 3 - 2 * wick_h
+    y_abs_offset = random.randint(-y_abs_jitter, y_abs_jitter)
+
+    team1_pattern = []
+    team2_pattern = []
+
+    # Team 1 wickstretcher
+    team1_yjitter_val = random.randint(-y_rel_jitter, y_rel_jitter)
+    team1_wickstretcher = get_grid_pattern(
+        "wickstretcher",
+        rows,
+        cols,
+        xoffset=xbuff,
+        yoffset=rows // 2 + y_abs_offset + team1_yjitter_val,
+    )
+
+    # Team 2 wickstretcher
+    team2_yjitter_val = random.randint(-y_rel_jitter, y_rel_jitter)
+    team2_wickstretcher = get_grid_pattern(
+        "wickstretcher",
+        rows,
+        cols,
+        xoffset=cols - xbuff,
+        yoffset=rows // 2 + y_abs_offset + team2_yjitter_val,
+        hflip=True,
+        vflip=bool(random.getrandbits(1)),
+    )
+
+    roll = random.random()
+    if roll < 0.15 and abs(y_abs_offset > wick_h):
+
+        # -----
+        # Double wickstretchers
+        # Team 1 second wickstretcher
+        team1_wickstretcher2 = get_grid_pattern(
+            "wickstretcher",
+            rows,
+            cols,
+            xoffset=xbuff,
+            yoffset=rows // 2 - y_abs_offset - team1_yjitter_val,
+        )
+
+        # Team 2 second wickstretcher
+        team2_wickstretcher2 = get_grid_pattern(
+            "wickstretcher",
+            rows,
+            cols,
+            xoffset=cols - xbuff,
+            yoffset=rows // 2 - y_abs_offset - team2_yjitter_val,
+            hflip=True,
+            vflip=bool(random.getrandbits(1)),
+        )
+        team1_pattern = pattern_union([team1_wickstretcher, team1_wickstretcher2])
+        team2_pattern = pattern_union([team2_wickstretcher, team2_wickstretcher2])
+
+    elif roll < 0.40:
+        # -----
+        # Crabstretchers in the corners
+        # Note that by default the crabstretcher goes up and to the left
+        crab_margin = 15
+
+        wickstretcher_bottom = y_abs_offset > 0
+        if wickstretcher_bottom:
+            # Crabs are at the top
+            # Make crabs go down
+            vflip_crabs = True
+            # Down and still going to the left
+            hflip_team1_crabs = False
+            team1_xoffset = cols - crab_margin
+            team1_yoffset = crab_margin
+            team2_xoffset = crab_margin
+            team2_yoffset = crab_margin
+        else:
+            # Crabs are at bottom
+            # They should keep going up
+            vflip_crabs = False
+            team1_xoffset = cols - crab_margin
+            team1_yoffset = rows - crab_margin
+            team2_xoffset = crab_margin
+            team2_yoffset = rows - crab_margin
+
+        crab_jitter_max = 20
+        crab1jitter = random.randint(0, crab_jitter_max)
+        crab2jitter = random.randint(0, crab_jitter_max)
+
+        team1_crab = get_grid_pattern(
+            "crabstretcher",
+            rows,
+            cols,
+            xoffset=team1_xoffset - crab1jitter,
+            yoffset=team1_yoffset + crab1jitter,
+            vflip=vflip_crabs,
+        )
+        team1_pattern = pattern_union([team1_wickstretcher, team1_crab])
+
+        team2_crab = get_grid_pattern(
+            "crabstretcher",
+            rows,
+            cols,
+            xoffset=team2_xoffset + crab2jitter,
+            yoffset=team2_yoffset + crab2jitter,
+            vflip=vflip_crabs,
+            hflip=True,
+        )
+        team2_pattern = pattern_union([team2_wickstretcher, team2_crab])
+
+    else:
+        # -----
+        # Spaceship escorts
+        sschoices = [
+            "lightweightspaceship",
+            "middleweightspaceship",
+            "heavyweightspaceship",
+            "x66",
+        ]
+        top_ss = "lightweightspaceship"  # random.choice(sschoices)
+        bot_ss = "x66"  # random.choice(sschoices)
+
+        top_ssh, top_ssw = get_pattern_size(top_ss)
+        top_ssjitter = top_ssh // 2
+        top_spaceship_y = (
+            rows // 2
+            + y_abs_offset
+            - wick_h
+            - top_ssh
+            + random.randint(-top_ssjitter, top_ssjitter)
+        )
+
+        bot_ssh, bot_ssw = get_pattern_size(bot_ss)
+        bot_ssjitter = bot_ssh // 2
+        bot_spaceship_y = (
+            rows // 2
+            + y_abs_offset
+            + wick_h
+            + bot_ssh
+            + random.randint(-bot_ssjitter, bot_ssjitter)
+        )
+
+        xbuff_ss = max(top_ssw, bot_ssw)
+
+        team1_top_ss = get_grid_pattern(
+            top_ss,
+            rows,
+            cols,
+            xoffset=xbuff_ss + random.randint(0, top_ssw),
+            yoffset=top_spaceship_y + random.randint(-5, 0),
+            hflip=True,
+        )
+        team1_bot_ss = get_grid_pattern(
+            bot_ss,
+            rows,
+            cols,
+            xoffset=xbuff_ss + random.randint(0, bot_ssw),
+            yoffset=bot_spaceship_y + random.randint(-5, 0),
+            hflip=True,
+        )
+        team1_pattern = pattern_union([team1_wickstretcher, team1_bot_ss, team1_top_ss])
+        # team1_pattern = pattern_union([team1_wickstretcher, team1_top_ss])
+
+        team2_top_ss = get_grid_pattern(
+            top_ss,
+            rows,
+            cols,
+            xoffset=cols - xbuff_ss - random.randint(0, top_ssw),
+            yoffset=top_spaceship_y + random.randint(-5, 0),
+        )
+        team2_bot_ss = get_grid_pattern(
+            bot_ss,
+            rows,
+            cols,
+            xoffset=cols - xbuff_ss - random.randint(0, bot_ssw),
+            yoffset=bot_spaceship_y + random.randint(-5, 0),
+        )
+        team2_pattern = pattern_union([team2_wickstretcher, team2_bot_ss, team2_top_ss])
+        # team2_pattern = pattern_union([team2_wickstretcher, team2_top_ss])
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return (s1, s2)
+
+
+@retry_on_failure
+def crabs_twocolor(rows, cols, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
+
+    # By default, crabs go up and to the left
+
+    mindim = min(rows, cols)
+    if mindim < 150:
+        poss_ncrabs = [1]
+    else:
+        poss_ncrabs = [2, 3]
+
+    ncrabs = random.choice(poss_ncrabs)
+
+    # corners for quadrants 1 2 3 4
+    quadrants = [
+        (1, (0, cols // 2)),
+        (2, (0, 0)),
+        (3, (rows // 2, 0)),
+        (4, (rows // 2, cols // 2)),
+    ]
+    do_hflip = [False, True, True, False]
+    do_vflip = [True, True, False, False]
+    parity = [1, -1, 1, -1]
+
+    crabs = []
+
+    for quadrant, (cornery, cornerx) in quadrants:
+        k = quadrant - 1
+
+        nslices = ncrabs + 1
+
+        quadrant_crabs = []
+        for a in range(1, nslices):
+            for b in range(1, nslices):
+                this_parity = parity[k]
+                if this_parity > 0:
+                    parity_check = a == b
+                elif this_parity < 0:
+                    parity_check = a == (nslices - b)
+
+                if parity_check:
+                    y = cornery + a * ((rows // 2) // nslices)
+                    x = cornerx + b * ((cols // 2) // nslices)
+
+                    jitter = random.randint(-8, 8)
+
+                    quadrant_crabs.append(
+                        get_grid_pattern(
+                            "crabstretcher",
+                            rows,
+                            cols,
+                            xoffset=x + jitter,
+                            yoffset=y + jitter,
+                            hflip=do_hflip[k],
+                            vflip=do_vflip[k],
+                        )
+                    )
+
+        crabs.append(pattern_union(quadrant_crabs))
+
+    # Use one quadrant to assemble the other quadrants
+    random.shuffle(crabs)
+    team1_pattern = pattern_union([crabs[0], crabs[1]])
+    team2_pattern = pattern_union([crabs[2], crabs[3]])
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return (s1, s2)
