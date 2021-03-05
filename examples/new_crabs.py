@@ -19,11 +19,8 @@ def make_map(seed=None):
         random.seed(seed)
 
     # By default, crabs go up and to the left
-    # Assemble a single pattern,
-    # then make copies and apply flips
-    # to orient each quadrant correctly.
     
-    mindim = min(ROWS, COLS)
+    mindim = min(rows, cols)
     if mindim < 150:
         poss_ncrabs = [1]
     else:
