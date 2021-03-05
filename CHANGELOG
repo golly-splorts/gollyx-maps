@@ -1,8 +1,18 @@
 Version 13.0:
 
+* Add 2 new maps:
+	* crabs - Carcinization
+	* spiders - Spider Cave
+* Retired 2 maps:
+	* twospaceshipgenerator - Spacetime Complex
+	* twoacorn - The Quad
+* Expanding map algorithms to work for larger maps (200 x 240)
+
+Version 13.0:
+
 * Rearrange and clean up internal API
 * Update map metadata to prepare for map retirement
-	* mapStartSeason and mapEndSeason
+* Add mapStartSeason and mapEndSeason to each map
 
 Version 11.0:
 
