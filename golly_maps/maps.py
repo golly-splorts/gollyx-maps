@@ -796,7 +796,7 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
 
         # Oscillator locations
         osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
-        osc_y = [centery - lengthscale]
+        osc_y = [centery - lengthscale]*3
 
     else:
         # Six oscillators versus two timebombs
