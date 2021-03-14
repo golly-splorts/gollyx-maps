@@ -406,16 +406,19 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
     distancing = True  # random.getrandbits(1)
 
     # Use margins to shift the cloud forward/backward (how depends on which quadrant)
-    lo_value = max(min(rows, cols) // 20, 1)
-    hi_value = max(min(rows, cols) // 10, 5)
+    lo_value = 0
+    hi_value = 3
 
-    # quadrant 1
-    if random.random() < 0.50:
+    slide = random.randint(0, hi_value)
+    slide_fwd = random.random() < 0.50
+
+    if slide_fwd:
         # Slide cloud forward by padding north and east
-        q1margin = [hi_value, hi_value, lo_value, lo_value]
+        q1margin = [slide, slide, 0, 0]
     else:
         # Slide cloud backward by padding south and west
-        q1margin = [lo_value, lo_value, hi_value, hi_value]
+        q1margin = [0, 0, slide, slide]
+
     q1flip = [True, False]
 
     quadrant_clouds.append(
@@ -432,12 +435,14 @@ def spaceshipcrash_twocolor(rows, cols, seed=None):
     )
 
     # quadrant 2
-    if random.random() < 0.50:
+    slide = random.randint(0, hi_value)
+    if not slide_fwd:
         # Slide cloud forward by padding north and west
-        q2margin = [hi_value, lo_value, lo_value, hi_value]
+        q2margin = [slide, 0, 0, slide]
     else:
         # Slide cloud backward by padding south and east
-        q2margin = [lo_value, hi_value, hi_value, lo_value]
+        q2margin = [0, slide, slide, 0]
+
     q2flip = [False, False]
 
     quadrant_clouds.append(
@@ -572,23 +577,28 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
 
     jitter = [3, 3]
 
+    # This will turn better-spaced grids on/off
+    distancing = True  # random.getrandbits(1)
+
     # Use margins to shift the cloud forward/backward (how depends on which quadrant)
-    lo_value = max(min(rows, cols) // 20, 1)
-    hi_value = max(min(rows, cols) // 10, 5)
+    lo_value = 0
+    hi_value = 3
+
+    # decide whether to slide quadrant 1 and 2 forward/backward
+    slide_fwd = random.random() < 0.50
 
     # This will hold four items: one glider cloud pattern for each quadrant
     quadrant_clouds = []
 
-    # This will turn better-spaced grids on/off
-    distancing = True  # random.getrandbits(1)
-
     # quadrant 1
-    if random.random() < 0.50:
+    slide = random.randint(0, hi_value)
+    if slide_fwd:
         # Slide cloud forward by padding north and east
-        q1margin = [hi_value, hi_value, lo_value, lo_value]
+        q1margin = [slide, slide, 0, 0]
     else:
         # Slide cloud backward by padding south and west
-        q1margin = [lo_value, lo_value, hi_value, hi_value]
+        q1margin = [0, 0, slide, slide]
+
     q1flip = [True, False]
 
     quadrant_clouds.append(
@@ -605,12 +615,14 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
     )
 
     # quadrant 2
-    if random.random() < 0.50:
+    slide = random.randint(0, hi_value)
+    if not slide_fwd:
         # Slide cloud forward by padding north and west
-        q2margin = [hi_value, lo_value, lo_value, hi_value]
+        q2margin = [slide, 0, 0, slide]
     else:
         # Slide cloud backward by padding south and east
-        q2margin = [lo_value, hi_value, hi_value, lo_value]
+        q2margin = [0, slide, slide, 0]
+
     q2flip = [False, False]
 
     quadrant_clouds.append(
@@ -626,13 +638,18 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
         )
     )
 
+    # decide whether to slide quadrant 3 and 4 forward/backward
+    slide_fwd = random.random() < 0.50
+
     # quadrant 3
-    if random.random() < 0.50:
+    slide = random.randint(0, hi_value)
+    if slide_fwd:
         # Slide cloud forward by padding south and west
-        q3margin = [lo_value, lo_value, hi_value, hi_value]
+        q3margin = [0, 0, slide, slide]
     else:
         # Slide cloud backward by padding north and east
-        q3margin = [hi_value, hi_value, lo_value, lo_value]
+        q3margin = [slide, slide, 0, 0]
+
     q3flip = [False, True]
 
     quadrant_clouds.append(
@@ -649,12 +666,14 @@ def spaceshipcluster_twocolor(rows, cols, seed=None):
     )
 
     # quadrant 4
-    if random.random() < 0.50:
+    slide = random.randint(0, hi_value)
+    if not slide_fwd:
         # Slide cloud forward by padding south and east
-        q4margin = [lo_value, hi_value, hi_value, lo_value]
+        q4margin = [0, slide, slide, 0]
     else:
         # Slide cloud backward by padding north and west
-        q4margin = [hi_value, lo_value, lo_value, hi_value]
+        q4margin = [slide, 0, 0, slide]
+
     q4flip = [True, True]
 
     quadrant_clouds.append(
