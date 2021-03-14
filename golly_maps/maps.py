@@ -3,7 +3,7 @@ from operator import itemgetter
 import json
 import os
 import random
-from .geom import hflip_pattern, rot_pattern
+from .geom import hflip_pattern, vflip_pattern, rot_pattern
 from .patterns import (
     get_pattern_size,
     get_pattern_livecount,
@@ -797,7 +797,7 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
         # Timebomb location
         timebomb_x = [centerx]
         timebomb_y = [centery]
-        hflip_timebomb = [bool(random.getrandbits(1))]
+        vflip_timebomb = [False]
 
         # Oscillator locations
         osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
@@ -809,7 +809,7 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
         # Timebomb locations
         timebomb_x = [centerx, centerx]
         timebomb_y = [centery + lengthscale, centery - lengthscale]
-        hflip_timebomb = [False, True]
+        vflip_timebomb = [False, True]
 
         # Bottom oscillator locations
         osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
@@ -867,10 +867,14 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
             team2_patterns.append(pattern)
 
     # Assemble the timebomb patterns
-    for k, (timebombxx, timebombyy, team_ass, do_hflip) in enumerate(
-        zip(timebomb_x, timebomb_y, timebomb_team_ass, hflip_timebomb)
+    for k, (timebombxx, timebombyy, team_ass, do_vflip) in enumerate(
+        zip(timebomb_x, timebomb_y, timebomb_team_ass, vflip_timebomb)
     ):
-        do_rotate = random.random() < 0.5
+        if mindim < 200:
+            do_rotate = random.random() < 0.5
+        else:
+            do_rotate = random.random() < 0.25
+
         do_hflip = bool(random.getrandbits(1))
 
         # Don't provide hflip/vflip args here,
@@ -883,11 +887,13 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
             yoffset=timebombyy + random.randint(0, timebomb_jitter_y),
         )
 
-        # Rotate first, then hflip
+        # Rotate first, then hflip, and finally vflip
         if do_rotate:
             pattern = rot_pattern(pattern, 90)
         if do_hflip:
             pattern = hflip_pattern(pattern)
+        if do_vflip:
+            pattern = vflip_pattern(pattern)
 
         if team_ass == 1:
             team1_patterns.append(pattern)
