@@ -3,7 +3,7 @@ from operator import itemgetter
 import json
 import os
 import random
-from .geom import hflip_pattern
+from .geom import hflip_pattern, rot_pattern
 from .patterns import (
     get_pattern_size,
     get_pattern_livecount,
@@ -794,9 +794,9 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
     if mindim < 200:
         # Three oscillators versus one timebomb
 
-        # Timebomb locations
+        # Timebomb location
         timebomb_x = [centerx]
-        timebomb_y = [centery + lengthscale]
+        timebomb_y = [centery]
         hflip_timebomb = [bool(random.getrandbits(1))]
 
         # Oscillator locations
@@ -870,15 +870,25 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
     for k, (timebombxx, timebombyy, team_ass, do_hflip) in enumerate(
         zip(timebomb_x, timebomb_y, timebomb_team_ass, hflip_timebomb)
     ):
-        do_hflip = k == 1
+        do_rotate = random.random() < 0.5
+        do_hflip = bool(random.getrandbits(1))
+
+        # Don't provide hflip/vflip args here,
+        # since we want them applied in a particular order
         pattern = get_grid_pattern(
             "timebomb",
             rows,
             cols,
             xoffset=timebombxx + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
             yoffset=timebombyy + random.randint(0, timebomb_jitter_y),
-            hflip=do_hflip,
         )
+
+        # Rotate first, then hflip
+        if do_rotate:
+            pattern = rot_pattern(pattern, 90)
+        if do_hflip:
+            pattern = hflip_pattern(pattern)
+
         if team_ass == 1:
             team1_patterns.append(pattern)
         else:
