@@ -1,7 +1,7 @@
 import json
 import os
 import unittest
-from golly_maps.maps import (
+from gollyx_maps.maps import (
     get_all_map_patterns,
     get_map_metadata,
     get_all_map_metadata,

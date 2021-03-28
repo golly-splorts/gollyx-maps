@@ -1,6 +1,6 @@
 import os
 import unittest
-from golly_maps.patterns import (
+from gollyx_maps.patterns import (
     get_patterns,
     get_pattern,
     get_pattern_size,
@@ -64,7 +64,7 @@ PATTERN_SIZES = {
 
 class PatternsTest(unittest.TestCase):
     """
-    Test patterns functionality in golly_maps
+    Test patterns functionality in gollyx_maps
     """
 
     def test_get_patterns(self):
