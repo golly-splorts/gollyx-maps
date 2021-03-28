@@ -1,4 +1,4 @@
-from golly_maps import maps
+from gollyx_maps import maps
 
 rows = 200
 cols = 240

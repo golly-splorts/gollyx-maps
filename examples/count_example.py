@@ -1,4 +1,4 @@
-from golly_maps.patterns import get_pattern_livecount, get_grid_pattern
+from gollyx_maps.patterns import get_pattern_livecount, get_grid_pattern
 
 
 def count_example():
