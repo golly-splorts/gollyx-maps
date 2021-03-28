@@ -3,10 +3,10 @@
 set -euo pipefail
 set -x
 
-REMOTE="gh"
+REMOTE="ghx"
 
-if [ -z "${GOLLY_MAPS_HOME}" ]; then
-	echo 'You must set the $GOLLY_MAPS_HOME environment variable to proceed.'
+if [ -z "${GOLLYX_MAPS_HOME}" ]; then
+	echo 'You must set the $GOLLYX_MAPS_HOME environment variable to proceed.'
 	exit 1
 fi
 
