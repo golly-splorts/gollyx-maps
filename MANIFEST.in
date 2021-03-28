@@ -1,1 +1,1 @@
-include requirements*.txt Readme.md data/*.json patterns/*.txt
+include requirements*.txt Readme.md data/*.json b3s23_patterns/*.txt
