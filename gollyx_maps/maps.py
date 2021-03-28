@@ -9,7 +9,7 @@ from .patterns import (
     get_pattern_livecount,
     get_grid_pattern,
     segment_pattern,
-    metheusela_quadrants_pattern,
+    methuselah_quadrants_pattern,
     pattern_union,
     cloud_region,
 )
@@ -31,7 +31,7 @@ def _get_map_pattern_function_map():
         "quadjustyna": quadjustyna_twocolor,
         "rabbitfarm": rabbitfarm_twocolor,
         "random": random_twocolor,
-        "randommetheuselas": randommetheuselas_twocolor,
+        "randommethuselahs": randommethuselahs_twocolor,
         "randompartition": randompartition_twocolor,
         "randomsegment": randomsegment_twocolor,
         "spaceshipcluster": spaceshipcluster_twocolor,
@@ -312,7 +312,7 @@ def randompartition_twocolor(rows, cols, seed=None):
 
 def quadjustyna_twocolor(rows, cols, seed=None):
     """
-    Four justyna metheuselas.
+    Four justyna methuselahs.
     """
     if seed is not None:
         random.seed(seed)
@@ -1412,8 +1412,8 @@ def switchengines_twocolor(rows, cols, seed=None):
         mc = [2, 4]
     else:
         mc = [3, 4, 9]
-    team1_pattern, team2_pattern = metheusela_quadrants_pattern(
-        rows, cols, seed, metheusela_counts=mc, fixed_metheusela="switchengine"
+    team1_pattern, team2_pattern = methuselah_quadrants_pattern(
+        rows, cols, seed, methuselah_counts=mc, fixed_methuselah="switchengine"
     )
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
@@ -1433,8 +1433,8 @@ def orchard_twocolor(rows, cols, seed=None):
         mc = [4, 9, 16]
 
     count = random.choice(mc)
-    team1_pattern, team2_pattern = metheusela_quadrants_pattern(
-        rows, cols, seed, metheusela_counts=[count], fixed_metheusela="acorn"
+    team1_pattern, team2_pattern = methuselah_quadrants_pattern(
+        rows, cols, seed, methuselah_counts=[count], fixed_methuselah="acorn"
     )
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
@@ -1442,12 +1442,12 @@ def orchard_twocolor(rows, cols, seed=None):
 
 
 @retry_on_failure
-def randommetheuselas_twocolor(rows, cols, seed=None):
+def randommethuselahs_twocolor(rows, cols, seed=None):
 
     if seed is not None:
         random.seed(seed)
 
-    team1_pattern, team2_pattern = metheusela_quadrants_pattern(rows, cols, seed)
+    team1_pattern, team2_pattern = methuselah_quadrants_pattern(rows, cols, seed)
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
     return pattern1_url, pattern2_url
@@ -1467,8 +1467,8 @@ def rabbitfarm_twocolor(rows, cols, seed=None):
     else:
         mc = [4, 9]
 
-    team1_wabbits, team2_wabbits = metheusela_quadrants_pattern(
-        rows, cols, seed, metheusela_counts=mc, fixed_metheusela="rabbit"
+    team1_wabbits, team2_wabbits = methuselah_quadrants_pattern(
+        rows, cols, seed, methuselah_counts=mc, fixed_methuselah="rabbit"
     )
 
     # Make the fence

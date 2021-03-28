@@ -348,13 +348,13 @@ def segment_pattern(
     return team1_pattern, team2_pattern
 
 
-def metheusela_quadrants_pattern(
-    rows, cols, seed=None, metheusela_counts=None, fixed_metheusela=None
+def methuselah_quadrants_pattern(
+    rows, cols, seed=None, methuselah_counts=None, fixed_methuselah=None
 ):
     """
-    Returns a map with a cluster of metheuselas in each quadrant.
+    Returns a map with a cluster of methuselahs in each quadrant.
 
-    The methesela_counts parameter determines how many metheuselas
+    The methesela_counts parameter determines how many methuselahs
     may be put in each corner.
 
     Valid configurations:
@@ -366,8 +366,8 @@ def metheusela_quadrants_pattern(
     16 (placed on a 4x4 grid)
 
     Procedure:
-    First randomly pair quadrants so their metheusela counts will match.
-    Next, place random metheusela patterns in each of the corners.
+    First randomly pair quadrants so their methuselah counts will match.
+    Next, place random methuselah patterns in each of the corners.
     """
     if seed is not None:
         random.seed(seed)
@@ -376,24 +376,24 @@ def metheusela_quadrants_pattern(
     BIGDIMLIMIT = 150
     mindim = min(rows, cols)
 
-    if metheusela_counts is None:
+    if methuselah_counts is None:
         if mindim < BIGDIMLIMIT:
-            metheusela_counts = [1, 2, 3, 4, 9]
+            methuselah_counts = [1, 2, 3, 4, 9]
         else:
-            metheusela_counts = [1, 2, 3, 4, 9, 16]
+            methuselah_counts = [1, 2, 3, 4, 9, 16]
 
     valid_mc = [1, 2, 3, 4, 9, 16]
-    for mc in metheusela_counts:
+    for mc in methuselah_counts:
         if mc not in valid_mc:
-            msg = "Invalid metheusela counts passed: must be in {', '.join(valid_mc)}\n"
-            msg += "you specified {', '.join(metheusela_counts)}"
+            msg = "Invalid methuselah counts passed: must be in {', '.join(valid_mc)}\n"
+            msg += "you specified {', '.join(methuselah_counts)}"
             raise GollyXPatternsError(msg)
 
-    if 16 in metheusela_counts and min(rows, cols) < BIGDIMLIMIT:
-        msg = "Invalid metheusela count specified: grid size too small for 4x4!"
+    if 16 in methuselah_counts and min(rows, cols) < BIGDIMLIMIT:
+        msg = "Invalid methuselah count specified: grid size too small for 4x4!"
         raise GollyXPatternsError(msg)
 
-    metheusela_names = [
+    methuselah_names = [
         "acorn",
         "bheptomino",
         "cheptomino",
@@ -405,7 +405,7 @@ def metheusela_quadrants_pattern(
         "timebomb",
         "switchengine",
     ]
-    small_metheusela_names = [
+    small_methuselah_names = [
         "bheptomino",
         "cheptomino",
         "eheptomino",
@@ -426,15 +426,15 @@ def metheusela_quadrants_pattern(
 
     rotdegs = [0, 90, 180, 270]
 
-    all_metheuselas = []
+    all_methuselahs = []
 
     for buddy_index in [[0, 1], [2, 3]]:
-        # Decide how many metheuselas in this quad pair
-        count = random.choice(metheusela_counts)
+        # Decide how many methuselahs in this quad pair
+        count = random.choice(methuselah_counts)
 
         if count == 1:
 
-            # Only one metheusela in this quadrant, so use the center
+            # Only one methuselah in this quadrant, so use the center
 
             jitterx = 20
             jittery = 15
@@ -445,10 +445,10 @@ def metheusela_quadrants_pattern(
                 y = corner[0] + rows // 4 + random.randint(-jittery, jittery)
                 x = corner[1] + cols // 4 + random.randint(-jitterx, jitterx)
 
-                if fixed_metheusela:
-                    meth = fixed_metheusela
+                if fixed_methuselah:
+                    meth = fixed_methuselah
                 else:
-                    meth = random.choice(metheusela_names)
+                    meth = random.choice(methuselah_names)
 
                 pattern = get_grid_pattern(
                     meth,
@@ -461,11 +461,11 @@ def metheusela_quadrants_pattern(
                     rotdeg=random.choice(rotdegs),
                 )
                 livecount = get_pattern_livecount(meth)
-                all_metheuselas.append((livecount, pattern))
+                all_methuselahs.append((livecount, pattern))
 
         elif count == 2 or count == 4:
 
-            # Two or four metheuselas in this quadrant, so place at corners of a square
+            # Two or four methuselahs in this quadrant, so place at corners of a square
             # Form the square by cutting the quadrant into thirds
 
             jitterx = 12
@@ -496,10 +496,10 @@ def metheusela_quadrants_pattern(
                             y = corner[0] + a * ((rows // 2) // nparts)
                             x = corner[1] + b * ((cols // 2) // nparts)
 
-                            if fixed_metheusela:
-                                meth = fixed_metheusela
+                            if fixed_methuselah:
+                                meth = fixed_methuselah
                             else:
-                                meth = random.choice(metheusela_names)
+                                meth = random.choice(methuselah_names)
 
                             try:
                                 pattern = get_grid_pattern(
@@ -514,14 +514,14 @@ def metheusela_quadrants_pattern(
                                 )
                             except GollyXPatternsError:
                                 raise GollyXPatternsError(
-                                    f"Error with metheusela {meth}: cannot fit"
+                                    f"Error with methuselah {meth}: cannot fit"
                                 )
                             livecount = get_pattern_livecount(meth)
-                            all_metheuselas.append((livecount, pattern))
+                            all_methuselahs.append((livecount, pattern))
 
         elif count == 3 or count == 9:
 
-            # Three or nine metheuselas, place these on a square with three points per side
+            # Three or nine methuselahs, place these on a square with three points per side
             # or eight points total
 
             for bi in buddy_index:
@@ -543,12 +543,12 @@ def metheusela_quadrants_pattern(
                             y = corner[0] + a * ((rows // 2) // nslices)
                             x = corner[1] + b * ((cols // 2) // nslices)
 
-                            if fixed_metheusela:
-                                meth = fixed_metheusela
+                            if fixed_methuselah:
+                                meth = fixed_methuselah
                             elif min(rows, cols) < BIGDIMLIMIT:
-                                meth = random.choice(small_metheusela_names)
+                                meth = random.choice(small_methuselah_names)
                             else:
-                                meth = random.choice(metheusela_names)
+                                meth = random.choice(methuselah_names)
 
                             try:
                                 pattern = get_grid_pattern(
@@ -563,14 +563,14 @@ def metheusela_quadrants_pattern(
                                 )
                             except GollyXPatternsError:
                                 raise GollyXPatternsError(
-                                    f"Error with metheusela {meth}: cannot fit"
+                                    f"Error with methuselah {meth}: cannot fit"
                                 )
                             livecount = get_pattern_livecount(meth)
-                            all_metheuselas.append((livecount, pattern))
+                            all_methuselahs.append((livecount, pattern))
 
         elif count == 16:
 
-            # Sixteen metheuselas, place these on a 4x4 square
+            # Sixteen methuselahs, place these on a 4x4 square
 
             for bi in buddy_index:
                 corner = quadrants[bi][1]
@@ -583,10 +583,10 @@ def metheusela_quadrants_pattern(
                         y = corner[0] + a * ((rows // 2) // nslices)
                         x = corner[1] + b * ((cols // 2) // nslices)
 
-                        if fixed_metheusela:
-                            meth = fixed_metheusela
+                        if fixed_methuselah:
+                            meth = fixed_methuselah
                         else:
-                            meth = random.choice(small_metheusela_names)
+                            meth = random.choice(small_methuselah_names)
                         try:
                             pattern = get_grid_pattern(
                                 meth,
@@ -600,25 +600,25 @@ def metheusela_quadrants_pattern(
                             )
                         except GollyXPatternsError:
                             raise GollyXPatternsError(
-                                f"Error with metheusela {meth}: cannot fit"
+                                f"Error with methuselah {meth}: cannot fit"
                             )
                         livecount = get_pattern_livecount(meth)
-                        all_metheuselas.append((livecount, pattern))
+                        all_methuselahs.append((livecount, pattern))
 
-    random.shuffle(all_metheuselas)
-    all_metheuselas.sort(key=itemgetter(0), reverse=True)
+    random.shuffle(all_methuselahs)
+    all_methuselahs.sort(key=itemgetter(0), reverse=True)
 
     team1_patterns = []
     team2_patterns = []
 
     serpentine_pattern = [1, 2, 2, 1]
-    for i, (_, metheusela_pattern) in enumerate(all_metheuselas):
+    for i, (_, methuselah_pattern) in enumerate(all_methuselahs):
         serpix = i % len(serpentine_pattern)
         serpteam = serpentine_pattern[serpix]
         if serpteam == 1:
-            team1_patterns.append(metheusela_pattern)
+            team1_patterns.append(methuselah_pattern)
         elif serpteam == 2:
-            team2_patterns.append(metheusela_pattern)
+            team2_patterns.append(methuselah_pattern)
 
     team1_pattern = pattern_union(team1_patterns)
     team2_pattern = pattern_union(team2_patterns)
