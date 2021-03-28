@@ -14,7 +14,7 @@ from .patterns import (
     cloud_region,
 )
 from .utils import pattern2url, retry_on_failure
-from .error import GollyPatternsError, GollyMapsError
+from .error import GollyXPatternsError, GollyXMapsError
 
 
 ##############
@@ -77,7 +77,7 @@ def get_map_realization(patternname, rows=100, columns=120):
     }
     """
     if rows < 100 or columns < 120:
-        raise GollyMapsError(f"Error: you must have at least 100 rows and 120 columns")
+        raise GollyXMapsError(f"Error: you must have at least 100 rows and 120 columns")
     # Get map data (pattern, name, zone names)
     mapdat = get_map_metadata(patternname)
 
@@ -163,7 +163,7 @@ def get_map_metadata(patternname):
     if patternname not in patterns_map:
         err = f"Error: map pattern {patternname} not found in valid patterns list: "
         err += ", ".join(list(patterns_map.keys()))
-        raise GollyPatternsError(err)
+        raise GollyXPatternsError(err)
 
     # Filter known patterns to find the specified pattern
     mapdat = get_all_map_metadata()

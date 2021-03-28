@@ -1,6 +1,6 @@
 import re
 from .patterns import get_pattern
-from .error import GollyMapsError, GollyPatternsError
+from .error import GollyXMapsError, GollyXPatternsError
 
 
 def pattern2url(pattern, xoffset=0, yoffset=0):
@@ -68,9 +68,9 @@ def retry_on_failure(func, *args, **kwargs):
         while not done and count < maxcount:
             try:
                 return func(*args, **kwargs)
-            except GollyPatternsError:
+            except GollyXPatternsError:
                 count += 1
                 continue
-        raise GollyMapsError(f"Error: retry failure for function {func.__name__}, tried {maxcount} times!")
+        raise GollyXMapsError(f"Error: retry failure for function {func.__name__}, tried {maxcount} times!")
 
     return wrap

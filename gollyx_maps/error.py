@@ -1,10 +1,10 @@
-class GollyMapsError(Exception):
+class GollyXMapsError(Exception):
     pass
 
 
-class GollyPatternsError(Exception):
+class GollyXPatternsError(Exception):
     pass
 
 
-class GollyGeomError(Exception):
+class GollyXGeomError(Exception):
     pass

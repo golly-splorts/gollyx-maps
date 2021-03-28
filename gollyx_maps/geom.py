@@ -19,5 +19,5 @@ def rot_pattern(pattern, deg):
             newpattern_tup = zip(*list(reversed(newpattern)))
             newpattern = ["".join(j) for j in newpattern_tup]
     else:
-        raise GollyGeomError(f"Invalid degree specified, must be one of: {', '.join(valid_deg)}")
+        raise GollyXGeomError(f"Invalid degree specified, must be one of: {', '.join(valid_deg)}")
     return newpattern
