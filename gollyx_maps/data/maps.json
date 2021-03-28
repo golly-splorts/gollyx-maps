@@ -106,7 +106,7 @@
         "mapZone2Name": "Quadrant II",
         "mapZone3Name": "Quadrant III",
         "mapZone4Name": "Quadrant IV",
-        "mapDescription": "Two fast-growing acorn metheuselas placed in the top and bottom halves of the grid.",
+        "mapDescription": "Two fast-growing acorn methuselahs placed in the top and bottom halves of the grid.",
         "mapStartSeason": 0,
         "mapEndSeason": 12
     },
@@ -162,7 +162,7 @@
         "mapStartSeason": 10
     },
     {
-        "patternName": "randommetheuselas",
+        "patternName": "randommethuselahs",
         "mapName": "Fistfight at the Opera",
         "mapZone1Name": "Box Seats",
         "mapZone2Name": "Usher Punch",
