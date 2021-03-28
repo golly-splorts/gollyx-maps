@@ -23,7 +23,7 @@ def get_pattern(pattern_name, hflip=False, vflip=False, rotdeg=0):
     as a list of strings, one string = one row
     """
     fname = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "patterns", pattern_name + ".txt"
+        os.path.dirname(os.path.abspath(__file__)), "b3s23_patterns", pattern_name + ".txt"
     )
     if os.path.exists(fname):
         with open(fname, "r") as f:
