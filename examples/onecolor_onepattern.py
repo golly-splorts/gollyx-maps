@@ -1,5 +1,5 @@
-from golly_maps.patterns import get_pattern_size, get_grid_pattern, pattern_union
-from golly_maps.utils import pattern2url
+from gollyx_maps.patterns import get_pattern_size, get_grid_pattern, pattern_union
+from gollyx_maps.utils import pattern2url
 
 
 ROWS = 100

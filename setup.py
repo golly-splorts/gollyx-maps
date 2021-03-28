@@ -8,23 +8,22 @@ with open('requirements-dev.txt') as f:
     required_dev = [x for x in f.read().splitlines() if not x.startswith("#")]
 
 # read the contents of your README file
-from os import path
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'Readme.md'), encoding='utf-8') as f:
+this_directory = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_directory, 'Readme.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 # Note: the _program variable is set in __init__.py.
 # it determines the name of the command line tool.
-from golly_maps import __version__
+from gollyx_maps import __version__
 
 setup(
-    name='golly-maps',
+    name='gollyx-maps',
     version=__version__,
-    packages=['golly_maps'],
+    packages=['gollyx_maps'],
     package_data = {
-      'golly_maps': ['data/*.json', 'patterns/*.txt']
+      'gollyx_maps': ['data/*.json', 'b3s23_patterns/*.txt']
     },
-    description='golly-maps is a core package for generating map patterns for Golly',
+    description='gollyx-maps is a package for turning cellular autonoma patterns into GollyX maps',
     url='https://golly.life',
     author='Ch4zm of Hellmouth',
     author_email='ch4zm.of.hellmouth@gmail.com',

@@ -1,4 +1,4 @@
-from golly_maps import maps
+from gollyx_maps import maps
 
 
 for rows, cols, cellsize in [(100, 120, 7), (200, 240, 4)]:

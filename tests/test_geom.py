@@ -1,6 +1,6 @@
 import os
 import unittest
-from golly_maps.geom import hflip_pattern, vflip_pattern, rot_pattern
+from gollyx_maps.geom import hflip_pattern, vflip_pattern, rot_pattern
 
 
 HERE = os.path.split(os.path.abspath(__file__))[0]
@@ -8,7 +8,7 @@ HERE = os.path.split(os.path.abspath(__file__))[0]
 
 class GeomTest(unittest.TestCase):
     """
-    Test geometry methods in golly_maps
+    Test geometry methods in gollyx_maps
     """
 
     def test_hflip_pattern(self):
