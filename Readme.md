@@ -1,6 +1,6 @@
 # gollyx-maps
 
-[![Travis](https://travis-ci.com/golly-splorts/golly-maps.svg?branch=main)](https://travis-ci.com/golly-splorts/golly-maps.svg?branch=main)
+[![Travis](https://travis-ci.com/golly-splorts/gollyx-maps.svg?branch=main)](https://travis-ci.com/golly-splorts/gollyx-maps.svg?branch=main)
 
 Code for turning cellular autonoma patterns into GollyX maps (ListLife arrays).
 
@@ -47,16 +47,8 @@ print(s1)
 print(s2)
 ```
 
-The s1 and s2 strings are readable/usable by both
-[golly-python](https://github.com/golly-splorts/golly-python)
-and [golly-js](https://github.com/golly-splorts/golly-js).
-
-This makes it useful for both the front-end Javascript Golly
-simulator, and for the backend Python Golly simulator.
-
-However, there are a limited number of maps and this is not
-gneerally useful, it is primarily for use by the Golly API
-and the backend simulator.
+The s1 and s2 strings are readable/usable by
+[gollyx-python](https://github.com/golly-splorts/gollyx-python).
 
 (Note: this is where new maps are added for new seasons.)
 
