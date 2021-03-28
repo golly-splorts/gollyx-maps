@@ -1,6 +1,6 @@
 include common.mk
 
-MODULES=golly_maps tests
+MODULES=gollyx_maps tests
 
 CB := $(shell git branch --show-current)
 
