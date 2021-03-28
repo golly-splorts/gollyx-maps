@@ -10,7 +10,7 @@ from .error import GollyXPatternsError
 
 def get_patterns():
     patternfiles = glob(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "patterns", "*.txt")
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "b3s23_patterns", "*.txt")
     )
     # trim extension
     patternfiles = [os.path.basename(os.path.splitext(p)[0]) for p in patternfiles]
