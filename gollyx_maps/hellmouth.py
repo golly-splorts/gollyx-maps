@@ -15,163 +15,37 @@ from .patterns import (
 )
 from .utils import pattern2url, retry_on_failure
 from .error import GollyXPatternsError, GollyXMapsError
-from .hellmouth import get_hellmouthmap_pattern_function_map
 
 
-def get_pattern_function_map(cup):
-    m = {
-        'hellmouth': get_hellmouthmap_pattern_function_map,
-        #'psuedo': get_pseudomap_pattern_function_map,
+##############
+# Util methods
+
+
+def get_hellmouthmap_pattern_function_map():
+    return {
+        "bigsegment": bigsegment_twocolor,
+        "eightpi": eightpi_twocolor,
+        "eightr": eightr_twocolor,
+        "fourrabbits": fourrabbits_twocolor,
+        "orchard": orchard_twocolor,
+        "quadjustyna": quadjustyna_twocolor,
+        "rabbitfarm": rabbitfarm_twocolor,
+        "random": random_twocolor,
+        "randommethuselahs": randommethuselahs_twocolor,
+        "randompartition": randompartition_twocolor,
+        "randomsegment": randomsegment_twocolor,
+        "spaceshipcluster": spaceshipcluster_twocolor,
+        "spaceshipcrash": spaceshipcrash_twocolor,
+        "spaceshipsegment": spaceshipsegment_twocolor,
+        "switchengines": switchengines_twocolor,
+        "timebomb": timebomb_oscillators_twocolor,
+        "timebombredux": timebomb_randomoscillators_twocolor,
+        "twoacorn": twoacorn_twocolor,
+        "twomultum": twomultum_twocolor,
+        "twospaceshipgenerators": twospaceshipgenerators_twocolor,
+        "spiders": spiders_twocolor,
+        "crabs": crabs_twocolor,
     }
-    return m
-
-
-########################
-# High-level API methods
-
-
-def get_all_map_patterns(cup):
-    """Get a list of all pattern names for this cup"""
-    f = get_pattern_function_map(cup)
-    patterns_map = f()
-    return list(patterns_map.keys())
-
-
-def get_map_realization(cup, patternname, rows=100, columns=120):
-    """
-    Return a JSON map with map names, zone names, and initial conditions.
-
-    Returns:
-    {
-        "patternName": y,
-        "mapName": z,
-        "mapZone1Name": a,
-        "mapZone2Name": b,
-        "mapZone3Name": c,
-        "mapZone4Name": d,
-        "url": e,
-        "initialConditions1": f,
-        "initialConditions2": g,
-        "rows": i,
-        "columns": j,
-        "cellSize:" k
-    }
-    """
-    if rows < 100 or columns < 120:
-        raise GollyXMapsError(f"Error: you must have at least 100 rows and 120 columns")
-
-    # Get map data (pattern, name, zone names)
-    mapdat = get_map_metadata(cup, patternname)
-
-    # Get the initial conditions for this map
-    s1, s2 = render_map(cup, patternname, rows, columns)
-    url = f"?s1={s1}&s2={s2}"
-    mapdat["initialConditions1"] = s1
-    mapdat["initialConditions2"] = s2
-    mapdat["url"] = url
-
-    # Include geometry info
-    maxdim = max(rows, columns)
-    if columns < 100:
-        cellSize = 10
-
-    elif columns < 125:
-        cellSize = 8
-
-    elif columns < 150:
-        cellSize = 7
-
-    elif columns < 175:
-        cellSize = 5
-
-    elif columns < 200:
-        cellSize = 4
-
-    elif columns < 275:
-        cellSize = 3
-
-    elif columns < 375:
-        cellSize = 2
-
-    else:
-        cellSize = 1
-
-    mapdat["rows"] = rows
-    mapdat["columns"] = columns
-    mapdat["cellSize"] = cellSize
-
-    # Remove these keys before returning realization for the API to serve up
-    remove_keys = ["mapSeasonStart", "mapSeasonEnd", "mapDescription"]
-    for remk in remove_keys:
-        if remk in mapdat.keys():
-            del mapdat[remk]
-
-    return mapdat
-
-
-##################
-# Metadata methods
-
-
-def get_map_metadata(cup, patternname):
-    """
-    Get map metadata for the specified cup and pattern
-    """
-    all_metadata = get_all_map_metadata(cup)
-    for m in all_metadata:
-        if m['patternName'] == patternname:
-            return m
-    # If we reach this point, we didn't find labels in data/maps.json
-    m = {
-        "patternName": patternname,
-        "mapName": "Unnamed Map",
-        "mapZone1Name": "Zone 1",
-        "mapZone2Name": "Zone 2",
-        "mapZone3Name": "Zone 3",
-        "mapZone4Name": "Zone 4",
-    }
-    return m
-
-
-def get_all_map_metadata(cup, season=None):
-    """
-    Get metadata for all maps for the specified cup and season.
-    """
-    map_data_file = os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), "data", f"{cup}.json"
-    )
-    if not os.path.exists(map_data_file):
-        raise Exception(f"Could not find map metadata for specified cup: {cup}")
-    with open(map_data_file, "r") as f:
-        mapdat = json.load(f)
-
-    # If the user does not specify a season, return every map's metadata
-    if season is None:
-        return mapdat
-
-    # If the user specifies a season, return only the maps for that specified season
-    keep_maps = []
-    for this_map in mapdat:
-        keep = False
-        if "mapStartSeason" in this_map:
-            if this_map["mapStartSeason"] <= season:
-                keep = True
-        if "mapEndSeason" in this_map:
-            if this_map["mapEndSeason"] <= season:
-                keep = False
-        if keep:
-            keep_maps.append(this_map)
-    return keep_maps
-
-
-####################################
-# Render the map for the realization
-
-
-def render_map(cup, patternname, rows, columns, seed=None):
-    functions_map = get_pattern_function_map(cup)
-    f = functions_map[patternname]
-    return f(rows, columns, seed=seed)
 
 
 def random_twocolor(rows, cols, seed=None):
@@ -781,7 +655,7 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
 
         # Oscillator locations
         osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
-        osc_y = [centery - lengthscale]*3
+        osc_y = [centery - lengthscale] * 3
 
     else:
         # Six oscillators versus two timebombs
@@ -815,10 +689,10 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
     osc_jitter_y = lengthscale // 4
     timebomb_jitter_x = lengthscale // 2
     timebomb_jitter_y = lengthscale // 8
-    #osc_jitter_x = 0
-    #osc_jitter_y = 0
-    #timebomb_jitter_x = 0
-    #timebomb_jitter_y = 0
+    # osc_jitter_x = 0
+    # osc_jitter_y = 0
+    # timebomb_jitter_x = 0
+    # timebomb_jitter_y = 0
 
     # Decide whether this is an even matchup (each team has 1 timebomb and 3 oscillators)
     # or a lopsided matchup (one team has both timebombs)
@@ -840,13 +714,15 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
     team2_patterns = []
 
     # Assemble the oscillator patterns
-    for k, (oscxx, oscyy, team_ass, parity) in enumerate(zip(osc_x, osc_y, osc_team_ass, oscparity)):
+    for k, (oscxx, oscyy, team_ass, parity) in enumerate(
+        zip(osc_x, osc_y, osc_team_ass, oscparity)
+    ):
         pattern = get_grid_pattern(
             _get_oscillator_name(),
             rows,
             cols,
             xoffset=oscxx + random.randint(-osc_jitter_x, osc_jitter_x),
-            yoffset=oscyy + parity*random.randint(0, osc_jitter_y),
+            yoffset=oscyy + parity * random.randint(0, osc_jitter_y),
         )
         if team_ass == 1:
             team1_patterns.append(pattern)
@@ -862,9 +738,9 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
 
         rotdeg = 0
         if do_rotate:
-            if k==0:
+            if k == 0:
                 rotdeg = 90
-            elif k==1:
+            elif k == 1:
                 rotdeg = 270
 
         # We have to rotate first, then hflip, so don't provide hflip argument here
@@ -873,8 +749,8 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
             rows,
             cols,
             xoffset=timebombxx + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
-            yoffset=timebombyy + parity*random.randint(0, timebomb_jitter_y),
-            rotdeg=rotdeg
+            yoffset=timebombyy + parity * random.randint(0, timebomb_jitter_y),
+            rotdeg=rotdeg,
         )
 
         if do_hflip:
@@ -892,67 +768,6 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
     pattern2_url = pattern2url(team2_pattern)
 
     return pattern1_url, pattern2_url
-
-
-# def timebomb_randomoscillators_twocolor(rows, cols, seed=None):
-#
-#    if seed is not None:
-#        random.seed(seed)
-#
-#    oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
-#
-#    # Flip a coin to decide on random oscillators or all the same oscillators
-#    random_oscillators = False
-#    if random.random() < 0.33:
-#        random_oscillators = True
-#
-#    oscillator_name = random.choice(oscillators)
-#
-#    centerxs = [
-#        (cols // 2) + (cols // 4) + random.randint(-4, 4),
-#        cols // 4 + random.randint(-4, 4),
-#        cols // 2 + random.randint(-4, 4),
-#    ]
-#    centerys = [
-#        (rows // 3),
-#    ] * 3
-#    centerys = [j + random.randint(-4, 4) for j in centerys]
-#
-#    osc_patterns = []
-#    for centerx, centery in zip(centerxs, centerys):
-#        if random_oscillators:
-#            oscillator_name = random.choice(oscillators)
-#        osc = get_grid_pattern(
-#            oscillator_name, rows, cols, xoffset=centerx, yoffset=centery
-#        )
-#        osc_patterns.append(osc)
-#
-#    osc_pattern = pattern_union(osc_patterns)
-#
-#    centerx2 = cols // 2
-#    centery2 = 2 * rows // 3
-#
-#    centerx2 += random.randint(-12, 12)
-#    centery2 += random.randint(-8, 8)
-#
-#    vflipopt = bool(random.getrandbits(1))
-#    hflipopt = bool(random.getrandbits(1))
-#    rotdegs = [0, 90, 180, 270, 0]
-#    timebomb = get_grid_pattern(
-#        "timebomb",
-#        rows,
-#        cols,
-#        xoffset=centerx2,
-#        yoffset=centery2,
-#        hflip=hflipopt,
-#        vflip=vflipopt,
-#        rotdeg=random.choice(rotdegs),
-#    )
-#
-#    pattern1_url = pattern2url(osc_pattern)
-#    pattern2_url = pattern2url(timebomb)
-#
-#    return pattern1_url, pattern2_url
 
 
 def fourrabbits_twocolor(rows, cols, seed=None):
