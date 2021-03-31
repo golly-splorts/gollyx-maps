@@ -17,11 +17,12 @@ def make_map(seed=None):
 
     if random.random() < 0.33:
         nsegments = 4
+        jitterx = 6
+        jittery = 6
     else:
         nsegments = 2
-
-    jitterx = 0*(4//nsegments)
-    jittery = 0*(4//nsegments)
+        jitterx = 15
+        jittery = 15
 
     intersectxs = [(i+1)*cols//(nsegments+1) + random.randint(-jitterx, jitterx) for i in range(nsegments)]
     intersectys = [(j+1)*rows//(nsegments+1) + random.randint(-jittery, jittery) for j in range(nsegments)]
@@ -39,8 +40,6 @@ def make_map(seed=None):
 
     x1s = intersectxs[:len(intersectxs)//2]
     x2s = intersectxs[len(intersectxs)//2:]
-    print(x1s)
-    print(x2s)
     for iy in range(0, rows):
         
         for x1 in x1s:
