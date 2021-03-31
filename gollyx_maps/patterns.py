@@ -8,12 +8,16 @@ from .geom import hflip_pattern, vflip_pattern, rot_pattern
 from .error import GollyXPatternsError
 
 
-def get_patterns():
-    patternfiles = glob(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "b3s23_patterns", "*.txt")
+def get_pattern_filepaths():
+    patternfilepaths = glob(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "*_patterns", "*.txt")
     )
-    # trim extension
-    patternfiles = [os.path.basename(os.path.splitext(p)[0]) for p in patternfiles]
+    return patternfilepaths
+
+
+def get_patterns():
+    patternpaths = get_pattern_filepaths()
+    patternfiles = [os.path.basename(os.path.splitext(p)[0]) for p in patternpaths]
     return patternfiles
 
 
@@ -22,22 +26,27 @@ def get_pattern(pattern_name, hflip=False, vflip=False, rotdeg=0):
     For a given pattern, return the .o diagram
     as a list of strings, one string = one row
     """
-    fname = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "b3s23_patterns", pattern_name + ".txt"
-    )
-    if os.path.exists(fname):
-        with open(fname, "r") as f:
-            pattern = f.readlines()
-        pattern = [r.strip() for r in pattern]
-        if hflip:
-            pattern = hflip_pattern(pattern)
-        if vflip:
-            pattern = vflip_pattern(pattern)
-        if rotdeg:
-            pattern = rot_pattern(pattern, rotdeg)
-        return pattern
-    else:
-        raise GollyXPatternsError(f"Error: pattern {fname} does not exist!")
+    patternpaths = get_pattern_filepaths()
+    fpath = None
+    for patternpath in patternpaths:
+        if patternpath.endswith("/" + pattern_name+".txt"):
+            fpath = patternpath
+
+    if fpath is None or not os.path.exists(fpath):
+        raise GollyXPatternsError(f"Error: pattern {pattern_name} does not exist!")
+
+    with open(fpath, "r") as f:
+        pattern = f.readlines()
+
+    pattern = [r.strip() for r in pattern]
+    if hflip:
+        pattern = hflip_pattern(pattern)
+    if vflip:
+        pattern = vflip_pattern(pattern)
+    if rotdeg:
+        pattern = rot_pattern(pattern, rotdeg)
+
+    return pattern
 
 
 def get_pattern_size(pattern_name, **kwargs):
@@ -349,7 +358,7 @@ def segment_pattern(
 
 
 def methuselah_quadrants_pattern(
-    rows, cols, seed=None, methuselah_counts=None, fixed_methuselah=None
+    rows, cols, seed=None, methuselah_counts=None, methuselah_names=None
 ):
     """
     Returns a map with a cluster of methuselahs in each quadrant.
@@ -389,29 +398,9 @@ def methuselah_quadrants_pattern(
             msg += "you specified {', '.join(methuselah_counts)}"
             raise GollyXPatternsError(msg)
 
-    if 16 in methuselah_counts and min(rows, cols) < BIGDIMLIMIT:
+    if False and 16 in methuselah_counts and min(rows, cols) < BIGDIMLIMIT:
         msg = "Invalid methuselah count specified: grid size too small for 4x4!"
         raise GollyXPatternsError(msg)
-
-    methuselah_names = [
-        "acorn",
-        "bheptomino",
-        "cheptomino",
-        "eheptomino",
-        "multuminparvo",
-        "piheptomino",
-        "rabbit",
-        "rpentomino",
-        "timebomb",
-        "switchengine",
-    ]
-    small_methuselah_names = [
-        "bheptomino",
-        "cheptomino",
-        "eheptomino",
-        "piheptomino",
-        "rpentomino",
-    ]
 
     # Store each quadrant and its upper left corner in (rows from top, cols from left) format
     quadrants = [
@@ -436,8 +425,8 @@ def methuselah_quadrants_pattern(
 
             # Only one methuselah in this quadrant, so use the center
 
-            jitterx = 20
-            jittery = 15
+            jitterx = 8
+            jittery = 8
 
             for bi in buddy_index:
                 corner = quadrants[bi][1]
@@ -445,10 +434,7 @@ def methuselah_quadrants_pattern(
                 y = corner[0] + rows // 4 + random.randint(-jittery, jittery)
                 x = corner[1] + cols // 4 + random.randint(-jitterx, jitterx)
 
-                if fixed_methuselah:
-                    meth = fixed_methuselah
-                else:
-                    meth = random.choice(methuselah_names)
+                meth = random.choice(methuselah_names)
 
                 pattern = get_grid_pattern(
                     meth,
@@ -468,8 +454,12 @@ def methuselah_quadrants_pattern(
             # Two or four methuselahs in this quadrant, so place at corners of a square
             # Form the square by cutting the quadrant into thirds
 
-            jitterx = 12
-            jittery = 8
+            if count == 4:
+                jitterx = 2
+                jittery = 2
+            else:
+                jitterx = 4
+                jittery = 4
 
             for bi in buddy_index:
                 corner = quadrants[bi][1]
@@ -493,13 +483,10 @@ def methuselah_quadrants_pattern(
                             proceed = True
 
                         if proceed:
-                            y = corner[0] + a * ((rows // 2) // nparts)
-                            x = corner[1] + b * ((cols // 2) // nparts)
+                            y = corner[0] + a * ((rows // 2) // nparts) + random.randint(-jittery, jittery)
+                            x = corner[1] + b * ((cols // 2) // nparts) + random.randint(-jitterx, jitterx)
 
-                            if fixed_methuselah:
-                                meth = fixed_methuselah
-                            else:
-                                meth = random.choice(methuselah_names)
+                            meth = random.choice(methuselah_names)
 
                             try:
                                 pattern = get_grid_pattern(
@@ -523,6 +510,12 @@ def methuselah_quadrants_pattern(
 
             # Three or nine methuselahs, place these on a square with three points per side
             # or eight points total
+            if count == 9:
+                jitterx = 2
+                jittery = 2
+            else:
+                jitterx = 4
+                jittery = 4
 
             for bi in buddy_index:
                 corner = quadrants[bi][1]
@@ -540,15 +533,10 @@ def methuselah_quadrants_pattern(
                             proceed = True
 
                         if proceed:
-                            y = corner[0] + a * ((rows // 2) // nslices)
-                            x = corner[1] + b * ((cols // 2) // nslices)
+                            y = corner[0] + a * ((rows // 2) // nslices) + random.randint(-jittery, jittery) 
+                            x = corner[1] + b * ((cols // 2) // nslices) + random.randint(-jitterx, jitterx) 
 
-                            if fixed_methuselah:
-                                meth = fixed_methuselah
-                            elif min(rows, cols) < BIGDIMLIMIT:
-                                meth = random.choice(small_methuselah_names)
-                            else:
-                                meth = random.choice(methuselah_names)
+                            meth = random.choice(methuselah_names)
 
                             try:
                                 pattern = get_grid_pattern(
@@ -571,6 +559,8 @@ def methuselah_quadrants_pattern(
         elif count == 16:
 
             # Sixteen methuselahs, place these on a 4x4 square
+            jitterx = 1
+            jittery = 1
 
             for bi in buddy_index:
                 corner = quadrants[bi][1]
@@ -580,13 +570,11 @@ def methuselah_quadrants_pattern(
                 for a in range(1, nslices):
                     for b in range(1, nslices):
 
-                        y = corner[0] + a * ((rows // 2) // nslices)
-                        x = corner[1] + b * ((cols // 2) // nslices)
+                        y = corner[0] + a * ((rows // 2) // nslices) + random.randint(-jittery, jittery)  
+                        x = corner[1] + b * ((cols // 2) // nslices) + random.randint(-jitterx, jitterx)  
 
-                        if fixed_methuselah:
-                            meth = fixed_methuselah
-                        else:
-                            meth = random.choice(small_methuselah_names)
+                        meth = random.choice(methuselah_names)
+
                         try:
                             pattern = get_grid_pattern(
                                 meth,
