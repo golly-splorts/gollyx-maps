@@ -140,26 +140,32 @@ map_realization_req_keys = [
 ]
 
 
-class MapsTest(unittest.TestCase):
+class HellmouthCupMapsTest(unittest.TestCase):
     """
-    Test maps functionality in the golly maps package.
+    Test maps functionality for Hellmouth Cup maps
+    in the golly maps package.
     """
+    cup = 'hellmouth'
 
     def test_get_all_map_patterns(self):
-        all_patterns = get_all_map_patterns()
+        cup = self.cup
+        all_patterns = get_all_map_patterns(cup)
         self.assertEqual(sorted(all_patterns), sorted(PATTERNS))
 
     def test_get_map_metadata(self):
+        cup = self.cup
         for pattern_name in PATTERNS:
-            metadata = get_map_metadata(pattern_name)
+            metadata = get_map_metadata(cup, pattern_name)
             for rk in map_metadata_req_keys:
                 self.assertIn(rk, metadata)
 
     def test_get_all_map_metadata(self):
+        cup = self.cup
+
         # -----
         # Check first batch of maps (Season 1)
         season0 = 0
-        map_data0 = get_all_map_metadata(season0)
+        map_data0 = get_all_map_metadata(cup, season0)
 
         # Check the metadata returned
         for m in map_data0:
@@ -173,7 +179,7 @@ class MapsTest(unittest.TestCase):
         # -----
         # Check second batch of maps (Season 4)
         season4 = 4
-        map_data4 = get_all_map_metadata(season4)
+        map_data4 = get_all_map_metadata(cup, season4)
 
         # Check the metadata returned
         for m in map_data4:
@@ -187,7 +193,7 @@ class MapsTest(unittest.TestCase):
         # -----
         # Check third batch of maps (Season 11)
         seasonX = 11
-        map_dataX = get_all_map_metadata(seasonX)
+        map_dataX = get_all_map_metadata(cup, seasonX)
 
         # Check the metadata returned
         for m in map_dataX:
@@ -201,7 +207,7 @@ class MapsTest(unittest.TestCase):
         # -----
         # Check fourth batch of maps (Season 13)
         seasonY = 13
-        map_dataY = get_all_map_metadata(seasonY)
+        map_dataY = get_all_map_metadata(cup, seasonY)
 
         # Check the metadata returned
         for m in map_dataY:
@@ -213,22 +219,26 @@ class MapsTest(unittest.TestCase):
         self.assertEqual(sorted(patternsY), sorted(PATTERNS_S13))
 
     def test_get_map_realization(self):
+        cup = self.cup
         for pattern_name in PATTERNS:
             r = 100
             c = 120
-            m = get_map_realization(pattern_name, rows=r, columns=c)
+            m = get_map_realization(cup, pattern_name, rows=r, columns=c)
             for rk in map_realization_req_keys:
                 self.assertIn(rk, m.keys())
 
     def test_get_map_01_basicget(self):
+        cup = self.cup
         for pattern_name in PATTERNS:
             with self.subTest(pattern_name=pattern_name):
                 # Standard size
                 r = 100
                 c = 120
-                get_map_realization(pattern_name, rows=r, columns=c)
+                get_map_realization(cup, pattern_name, rows=r, columns=c)
 
     def test_get_map_02_no_exceptions(self):
+        cup = self.cup
+
         # Get each map 25 times
         # This ensures there are no corner cases to raise exceptions
         for pattern_name in PATTERNS:
@@ -237,13 +247,13 @@ class MapsTest(unittest.TestCase):
             r = 100
             c = 120
             for i in range(25):
-                get_map_realization(pattern_name, rows=r, columns=c)
+                get_map_realization(cup, pattern_name, rows=r, columns=c)
 
             # Double size
             r = 200
             c = 240
             for i in range(25):
-                get_map_realization(pattern_name, rows=r, columns=c)
+                get_map_realization(cup, pattern_name, rows=r, columns=c)
 
     def test_random(self):
         """
@@ -251,11 +261,12 @@ class MapsTest(unittest.TestCase):
         make sure we don't have an off-by-one error
         (artifact: missing any cells for row 0.)
         """
+        cup = self.cup
         random_patterns = ["random", "randompartition"]
         for pattern_name in random_patterns:
             r = 100
             c = 120
-            m = get_map_realization(pattern_name, rows=r, columns=c)
+            m = get_map_realization(cup, pattern_name, rows=r, columns=c)
             ic1 = json.loads(m["initialConditions1"])[0]
             ic2 = json.loads(m["initialConditions2"])[0]
             state1_has_row0 = "0" in ic1.keys()

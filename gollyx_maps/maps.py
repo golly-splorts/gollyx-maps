@@ -23,7 +23,7 @@ def get_pattern_function_map(cup):
         'hellmouth': get_hellmouthmap_pattern_function_map,
         #'psuedo': get_pseudomap_pattern_function_map,
     }
-    return m
+    return m[cup]
 
 
 ########################
@@ -33,8 +33,8 @@ def get_pattern_function_map(cup):
 def get_all_map_patterns(cup):
     """Get a list of all pattern names for this cup"""
     f = get_pattern_function_map(cup)
-    patterns_map = f()
-    return list(patterns_map.keys())
+    pattern_map = f()
+    return list(pattern_map.keys())
 
 
 def get_map_realization(cup, patternname, rows=100, columns=120):
@@ -169,9 +169,10 @@ def get_all_map_metadata(cup, season=None):
 
 
 def render_map(cup, patternname, rows, columns, seed=None):
-    functions_map = get_pattern_function_map(cup)
-    f = functions_map[patternname]
-    return f(rows, columns, seed=seed)
+    f = get_pattern_function_map(cup)
+    pattern_map = f()
+    g = pattern_map[patternname]
+    return g(rows, columns, seed=seed)
 
 
 def random_twocolor(rows, cols, seed=None):
