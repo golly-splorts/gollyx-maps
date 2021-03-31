@@ -109,6 +109,7 @@ def randompartition_twocolor(rows, cols, seed=None):
     """
     if seed is not None:
         random.seed(seed)
+
     ncells = rows * cols
     nlivecells = int(ncells * 0.12)
 
