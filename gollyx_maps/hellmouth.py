@@ -48,6 +48,54 @@ def get_hellmouthmap_pattern_function_map():
     }
 
 
+def hellmouth_methuselah_quadrants_pattern(
+    rows, cols, seed=None, methuselahs_counts=None, fixed_methuselah=None
+):
+    small_methuselah_names = [
+        "bheptomino",
+        "cheptomino",
+        "eheptomino",
+        "piheptomino",
+        "rpentomino",
+    ]
+    reg_methuselah_names = [
+        "acorn",
+        "bheptomino",
+        "cheptomino",
+        "eheptomino",
+        "multuminparvo",
+        "piheptomino",
+        "rabbit",
+        "rpentomino",
+        "timebomb",
+        "switchengine",
+    ]
+
+    # some repetition with original function here, but eh
+    BIGDIMLIMIT = 150
+    mindim = min(rows, cols)
+    if mindim < BIGDIMLIMIT:
+        mc = [1, 2, 3, 4, 9]
+        if fixed_methuselah:
+            mn = [fixed_methuselah]
+        else:
+            mn = reg_methuselah_names + small_methuselah_names
+    else:
+        mc = [1, 2, 3, 4, 9, 16]
+        if fixed_methuselah:
+            mn = [fixed_methuselah]
+        else:
+            mn = small_methuselah_names
+
+    return methuselah_quadrants_pattern(
+        rows, cols, seed=None, methuselahs_counts=mc, methuselah_names=mn
+    )
+
+
+#############
+# Map methods
+
+
 def random_twocolor(rows, cols, seed=None):
     """
     Generate a random two-color list life initialization.
@@ -1209,7 +1257,7 @@ def switchengines_twocolor(rows, cols, seed=None):
         mc = [2, 4]
     else:
         mc = [3, 4, 9]
-    team1_pattern, team2_pattern = methuselah_quadrants_pattern(
+    team1_pattern, team2_pattern = hellmouth_methuselah_quadrants_pattern(
         rows, cols, seed, methuselah_counts=mc, fixed_methuselah="switchengine"
     )
     pattern1_url = pattern2url(team1_pattern)
@@ -1230,7 +1278,7 @@ def orchard_twocolor(rows, cols, seed=None):
         mc = [4, 9, 16]
 
     count = random.choice(mc)
-    team1_pattern, team2_pattern = methuselah_quadrants_pattern(
+    team1_pattern, team2_pattern = hellmouth_methuselah_quadrants_pattern(
         rows, cols, seed, methuselah_counts=[count], fixed_methuselah="acorn"
     )
     pattern1_url = pattern2url(team1_pattern)
@@ -1244,7 +1292,9 @@ def randommethuselahs_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    team1_pattern, team2_pattern = methuselah_quadrants_pattern(rows, cols, seed)
+    team1_pattern, team2_pattern = hellmouth_methuselah_quadrants_pattern(
+        rows, cols, seed
+    )
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
     return pattern1_url, pattern2_url
@@ -1264,7 +1314,7 @@ def rabbitfarm_twocolor(rows, cols, seed=None):
     else:
         mc = [4, 9]
 
-    team1_wabbits, team2_wabbits = methuselah_quadrants_pattern(
+    team1_wabbits, team2_wabbits = hellmouth_methuselah_quadrants_pattern(
         rows, cols, seed, methuselah_counts=mc, fixed_methuselah="rabbit"
     )
 
