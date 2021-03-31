@@ -15,16 +15,10 @@ def make_map(seed=None):
 
     thickness = random.randint(2, 4)
 
-    #intersectx1 = cols//3 + random.randint(-jitterx, jitterx)
-    #intersectx2 = 2*cols//3 + random.randint(-jitterx, jitterx)
-
-    #intersecty1 = rows//3 + random.randint(-jittery, jittery)
-    #intersecty2 = 2*rows//3 + random.randint(-jittery, jittery)
-
-    #intersectxs = [intersectx1, intersectx2]
-    #intersectys = [intersecty1, intersecty2]
-
-    nsegments = random.choice([2, 4])
+    if random.random() < 0.33:
+        nsegments = 4
+    else:
+        nsegments = 2
 
     jitterx = 0*(4//nsegments)
     jittery = 0*(4//nsegments)
