@@ -20,7 +20,7 @@ if [[ $# != 2 ]]; then
 	echo " - push result to git repo"
     echo
     echo "Usage: $(basename $0) source_branch dest_branch"
-    echo "Example: $(basename $0) release/v1.0 main"
+    echo "Example: $(basename $0) release/v1.0 mainx"
     exit 1
 fi
 
