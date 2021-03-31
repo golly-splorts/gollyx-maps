@@ -21,7 +21,7 @@ setup(
     version=__version__,
     packages=['gollyx_maps'],
     package_data = {
-      'gollyx_maps': ['data/*.json', 'b3s23_patterns/*.txt']
+      'gollyx_maps': ['data/*.json', 'b3s23_patterns/*.txt', 'b357s238_patterns/*.txt']
     },
     description='gollyx-maps is a package for turning cellular autonoma patterns into GollyX maps',
     url='https://golly.life',
