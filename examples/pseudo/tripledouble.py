@@ -24,8 +24,7 @@ def make_map(seed=None):
     #intersectxs = [intersectx1, intersectx2]
     #intersectys = [intersecty1, intersecty2]
 
-    #nsegments = random.choice([2, 4])
-    nsegments = 2
+    nsegments = random.choice([2, 4])
 
     jitterx = 0*(4//nsegments)
     jittery = 0*(4//nsegments)
