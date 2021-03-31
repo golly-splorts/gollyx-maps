@@ -1,3 +1,4 @@
+
 from gollyx_maps.utils import pattern2url
 from gollyx_maps.patterns import segment_pattern
 import random
@@ -14,7 +15,7 @@ def make_map(seed=None):
 
     possible_nhseg = [3,5]
     possible_nvseg = [3,5]
-    gap_probability = random.random() * 0.18
+    gap_probability = random.random() * 0.10
 
     maxdim = max(rows, cols)
 
@@ -31,7 +32,7 @@ def make_map(seed=None):
         rows,
         cols,
         seed,
-        colormode="classic",
+        colormode="random",
         nhseg=nhseg,
         nvseg=nvseg,
         jitterx=jitterx,
