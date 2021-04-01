@@ -1,0 +1,156 @@
+[
+    {
+        "patternName": "bigsegment",
+        "cup": "pseudo",
+        "mapName": "South Perimeter",
+        "mapZone1Name": "100 S 200 E",
+        "mapZone2Name": "900 S 400 E",
+        "mapZone3Name": "300 S 200 W",
+        "mapZone4Name": "200 S 900 W",
+        "mapDescription": "A map cut by horizontal and vertical segments of solid colors",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "gaussian",
+        "cup": "pseudo",
+        "mapName": "The Gaussian",
+        "mapZone1Name": "real known",
+        "mapZone2Name": "imaginary known",
+        "mapZone3Name": "imaginary unknown",
+        "mapZone4Name": "real unknown",
+        "mapDescription": "A totally normal random map with a Gaussian point distribution",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "lockpickfence",
+        "cup": "pseudo",
+        "mapName": "The Locksmith",
+        "mapZone1Name": "cylinders",
+        "mapZone2Name": "pins",
+        "mapZone3Name": "tumblers",
+        "mapZone4Name": "jambs",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "methuselahdense",
+        "cup": "pseudo",
+        "mapName": "Dance Hall",
+        "mapZone1Name": "cha cha",
+        "mapZone2Name": "skanking",
+        "mapZone3Name": "toasting",
+        "mapZone4Name": "foxtrot",
+        "mapDescription": "Dense crowds of methuselahs dance together",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "methuselahsparse",
+        "cup": "pseudo",
+        "mapName": "Seeds",
+        "mapZone1Name": "acorns",
+        "mapZone2Name": "poppy seeds",
+        "mapZone3Name": "grass seeds",
+        "mapZone4Name": "wildflower seeds",
+        "mapDescription": "Sparse crowds of methuselahs that grow into mighty structures",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "nastynonominos",
+        "cup": "pseudo",
+        "mapName": "The Filthy McNasty",
+        "mapZone1Name": "filthy",
+        "mapZone2Name": "nasty",
+        "mapZone3Name": "how nasty",
+        "mapZone4Name": "filthy mcnasty",
+        "mapDescription": "A row of nasty nonomino methuselahs",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "stickyheptominos",
+        "cup": "pseudo",
+        "mapName": "Sticky Fingers",
+        "mapZone1Name": "sticky index",
+        "mapZone2Name": "sticky middle",
+        "mapZone3Name": "sticky ring",
+        "mapZone4Name": "sticky pinky",
+        "mapDescription": "A row of sticky heptomino methuselahs",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "patiolights",
+        "cup": "pseudo",
+        "mapName": "The Porch",
+        "mapZone1Name": "sunset",
+        "mapZone2Name": "swing",
+        "mapZone3Name": "steps",
+        "mapZone4Name": "doggie",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "random",
+        "cup": "pseudo",
+        "mapName": "Northeast Hellmouth",
+        "mapZone1Name": "Blast Zone 1",
+        "mapZone2Name": "Blast Zone 2",
+        "mapZone3Name": "Blast Zone 3",
+        "mapZone4Name": "Blast Zone 4",
+        "mapDescription": "A completely random map layout, territory split 50/50.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "randompartition",
+        "cup": "pseudo",
+        "mapName": "Northeast Hellmouth's Revenge",
+        "mapZone1Name": "Burn Zone 1",
+        "mapZone2Name": "Burn Zone 2",
+        "mapZone3Name": "Burn Zone 3",
+        "mapZone4Name": "Burn Zone 4",
+        "mapDescription": "Randomly partitioned random maps, with teams placed in alternating partitions.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "randomsegment",
+        "cup": "pseudo",
+        "mapName": "Candy Garden",
+        "mapZone1Name": "twizzlies",
+        "mapZone2Name": "mooncakes",
+        "mapZone3Name": "shmoops",
+        "mapZone4Name": "flurries",
+        "mapDescription": "A map cut by horizontal and vertical segments of random colors.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "stretchydog",
+        "cup": "pseudo",
+        "mapName": "Stretchydog",
+        "mapZone1Name": "stretchydog",
+        "mapZone2Name": "stretchydog",
+        "mapZone3Name": "stretchydog",
+        "mapZone4Name": "stretchydog",
+        "mapDescription": "Stretchydog methuselahs form groups in each quadrant",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "sunburst",
+        "cup": "pseudo",
+        "mapName": "Sunburst",
+        "mapZone1Name": "SUN I",
+        "mapZone2Name": "SUN II",
+        "mapZone3Name": "SUN III",
+        "mapZone4Name": "SUN IV",
+        "mapDescription": "Radially partitioned random map - STARE INTO THE SUN",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "tripledouble",
+        "cup": "pseudo",
+        "mapName": "Triple Double",
+        "mapZone1Name": "triple double",
+        "mapZone2Name": "triple deek",
+        "mapZone3Name": "double double",
+        "mapZone4Name": "driple trouble",
+        "mapDescription": "Thick segments intersect to form elaborate patterns",
+        "mapStartSeason": 0
+    }
+]
