@@ -49,7 +49,7 @@ def get_hellmouthmap_pattern_function_map():
 
 
 def hellmouth_methuselah_quadrants_pattern(
-    rows, cols, seed=None, methuselahs_counts=None, fixed_methuselah=None
+    rows, cols, seed=None, methuselah_counts=None, fixed_methuselah=None
 ):
     small_methuselah_names = [
         "bheptomino",
@@ -88,7 +88,7 @@ def hellmouth_methuselah_quadrants_pattern(
             mn = small_methuselah_names
 
     return methuselah_quadrants_pattern(
-        rows, cols, seed=None, methuselahs_counts=mc, methuselah_names=mn
+        rows, cols, seed=None, methuselah_counts=mc, methuselah_names=mn
     )
 
 
@@ -153,7 +153,8 @@ def random_twocolor(rows, cols, seed=None):
 
 def randompartition_twocolor(rows, cols, seed=None):
     """
-    Generate a two-color map with multiple patterns for each team.
+    Generate a two-color random map, and assign points to colors
+    after subdividing the grid into rectangles.
     """
     if seed is not None:
         random.seed(seed)
