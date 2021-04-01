@@ -57,10 +57,10 @@ def make_map(seed=None):
         team1_pattern.append(team1_row_str)
         team2_pattern.append(team2_row_str)
 
-    s1 = pattern2url(team1_pattern)
-    s2 = pattern2url(team2_pattern)
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
 
-    return (s1, s2)
+    return pattern1_url, pattern2_url
 
 
 

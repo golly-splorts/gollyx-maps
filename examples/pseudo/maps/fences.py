@@ -17,11 +17,11 @@ def make_map(seed=None):
         random.seed(seed)
 
 
-    # Make the wabbits
+    # Make the lockpicks
     # -----------------
     mc = [4]
 
-    team1_wabbits, team2_wabbits = methuselah_quadrants_pattern(
+    team1_lockpicks, team2_lockpicks = methuselah_quadrants_pattern(
         rows, cols, seed, methuselah_counts=mc, methuselah_names=["pseudo_lockpick_heptomino"]
     )
 
@@ -56,8 +56,8 @@ def make_map(seed=None):
         jittery=jittery,
     )
 
-    team1_pattern = pattern_union([team1_wabbits, team1_fence])
-    team2_pattern = pattern_union([team2_wabbits, team2_fence])
+    team1_pattern = pattern_union([team1_lockpicks, team1_fence])
+    team2_pattern = pattern_union([team2_lockpicks, team2_fence])
 
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)

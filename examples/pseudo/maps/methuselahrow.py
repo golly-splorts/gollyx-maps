@@ -36,7 +36,7 @@ def make_map(seed=None):
     centerx = cols // 2
     centery = rows // 2
 
-    # Place one pi omino every N grid spaces
+    # Place one methuselah every N grid spaces
     # maximum number - 1
     n = 10
     maxshapes = centerx // n
@@ -70,11 +70,11 @@ def make_map(seed=None):
         )
         c2patterns.append(pattern2)
 
-    s1 = pattern_union(c1patterns)
-    s2 = pattern_union(c2patterns)
+    u1 = pattern_union(c1patterns)
+    u2 = pattern_union(c2patterns)
 
-    pattern1_url = pattern2url(s1)
-    pattern2_url = pattern2url(s2)
+    pattern1_url = pattern2url(u1)
+    pattern2_url = pattern2url(u2)
 
     return pattern1_url, pattern2_url
 
