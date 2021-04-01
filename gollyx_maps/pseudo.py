@@ -1,18 +1,21 @@
 from .utils import pattern2url
 from .patterns import (
     get_grid_empty,
+    get_grid_pattern,
     methuselah_quadrants_pattern,
     pattern_union,
     segment_pattern,
 )
+from .geom import hflip_pattern, vflip_pattern
 import random
+import itertools
 
 
 ##############
 # Util methods
 
 
-def get_pseudo_pattern_function_map():
+def get_pseudomap_pattern_function_map():
     return {
         "bigsegment": bigsegment_twocolor,
         "gaussian": gaussian_twocolor,
@@ -146,20 +149,14 @@ def lockpickfence_twocolor(rows, cols, seed=None):
 
     # Always 1 horizontal segment, optional vertical segment
     nhseg = 1
-    if random.random() < 0.33:
-        nvseg = 0
-    else:
-        nvseg = 1
+    nvseg = 1
 
     # Set amount of jitter for placement of segments
-    jitterx = 8
-    jittery = 8
+    jitterx = 9
+    jittery = 9
 
     # Color mode should be broken
-    if random.random() < 0.33:
-        colormode = "classicbroken"
-    else:
-        colormode = "randombroken"
+    colormode = "randombroken"
 
     team1_fence, team2_fence = segment_pattern(
         rows,
@@ -181,7 +178,7 @@ def lockpickfence_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def _methuselahgrid_twocolor(rows, cols, seed=None):
+def _methuselahgrid_twocolor(rows, cols, seed=None, dense=False):
 
     if seed is not None:
         random.seed(seed)
@@ -234,14 +231,14 @@ def _methuselahgrid_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-def methuselahdense_twocolor(rows, cols, seeds=None):
+def methuselahdense_twocolor(rows, cols, seed=None):
     """
     Create a densely-packed grid of methuselah patterns
     """
     return _methuselahgrid_twocolor(rows, cols, seed, dense=True)
 
 
-def methuselahsparse_twocolor(rows, cols, seeds=None):
+def methuselahsparse_twocolor(rows, cols, seed=None):
     """
     Create a sparsely-packed grid of methuselah patterns
     """
@@ -400,7 +397,7 @@ def patiolights_twocolor(rows, cols, seed=None):
         ylightstop = miny - random.randint(2, 3)
         ylightsbot = maxy + random.randint(2, 3)
         ix = random.randint(4, 12)
-        while ix < cols:
+        while ix < cols-1:
             if random.random() < 0.50:
                 team1_pattern[ylightsbot][ix] = 'o'
                 team1_pattern[ylightsbot][ix+1] = 'o'
@@ -420,7 +417,7 @@ def patiolights_twocolor(rows, cols, seed=None):
         ylightstop = miny - random.randint(2, 3)
         ylightsbot = maxy + random.randint(2, 3)
         ix = random.randint(4, 12)
-        while ix < cols:
+        while ix < cols-1:
             if random.random() < 0.50:
                 team2_pattern[ylightsbot][ix] = 'o'
                 team2_pattern[ylightsbot][ix+1] = 'o'
