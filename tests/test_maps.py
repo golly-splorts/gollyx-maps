@@ -12,7 +12,7 @@ from gollyx_maps.maps import (
 HERE = os.path.split(os.path.abspath(__file__))[0]
 
 # A list of all patterns ever
-PATTERNS = [
+HELLMOUTH_PATTERNS = [
     "bigsegment",
     "crabs",
     "eightpi",
@@ -37,7 +37,7 @@ PATTERNS = [
     "twospaceshipgenerators",
 ]
 
-PATTERNS_S13 = [
+HELLMOUTH_PATTERNS_S13 = [
     "bigsegment",
     "crabs",
     "eightpi",
@@ -60,7 +60,7 @@ PATTERNS_S13 = [
     "twomultum",
 ]
 
-PATTERNS_S11 = [
+HELLMOUTH_PATTERNS_S11 = [
     "bigsegment",
     "eightpi",
     "eightr",
@@ -84,7 +84,7 @@ PATTERNS_S11 = [
 ]
 
 # A list of patterns after new Season 4 maps
-PATTERNS_S4 = [
+HELLMOUTH_PATTERNS_S4 = [
     "eightpi",
     "eightr",
     "fourrabbits",
@@ -100,7 +100,7 @@ PATTERNS_S4 = [
 ]
 
 # A list of patterns after new Season 0 maps
-PATTERNS_S0 = [
+HELLMOUTH_PATTERNS_S0 = [
     "eightpi",
     "eightr",
     "fourrabbits",
@@ -150,11 +150,11 @@ class HellmouthCupMapsTest(unittest.TestCase):
     def test_get_all_map_patterns(self):
         cup = self.cup
         all_patterns = get_all_map_patterns(cup)
-        self.assertEqual(sorted(all_patterns), sorted(PATTERNS))
+        self.assertEqual(sorted(all_patterns), sorted(HELLMOUTH_PATTERNS))
 
     def test_get_map_metadata(self):
         cup = self.cup
-        for pattern_name in PATTERNS:
+        for pattern_name in HELLMOUTH_PATTERNS:
             metadata = get_map_metadata(cup, pattern_name)
             for rk in map_metadata_req_keys:
                 self.assertIn(rk, metadata)
@@ -174,7 +174,7 @@ class HellmouthCupMapsTest(unittest.TestCase):
 
         # Check the patterns returned
         patterns0 = [m['patternName'] for m in map_data0]
-        self.assertEqual(sorted(patterns0), sorted(PATTERNS_S0))
+        self.assertEqual(sorted(patterns0), sorted(HELLMOUTH_PATTERNS_S0))
 
         # -----
         # Check second batch of maps (Season 4)
@@ -188,7 +188,7 @@ class HellmouthCupMapsTest(unittest.TestCase):
 
         # Check the patterns returned
         patterns4 = [m['patternName'] for m in map_data4]
-        self.assertEqual(sorted(patterns4), sorted(PATTERNS_S4))
+        self.assertEqual(sorted(patterns4), sorted(HELLMOUTH_PATTERNS_S4))
 
         # -----
         # Check third batch of maps (Season 11)
@@ -202,7 +202,7 @@ class HellmouthCupMapsTest(unittest.TestCase):
 
         # Check the patterns returned
         patternsX = [m['patternName'] for m in map_dataX]
-        self.assertEqual(sorted(patternsX), sorted(PATTERNS_S11))
+        self.assertEqual(sorted(patternsX), sorted(HELLMOUTH_PATTERNS_S11))
 
         # -----
         # Check fourth batch of maps (Season 13)
@@ -216,11 +216,11 @@ class HellmouthCupMapsTest(unittest.TestCase):
 
         # Check the patterns returned
         patternsY = [m['patternName'] for m in map_dataY]
-        self.assertEqual(sorted(patternsY), sorted(PATTERNS_S13))
+        self.assertEqual(sorted(patternsY), sorted(HELLMOUTH_PATTERNS_S13))
 
     def test_get_map_realization(self):
         cup = self.cup
-        for pattern_name in PATTERNS:
+        for pattern_name in HELLMOUTH_PATTERNS:
             r = 100
             c = 120
             m = get_map_realization(cup, pattern_name, rows=r, columns=c)
@@ -229,7 +229,7 @@ class HellmouthCupMapsTest(unittest.TestCase):
 
     def test_get_map_01_basicget(self):
         cup = self.cup
-        for pattern_name in PATTERNS:
+        for pattern_name in HELLMOUTH_PATTERNS:
             with self.subTest(pattern_name=pattern_name):
                 # Standard size
                 r = 100
@@ -241,7 +241,7 @@ class HellmouthCupMapsTest(unittest.TestCase):
 
         # Get each map 25 times
         # This ensures there are no corner cases to raise exceptions
-        for pattern_name in PATTERNS:
+        for pattern_name in HELLMOUTH_PATTERNS:
 
             # Standard size
             r = 100
@@ -272,3 +272,13 @@ class HellmouthCupMapsTest(unittest.TestCase):
             state1_has_row0 = "0" in ic1.keys()
             state2_has_row0 = "0" in ic1.keys()
             self.assertTrue(state1_has_row0 or state2_has_row0)
+
+
+class PseudoCupMapsTest(unittest.TestCase):
+    """
+    Test maps functionality for Pseudo Cup maps
+    in the golly maps package.
+    """
+    cup = 'pseudo'
+
+
