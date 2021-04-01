@@ -21,7 +21,7 @@ from .hellmouth import get_hellmouthmap_pattern_function_map
 def get_pattern_function_map(cup):
     m = {
         'hellmouth': get_hellmouthmap_pattern_function_map,
-        #'psuedo': get_pseudomap_pattern_function_map,
+        'psuedo': get_pseudomap_pattern_function_map,
     }
     return m[cup]
 
