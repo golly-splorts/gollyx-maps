@@ -701,11 +701,11 @@ def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
 
         # Timebomb location
         timebomb_x = [centerx]
-        timebomb_y = [centery]
+        timebomb_y = [centery + lengthscale // 2]
 
         # Oscillator locations
         osc_x = [centerx - lengthscale, centerx, centerx + lengthscale]
-        osc_y = [centery - lengthscale] * 3
+        osc_y = [centery - lengthscale // 2] * 3
 
     else:
         # Six oscillators versus two timebombs
@@ -1034,14 +1034,12 @@ def twomultum_twocolor(rows, cols, seed=None):
 
     mindim = min(rows, cols)
     if mindim < 200:
-        L = 15
-        multum_x_loc = [cols // 2]
-        multum_y_loc = [rows // 2 - L, rows // 2 + L]
-
+        L = 17
     else:
         L = 25
-        multum_x_loc = [cols // 2 - L, cols // 2 + L]
-        multum_y_loc = [rows // 2 - L, rows // 2 + L]
+
+    multum_x_loc = [cols // 2 - L, cols // 2 + L]
+    multum_y_loc = [rows // 2 - L, rows // 2 + L]
 
     npoints = len(multum_x_loc) * len(multum_y_loc)
     team_assignments = [
@@ -1052,7 +1050,8 @@ def twomultum_twocolor(rows, cols, seed=None):
     ] * (npoints - npoints // 2)
     random.shuffle(team_assignments)
 
-    jitter = 5
+    jitterx = 9
+    jittery = 6
 
     team1_patterns = []
     team2_patterns = []
@@ -1061,8 +1060,8 @@ def twomultum_twocolor(rows, cols, seed=None):
             "multuminparvo",
             rows,
             cols,
-            xoffset=x + random.randint(-jitter, jitter),
-            yoffset=y + random.randint(-jitter, jitter),
+            xoffset=x + random.randint(-jitterx, jitterx),
+            yoffset=y + random.randint(-jittery, jittery),
             vflip=(y < rows // 2 or random.random() < 0.25),
         )
         if team_assignments[i] == 1:
