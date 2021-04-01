@@ -1,7 +1,6 @@
 [
     {
         "patternName": "bigsegment",
-        "cup": "pseudo",
         "mapName": "South Perimeter",
         "mapZone1Name": "100 S 200 E",
         "mapZone2Name": "900 S 400 E",
@@ -12,7 +11,6 @@
     },
     {
         "patternName": "gaussian",
-        "cup": "pseudo",
         "mapName": "The Gaussian",
         "mapZone1Name": "real known",
         "mapZone2Name": "imaginary known",
@@ -23,7 +21,6 @@
     },
     {
         "patternName": "lockpickfence",
-        "cup": "pseudo",
         "mapName": "The Locksmith",
         "mapZone1Name": "cylinders",
         "mapZone2Name": "pins",
@@ -34,7 +31,6 @@
     },
     {
         "patternName": "methuselahdense",
-        "cup": "pseudo",
         "mapName": "Dance Hall",
         "mapZone1Name": "cha cha",
         "mapZone2Name": "skanking",
@@ -45,7 +41,6 @@
     },
     {
         "patternName": "methuselahsparse",
-        "cup": "pseudo",
         "mapName": "Seeds",
         "mapZone1Name": "acorns",
         "mapZone2Name": "poppy seeds",
@@ -56,7 +51,6 @@
     },
     {
         "patternName": "nastynonominos",
-        "cup": "pseudo",
         "mapName": "The Filthy McNasty",
         "mapZone1Name": "filthy",
         "mapZone2Name": "nasty",
@@ -67,7 +61,6 @@
     },
     {
         "patternName": "stickyheptominos",
-        "cup": "pseudo",
         "mapName": "Sticky Fingers",
         "mapZone1Name": "sticky index",
         "mapZone2Name": "sticky middle",
@@ -78,7 +71,6 @@
     },
     {
         "patternName": "patiolights",
-        "cup": "pseudo",
         "mapName": "The Porch",
         "mapZone1Name": "sunset",
         "mapZone2Name": "swing",
@@ -89,7 +81,6 @@
     },
     {
         "patternName": "random",
-        "cup": "pseudo",
         "mapName": "Northeast Hellmouth",
         "mapZone1Name": "Blast Zone 1",
         "mapZone2Name": "Blast Zone 2",
@@ -100,7 +91,6 @@
     },
     {
         "patternName": "randompartition",
-        "cup": "pseudo",
         "mapName": "Northeast Hellmouth's Revenge",
         "mapZone1Name": "Burn Zone 1",
         "mapZone2Name": "Burn Zone 2",
@@ -111,7 +101,6 @@
     },
     {
         "patternName": "randomsegment",
-        "cup": "pseudo",
         "mapName": "Candy Garden",
         "mapZone1Name": "twizzlies",
         "mapZone2Name": "mooncakes",
@@ -122,7 +111,6 @@
     },
     {
         "patternName": "stretchydog",
-        "cup": "pseudo",
         "mapName": "Stretchydog",
         "mapZone1Name": "stretchydog",
         "mapZone2Name": "stretchydog",
@@ -133,7 +121,6 @@
     },
     {
         "patternName": "sunburst",
-        "cup": "pseudo",
         "mapName": "Sunburst",
         "mapZone1Name": "SUN I",
         "mapZone2Name": "SUN II",
@@ -144,7 +131,6 @@
     },
     {
         "patternName": "tripledouble",
-        "cup": "pseudo",
         "mapName": "Triple Double",
         "mapZone1Name": "triple double",
         "mapZone2Name": "triple deek",
