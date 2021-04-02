@@ -1,5 +1,9 @@
 gollyx-maps:
 
+Version 18.0:
+
+* Add pseudo maps and patterns
+
 Version 17.0:
 
 * Rename components from golly to gollyx
