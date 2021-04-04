@@ -51,11 +51,11 @@
     },
     {
         "patternName": "nastynonominos",
-        "mapName": "The Filthy McNasty",
-        "mapZone1Name": "filthy",
-        "mapZone2Name": "nasty",
-        "mapZone3Name": "how nasty",
-        "mapZone4Name": "filthy mcnasty",
+        "mapName": "Big and Nasty",
+        "mapZone1Name": "curveball",
+        "mapZone2Name": "sinker",
+        "mapZone3Name": "slider",
+        "mapZone4Name": "splitter",
         "mapDescription": "A row of nasty nonomino methuselahs",
         "mapStartSeason": 0
     },
