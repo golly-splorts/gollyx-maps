@@ -242,7 +242,7 @@ def methuselahsparse_twocolor(rows, cols, seed=None):
     """
     Create a sparsely-packed grid of methuselah patterns
     """
-    return _methuselahgrid_twocolor(rows, cols, seed, dense=True)
+    return _methuselahgrid_twocolor(rows, cols, seed, dense=False)
 
 
 def nastynonominos_twocolor(rows, cols, seed=None):
