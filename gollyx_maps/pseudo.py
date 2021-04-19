@@ -15,7 +15,7 @@ import itertools
 # Util methods
 
 
-def get_pseudomap_pattern_function_map():
+def get_pseudo_pattern_function_map():
     return {
         "bigsegment": bigsegment_twocolor,
         "gaussian": gaussian_twocolor,

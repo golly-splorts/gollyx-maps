@@ -21,7 +21,7 @@ from .error import GollyXPatternsError, GollyXMapsError
 # Util methods
 
 
-def get_hellmouthmap_pattern_function_map():
+def get_hellmouth_pattern_function_map():
     return {
         "bigsegment": bigsegment_twocolor,
         "eightpi": eightpi_twocolor,
