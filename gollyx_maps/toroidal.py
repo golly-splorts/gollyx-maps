@@ -273,7 +273,42 @@ def donutengine_twocolor(rows, cols, seed=None):
 
 
 def donutquadjustyna_twocolor(rows, cols, seed=None):
-    pass
+
+    if seed is not None:
+        random.seed(seed)
+
+    rotdegs = [0, 90, 180, 270]
+
+    centery = rows//2
+    centerxs = [cols//5, 2*cols//5, 3*cols//5, 4*cols//5]
+
+    justynas = []
+    for centerx in centerxs:
+
+        justcenterx = centerx + random.randint(-8, 8)
+        justcentery = centery + random.randint(-8, 8)
+
+        just = get_grid_pattern(
+            "justyna",
+            rows,
+            cols,
+            xoffset=justcenterx,
+            yoffset=justcentery,
+            hflip=(random.random() < 0.5),
+            vflip=(random.random() < 0.5),
+            rotdeg=random.choice(rotdegs),
+        )
+        justynas.append(just)
+
+    random.shuffle(justynas)
+
+    team1_pattern = pattern_union([justynas[0], justynas[1]])
+    team2_pattern = pattern_union([justynas[2], justynas[3]])
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return (s1, s2)
 
 
 def donutrandom_twocolor(rows, cols, seed=None):
