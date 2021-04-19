@@ -644,7 +644,34 @@ def donutsegment_twocolor(rows, cols, seed=None):
 
 
 def donutrandomsegment_twocolor(rows, cols, seed=None):
-    pass
+
+    if seed is not None:
+        random.seed(seed)
+
+    nhseg = random.randint(0, 4)
+    nvseg = random.randint(1, 10)
+
+    jitterx = 6
+    jittery = 8
+
+    gap_probability = random.random() * 0.06
+
+    team1_pattern, team2_pattern = segment_pattern(
+        rows,
+        cols,
+        seed,
+        colormode="random",
+        nhseg=nhseg,
+        nvseg=nvseg,
+        jitterx=jitterx,
+        jittery=jittery,
+        gap_probability=gap_probability,
+    )
+
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+
+    return pattern1_url, pattern2_url
 
 
 def donutmethuselahs_twocolor(rows, cols, seed=None):
