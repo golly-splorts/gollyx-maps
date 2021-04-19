@@ -58,7 +58,7 @@ def toroidal_methuselah_quadrants_pattern(
     # Only parameter to modify is number of methuselahs in each quadrant row
     # e.g., hmc = 4 means 4 methuselahs in one row, per quadrant
     if hmc is None:
-        hmcs = [1,2,3,4]
+        hmcs = [1, 2, 3, 4]
     else:
         hmcs = [hmc]
 
@@ -94,7 +94,11 @@ def toroidal_methuselah_quadrants_pattern(
             for a in range(1, nparts):
 
                 y = corner[0] + (rows // 4) + random.randint(-jittery, jittery)
-                x = corner[1] + a * ((cols // 2) // nparts) + random.randint(-jitterx, jitterx)
+                x = (
+                    corner[1]
+                    + a * ((cols // 2) // nparts)
+                    + random.randint(-jitterx, jitterx)
+                )
 
                 meth = random.choice(methuselah_names)
 
@@ -197,18 +201,18 @@ def doublegaussian_twocolor(rows, cols, seed=None):
         random.seed(seed)
 
     # Lower bound of 0.10, upper bound of 0.18
-    density = 0.10 + random.random()*0.08
+    density = 0.10 + random.random() * 0.08
 
     ncells = rows * cols
     nlivecells = ncells * density
-    nlivecellspt = nlivecells//2
+    nlivecellspt = nlivecells // 2
 
-    stdx = cols//random.randint(10,16)
-    stdy = rows//random.randint(3,8)
+    stdx = cols // random.randint(10, 16)
+    stdy = rows // random.randint(3, 8)
 
     # Left gaussian
-    centerx = cols//3
-    centery = rows//2
+    centerx = cols // 3
+    centery = rows // 2
     left_points = set()
     while len(left_points) < nlivecellspt:
         randx = int(random.gauss(centerx, stdx))
@@ -217,8 +221,8 @@ def doublegaussian_twocolor(rows, cols, seed=None):
             left_points.add((randx, randy))
 
     # Right gaussian
-    centerx = 2*cols//3
-    centery = rows//2
+    centerx = 2 * cols // 3
+    centery = rows // 2
     right_points = set()
     while len(right_points) < nlivecellspt:
         randx = int(random.gauss(centerx, stdx))
@@ -266,7 +270,9 @@ def doublegaussian_twocolor(rows, cols, seed=None):
 
 
 def donutengine_twocolor(rows, cols, seed=None):
-    team1_pattern, team2_pattern = toroidal_methuselah_quadrants_pattern(rows, cols, seed=seed) 
+    team1_pattern, team2_pattern = toroidal_methuselah_quadrants_pattern(
+        rows, cols, seed=seed
+    )
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
     return pattern1_url, pattern2_url
@@ -279,8 +285,8 @@ def donutquadjustyna_twocolor(rows, cols, seed=None):
 
     rotdegs = [0, 90, 180, 270]
 
-    centery = rows//2
-    centerxs = [cols//5, 2*cols//5, 3*cols//5, 4*cols//5]
+    centery = rows // 2
+    centerxs = [cols // 5, 2 * cols // 5, 3 * cols // 5, 4 * cols // 5]
 
     justynas = []
     for centerx in centerxs:
@@ -367,7 +373,7 @@ def donutrandompartition_twocolor(rows, cols, seed=None):
         random.seed(seed)
 
     ncells = rows * cols
-    density = 0.10 + random.random()*0.05
+    density = 0.10 + random.random() * 0.05
     nlivecells = int(ncells * density)
 
     mindim = min(rows, cols)
@@ -420,11 +426,125 @@ def donutrandompartition_twocolor(rows, cols, seed=None):
 
 
 def donuttimebomb_twocolor(rows, cols, seed=None):
-    pass
+    return _timebomb_oscillators_twocolor(rows, cols, revenge=False, seed=seed)
 
 
 def donuttimebombredux_twocolor(rows, cols, seed=None):
-    pass
+    return _timebomb_oscillators_twocolor(rows, cols, revenge=True, seed=seed)
+
+
+def _timebomb_oscillators_twocolor(rows, cols, revenge, seed=None):
+
+    if seed is not None:
+        random.seed(seed)
+
+    centerx = cols // 2
+    centery = rows // 2
+
+    osc_x = [
+        1 * cols // 9,
+        2 * cols // 9,
+        3 * cols // 9,
+        5 * cols // 9,
+        6 * cols // 9,
+        7 * cols // 9,
+    ]
+    osc_y = [
+        centery,
+    ] * 6
+
+    timebomb_x = [
+        4 * cols // 9,
+        8 * cols // 9,
+    ]
+    timebomb_y = [
+        centery,
+    ] * 2
+
+    def _get_oscillator_name():
+        if revenge:
+            oscillators = ["airforce", "koksgalaxy", "dinnertable", "vring64", "harbor"]
+            which_oscillator = random.choice(oscillators)
+        else:
+            which_oscillator = "quadrupleburloaferimeter"
+        return which_oscillator
+
+    # jitter for patterns
+    osc_jitter_x = 1  # 5
+    osc_jitter_y = 1  # 5
+    timebomb_jitter_x = 1  # 8
+    timebomb_jitter_y = 1  # 8
+
+    # Team assignments - even
+    osc_team_ass = [1, 1, 1, 2, 2, 2]
+    timebomb_team_ass = [2, 1]
+
+    if random.random() < 0.50:
+        osc_team_ass.reverse()
+
+    if random.random() < 0.50:
+        timebomb_team_ass.reverse()
+
+    if random.random() < 0.50:
+        random.shuffle(osc_team_ass)
+
+    # Assemble the team patterns
+    team1_patterns = []
+    team2_patterns = []
+
+    # Assemble the oscillator patterns
+    for k, (oscxx, oscyy, team_ass) in enumerate(zip(osc_x, osc_y, osc_team_ass)):
+        pattern = get_grid_pattern(
+            _get_oscillator_name(),
+            rows,
+            cols,
+            xoffset=oscxx + random.randint(-osc_jitter_x, osc_jitter_x),
+            yoffset=oscyy + random.randint(-osc_jitter_y, osc_jitter_y),
+        )
+        if team_ass == 1:
+            team1_patterns.append(pattern)
+        else:
+            team2_patterns.append(pattern)
+
+    # Assemble the timebomb patterns
+    for k, (timebombxx, timebombyy, team_ass) in enumerate(
+        zip(timebomb_x, timebomb_y, timebomb_team_ass)
+    ):
+        do_rotate = random.random() < 0.5
+        do_vflip = bool(random.getrandbits(1))
+
+        rotdeg = 0
+        if do_rotate:
+            if k == 0:
+                rotdeg = 90
+            elif k == 1:
+                rotdeg = 270
+
+        # We have to rotate first, then hflip, so don't provide hflip argument here
+        pattern = get_grid_pattern(
+            "timebomb",
+            rows,
+            cols,
+            xoffset=timebombxx + random.randint(-timebomb_jitter_x, timebomb_jitter_x),
+            yoffset=timebombyy + random.randint(-timebomb_jitter_y, timebomb_jitter_y),
+            rotdeg=rotdeg,
+        )
+
+        if do_vflip:
+            pattern = vflip_pattern(pattern)
+
+        if team_ass == 1:
+            team1_patterns.append(pattern)
+        else:
+            team2_patterns.append(pattern)
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
+
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+
+    return pattern1_url, pattern2_url
 
 
 def donutmultums_twocolor(rows, cols, seed=None):
@@ -490,7 +610,7 @@ def donutsegment_twocolor(rows, cols, seed=None):
         random.seed(seed)
 
     possible_nhseg = [0, 1, 3]
-    
+
     possible_nvseg = [1, 2, 3, 5]
 
     maxdim = max(rows, cols)
