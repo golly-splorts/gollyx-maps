@@ -457,26 +457,12 @@ def donutsegment_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    if rows < 50:
-        possible_nhseg = [0, 1]
-    if rows < 150:
-        possible_nhseg = [0, 1, 3]
-    if rows < 200:
-        possible_nhseg = [2, 3, 4]
-    else:
-        possible_nhseg = [3, 4]
-
-    if cols < 50:
-        possible_nvseg = [0, 1]
-    elif rows < 150:
-        possible_nvseg = [0, 1, 3]
-    elif rows < 200:
-        possible_nvseg = [2, 3, 5]
-    else:
-        possible_nvseg = [3, 5]
+    possible_nhseg = [0, 1, 3]
+    
+    possible_nvseg = [1, 2, 3, 5]
 
     maxdim = max(rows, cols)
-    gap_probability = random.random() * 0.06
+    gap_probability = random.random() * 0.05
 
     nhseg = 0
     nvseg = 0
