@@ -357,6 +357,74 @@ def segment_pattern(
     return team1_pattern, team2_pattern
 
 
+def rectangular_methuselah_quadrants_pattern(
+    rows, cols, seed=None, methuselah_hcounts=None, methuselah_vcounts=None, methuselah_names=None
+):
+    if seed is not None:
+        random.seed(seed)
+
+    # Store each quadrant and its upper left corner in (rows from top, cols from left) format
+    quadrants = [
+        (1, (0, cols // 2)),
+        (2, (0, 0)),
+        (3, (rows // 2, 0)),
+        (4, (rows // 2, cols // 2)),
+    ]
+
+    # Shuffle quadrants, first two and second two are now paired up as buddies
+    random.shuffle(quadrants)
+
+    rotdegs = [0, 90, 180, 270]
+
+    all_methuselahs = []
+
+    for buddy_index in [[0, 1], [2, 3]]:
+        # Decide how many methuselahs in this quad pair
+        hcount = random.choice(methuselah_hcounts)
+        vcount = random.choice(methuselah_vcounts)
+
+        for i in hcount:
+            for j in vcount:
+
+                y = corner[0] + i*(cols // 2)//vcount
+                x = corner[1] + i*(cols // 2)//hcount
+
+                meth = random.choice(methuselah_names)
+
+                pattern = get_grid_pattern(
+                    meth,
+                    rows,
+                    cols,
+                    xoffset=x,
+                    yoffset=y,
+                    hflip=bool(random.getrandbits(1)),
+                    vflip=bool(random.getrandbits(1)),
+                    rotdeg=random.choice(rotdegs),
+                )
+                livecount = get_pattern_livecount(meth)
+                all_methuselahs.append((livecount, pattern))
+
+    random.shuffle(all_methuselahs)
+    all_methuselahs.sort(key=itemgetter(0), reverse=True)
+
+    team1_patterns = []
+    team2_patterns = []
+
+    serpentine_pattern = [1, 2, 2, 1]
+    for i, (_, methuselah_pattern) in enumerate(all_methuselahs):
+        serpix = i % len(serpentine_pattern)
+        serpteam = serpentine_pattern[serpix]
+        if serpteam == 1:
+            team1_patterns.append(methuselah_pattern)
+        elif serpteam == 2:
+            team2_patterns.append(methuselah_pattern)
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
+
+    return team1_pattern, team2_pattern
+
+
 def methuselah_quadrants_pattern(
     rows, cols, seed=None, methuselah_counts=None, methuselah_names=None
 ):
