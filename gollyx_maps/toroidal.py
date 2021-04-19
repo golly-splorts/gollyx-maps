@@ -196,17 +196,23 @@ def doublegaussian_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
+    # Lower bound of 0.10, upper bound of 0.18
+    density = 0.10 + random.random()*0.08
+
     ncells = rows * cols
-    nlivecells = ncells * 0.10
+    nlivecells = ncells * density
     nlivecellspt = nlivecells//2
+
+    stdx = cols//random.randint(10,16)
+    stdy = rows//random.randint(3,8)
 
     # Left gaussian
     centerx = cols//3
     centery = rows//2
     left_points = set()
     while len(left_points) < nlivecellspt:
-        randx = int(random.gauss(centerx, cols//16))
-        randy = int(random.gauss(centery, rows//6))
+        randx = int(random.gauss(centerx, stdx))
+        randy = int(random.gauss(centery, stdy))
         if (randx >= 0 and randx < cols) and (randy >= 0 and randy < rows):
             left_points.add((randx, randy))
 
@@ -215,8 +221,8 @@ def doublegaussian_twocolor(rows, cols, seed=None):
     centery = rows//2
     right_points = set()
     while len(right_points) < nlivecellspt:
-        randx = int(random.gauss(centerx, cols//16))
-        randy = int(random.gauss(centery, rows//6))
+        randx = int(random.gauss(centerx, stdx))
+        randy = int(random.gauss(centery, stdy))
         if (randx >= 0 and randx < cols) and (randy >= 0 and randy < rows):
             right_points.add((randx, randy))
 
