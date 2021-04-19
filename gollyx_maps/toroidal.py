@@ -367,15 +367,12 @@ def donutrandompartition_twocolor(rows, cols, seed=None):
         random.seed(seed)
 
     ncells = rows * cols
-    nlivecells = int(ncells * 0.12)
+    density = 0.10 + random.random()*0.05
+    nlivecells = int(ncells * density)
 
     mindim = min(rows, cols)
-    if mindim < 200:
-        nhpartitions = random.choice([1, 2, 4, 5])
-        nvpartitions = random.choice([2, 4, 8])
-    else:
-        nhpartitions = random.choice([1, 2, 4, 6, 8])
-        nvpartitions = random.choice([2, 4, 6, 8, 10])
+    nhpartitions = random.choice([1, 2, 4, 6, 8])
+    nvpartitions = random.choice([1, 2, 4, 6, 8, 10, 12])
 
     w_vpartition = cols // nvpartitions
     h_hpartition = rows // nhpartitions
