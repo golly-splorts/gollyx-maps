@@ -130,7 +130,27 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "crabs",
+        "patternName": "randys",
+        "mapName": "Randy's Donuts",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "Psychadelic patterns for weird maps.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "porchlights",
+        "mapName": "Donut Hot Tub",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "A string of porch lights stretching across the map.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "crabdonuts",
         "mapName": "Crab Donuts",
         "mapZone1Name": "",
         "mapZone2Name": "",

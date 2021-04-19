@@ -91,6 +91,7 @@ def gaussian_twocolor(rows, cols, seed=None):
     while len(points) < nlivecells:
         randx = int(random.gauss(centerx, centerx//2))
         randy = int(random.gauss(centery, centery//2))
+        # Should be >= 0, bug
         if (randx > 0 and randx < cols) and (randy > 0 and randy < rows):
             points.add((randx, randy))
 
