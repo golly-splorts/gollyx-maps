@@ -31,7 +31,7 @@ def get_toroidal_pattern_function_map():
         "donutrandompartition": donutrandompartition_twocolor,
         "donuttimebomb": donuttimebomb_twocolor,
         "donuttimebombredux": donuttimebombredux_twocolor,
-        "donutmutlums": donutmultums_twocolor,
+        "donutmultums": donutmultums_twocolor,
         "bigsegment": donutsegment_twocolor,
         "randomsegment": donutrandomsegment_twocolor,
         "donutmethuselahs": donutmethuselahs_twocolor,
@@ -554,15 +554,17 @@ def donutmultums_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    L = 20
+    L = 22
 
     multum_x_loc = [
+        cols // 2 - 4 * L,
         cols // 2 - 3 * L,
         cols // 2 - 2 * L,
         cols // 2 - L,
         cols // 2 + L,
         cols // 2 + 2 * L,
         cols // 2 + 3 * L,
+        cols // 2 + 4 * L,
     ]
 
     multum_y_loc = [rows // 2]
@@ -576,7 +578,7 @@ def donutmultums_twocolor(rows, cols, seed=None):
     ] * (npoints - npoints // 2)
     random.shuffle(team_assignments)
 
-    jitterx = 9
+    jitterx = 8
     jittery = 6
 
     team1_patterns = []
