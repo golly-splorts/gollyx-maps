@@ -38,7 +38,7 @@ def get_all_map_patterns(cup):
     return list(pattern_map.keys())
 
 
-def get_map_realization(cup, patternname, rows=100, columns=120):
+def get_map_realization(cup, patternname, rows=100, columns=120, cell_size=None):
     """
     Return a JSON map with map names, zone names, and initial conditions.
 
@@ -70,7 +70,11 @@ def get_map_realization(cup, patternname, rows=100, columns=120):
 
     # Include geometry info
     maxdim = max(rows, columns)
-    if columns < 100:
+
+    if cell_size is not None:
+        cellSize = cell_size
+
+    elif columns < 100:
         cellSize = 10
 
     elif columns < 125:
