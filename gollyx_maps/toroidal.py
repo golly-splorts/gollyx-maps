@@ -197,30 +197,28 @@ def doublegaussian_twocolor(rows, cols, seed=None):
         random.seed(seed)
 
     ncells = rows * cols
-    nlivecells = ncells * 0.15
+    nlivecells = ncells * 0.10
     nlivecellspt = nlivecells//2
 
     # Left gaussian
-    centerx = cols//4
+    centerx = cols//3
     centery = rows//2
     left_points = set()
     while len(left_points) < nlivecellspt:
-        randx = int(random.gauss(centerx, centerx//2))
-        randx = (randx + 2*cols)%cols
-        randy = int(random.gauss(centery, centery//2))
-        randy = (randy + 2*rows)%rows
-        points.add((randx, randy))
+        randx = int(random.gauss(centerx, cols//16))
+        randy = int(random.gauss(centery, rows//6))
+        if (randx >= 0 and randx < cols) and (randy >= 0 and randy < rows):
+            left_points.add((randx, randy))
 
     # Right gaussian
-    centerx = cols//4
+    centerx = 2*cols//3
     centery = rows//2
     right_points = set()
     while len(right_points) < nlivecellspt:
-        randx = int(random.gauss(centerx, centerx//2))
-        randx = (randx + 2*cols)%cols
-        randy = int(random.gauss(centery, centery//2))
-        randy = (randy + 2*rows)%rows
-        points.add((randx, randy))
+        randx = int(random.gauss(centerx, cols//16))
+        randy = int(random.gauss(centery, rows//6))
+        if (randx >= 0 and randx < cols) and (randy >= 0 and randy < rows):
+            right_points.add((randx, randy))
 
     # Assign teams left/right side
     if random.random() < 0.50:
@@ -513,8 +511,51 @@ def donutmath_twocolor(rows, cols, seed=None):
     pass
 
 
+@retry_on_failure
 def randys_twocolor(rows, cols, seed=None):
-    pass
+    if seed is not None:
+        random.seed(seed)
+
+    centerx = cols // 2
+    centery = rows // 2
+
+    # Place one r omino every 15 grid spaces,
+    # maximum number - 1
+    maxshapes = centerx // 15
+    c1patterns = []
+    c2patterns = []
+    for i in range(maxshapes - 1):
+        end = (i + 1) * 15
+        start = end - 7
+        pattern1 = get_grid_pattern(
+            "rpentomino",
+            rows,
+            cols,
+            xoffset=centerx - random.randint(start, end),
+            yoffset=centery + random.randint(-12, 12),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c1patterns.append(pattern1)
+
+        pattern2 = get_grid_pattern(
+            "rpentomino",
+            rows,
+            cols,
+            xoffset=centerx + random.randint(start, end),
+            yoffset=centery + random.randint(-12, 12),
+            hflip=bool(random.getrandbits(1)),
+            vflip=bool(random.getrandbits(1)),
+        )
+        c2patterns.append(pattern2)
+
+    s1 = pattern_union(c1patterns)
+    s2 = pattern_union(c2patterns)
+
+    pattern1_url = pattern2url(s1)
+    pattern2_url = pattern2url(s2)
+
+    return pattern1_url, pattern2_url
 
 
 def porchlights_twocolor(rows, cols, seed=None):
