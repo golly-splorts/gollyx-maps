@@ -1,0 +1,142 @@
+[
+    {
+        "patternName": "donutpi",
+        "mapName": "Donut Pie",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "A row of Pi pentominos with some vertical jitter.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "doublegaussian",
+        "mapName": "Double Rainbow",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "A bimodal Gaussian of random points.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donutcore",
+        "mapName": "Donut Core",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "Switch engine methuselahs covering the grid.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "quadjustyna",
+        "mapName": "Justyna Donut",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "Four justyna methuselahs, randomly oriented.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donutrandom",
+        "mapName": "East Donut Desert",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "A completely random map layout, territory split 50/50.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donutrandompartition",
+        "mapName": "East Donut Dessert",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "Randomly partitioned random maps, with teams placed in alternating partitions.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donuttimebomb",
+        "mapName": "West Donut Desert",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "Three quadruple burloaferimeters holding defensive positions against timebomb methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donuttimebombredux",
+        "mapName": "West Donut Dessert",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "Three large oscillators holding defensive positions against timebomb methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donutmultums",
+        "mapName": "Donut Cave",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "A row of multum in parvo methuselahs performing acts of reverse disappearing.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bigsegment",
+        "mapName": "Donut Frame",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "A map cut by horizontal and vertical segments of solid colors.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "randomsegment",
+        "mapName": "Donut Candy",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "A map cut by horizontal and vertical segments of random colors.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donutmethuselahs",
+        "mapName": "Donut Fisticuffs",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "A map littered with various fast-growing methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donutmath",
+        "mapName": "Because Math",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "Map initial conditions created from mathematical expressions for bitfields.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "crabs",
+        "mapName": "Crab Donuts",
+        "mapZone1Name": "",
+        "mapZone2Name": "",
+        "mapZone3Name": "",
+        "mapZone4Name": "",
+        "mapDescription": "Crabstretchers all over.",
+        "mapStartSeason": 0
+    }
+]
