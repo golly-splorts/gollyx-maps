@@ -380,11 +380,13 @@ def donutrandompartition_twocolor(rows, cols, seed=None):
     nlivecells = int(ncells * density)
 
     mindim = min(rows, cols)
-    nhpartitions = random.choice([1, 2, 4])
-    nvpartitions = random.choice([1, 2, 4, 6, 8])
+    nhpartitions = random.choice([2, 4])
+    nvpartitions = random.choice([2, 4, 6, 8, 10, 12])
 
     w_vpartition = cols // nvpartitions
     h_hpartition = rows // nhpartitions
+    if w_vpartition==0 or h_hpartition==0:
+        raise Exception("Error: width/height of partitions is 0")
 
     team1_points = set()
     while len(team1_points) < nlivecells // 2:
