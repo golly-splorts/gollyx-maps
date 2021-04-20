@@ -149,7 +149,6 @@ def toroidal_methuselah_quadrants_pattern(
 # Map methods
 
 
-@retry_on_failure
 def donutpi_twocolor(rows, cols, seed=None):
     """
     Fill a row with pi heptominos
@@ -381,8 +380,8 @@ def donutrandompartition_twocolor(rows, cols, seed=None):
     nlivecells = int(ncells * density)
 
     mindim = min(rows, cols)
-    nhpartitions = random.choice([1, 2, 4, 6, 8])
-    nvpartitions = random.choice([1, 2, 4, 6, 8, 10, 12])
+    nhpartitions = random.choice([1, 2, 4])
+    nvpartitions = random.choice([1, 2, 4, 6, 8])
 
     w_vpartition = cols // nvpartitions
     h_hpartition = rows // nhpartitions
@@ -630,8 +629,8 @@ def donutsegment_twocolor(rows, cols, seed=None):
         nhseg = random.choice(possible_nhseg)
         nvseg = random.choice(possible_nvseg)
 
-    jitterx = 15
-    jittery = 15
+    jitterx = 8
+    jittery = 5
 
     team1_pattern, team2_pattern = segment_pattern(
         rows,
@@ -656,11 +655,11 @@ def donutrandomsegment_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    nhseg = random.randint(0, 4)
-    nvseg = random.randint(1, 10)
+    nhseg = random.randint(0, 3)
+    nvseg = random.randint(1, 7)
 
-    jitterx = 6
-    jittery = 8
+    jitterx = 5
+    jittery = 5
 
     gap_probability = random.random() * 0.06
 
@@ -691,7 +690,6 @@ def donutmethuselahs_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
-@retry_on_failure
 def donutmath_twocolor(rows, cols, seed=None):
 
     def is_prime(n):
@@ -791,7 +789,6 @@ def _expression_pattern(
     return team1_pattern, team2_pattern
 
 
-@retry_on_failure
 def randys_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
