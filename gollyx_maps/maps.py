@@ -15,14 +15,16 @@ from .patterns import (
 )
 from .utils import pattern2url, retry_on_failure
 from .error import GollyXPatternsError, GollyXMapsError
-from .hellmouth import get_hellmouthmap_pattern_function_map
-from .pseudo import get_pseudomap_pattern_function_map
+from .hellmouth import get_hellmouth_pattern_function_map
+from .pseudo import get_pseudo_pattern_function_map
+from .toroidal import get_toroidal_pattern_function_map
 
 
 def get_pattern_function_map(cup):
     m = {
-        'hellmouth': get_hellmouthmap_pattern_function_map,
-        'pseudo': get_pseudomap_pattern_function_map,
+        'hellmouth': get_hellmouth_pattern_function_map,
+        'pseudo': get_pseudo_pattern_function_map,
+        'toroidal': get_toroidal_pattern_function_map,
     }
     return m[cup]
 
@@ -38,7 +40,7 @@ def get_all_map_patterns(cup):
     return list(pattern_map.keys())
 
 
-def get_map_realization(cup, patternname, rows=100, columns=120):
+def get_map_realization(cup, patternname, rows=100, columns=120, cell_size=None):
     """
     Return a JSON map with map names, zone names, and initial conditions.
 
@@ -58,9 +60,6 @@ def get_map_realization(cup, patternname, rows=100, columns=120):
         "cellSize:" k
     }
     """
-    if rows < 100 or columns < 120:
-        raise GollyXMapsError(f"Error: you must have at least 100 rows and 120 columns")
-
     # Get map data (pattern, name, zone names)
     mapdat = get_map_metadata(cup, patternname)
 
@@ -73,7 +72,11 @@ def get_map_realization(cup, patternname, rows=100, columns=120):
 
     # Include geometry info
     maxdim = max(rows, columns)
-    if columns < 100:
+
+    if cell_size is not None:
+        cellSize = cell_size
+
+    elif columns < 100:
         cellSize = 10
 
     elif columns < 125:

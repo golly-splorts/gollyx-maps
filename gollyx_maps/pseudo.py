@@ -15,7 +15,7 @@ import itertools
 # Util methods
 
 
-def get_pseudomap_pattern_function_map():
+def get_pseudo_pattern_function_map():
     return {
         "bigsegment": bigsegment_twocolor,
         "gaussian": gaussian_twocolor,
@@ -91,6 +91,7 @@ def gaussian_twocolor(rows, cols, seed=None):
     while len(points) < nlivecells:
         randx = int(random.gauss(centerx, centerx//2))
         randy = int(random.gauss(centery, centery//2))
+        # Should be >= 0, bug
         if (randx > 0 and randx < cols) and (randy > 0 and randy < rows):
             points.add((randx, randy))
 
