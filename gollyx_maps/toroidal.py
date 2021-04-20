@@ -921,4 +921,39 @@ def porchlights_twocolor(rows, cols, seed=None):
 
 
 def crabdonuts_twocolor(rows, cols, seed=None):
-    pass
+
+    if seed is not None:
+        random.seed(seed)
+
+    rotdegs = [0, 90, 180, 270]
+
+    centery = rows // 2
+    centerxs = [cols // 5, 2 * cols // 5, 3 * cols // 5, 4 * cols // 5]
+
+    crabs = []
+    for centerx in centerxs:
+
+        crabcenterx = centerx + random.randint(-8, 8)
+        crabcentery = centery + random.randint(-8, 8)
+
+        crab = get_grid_pattern(
+            "crabstretcher",
+            rows,
+            cols,
+            xoffset=crabcenterx,
+            yoffset=crabcentery,
+            hflip=(random.random() < 0.5),
+            vflip=(random.random() < 0.5),
+            rotdeg=random.choice(rotdegs),
+        )
+        crabs.append(crab)
+
+    random.shuffle(crabs)
+
+    team1_pattern = pattern_union([crabs[0], crabs[1]])
+    team2_pattern = pattern_union([crabs[2], crabs[3]])
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return (s1, s2)
