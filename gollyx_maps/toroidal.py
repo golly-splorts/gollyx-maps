@@ -690,7 +690,91 @@ def donutmethuselahs_twocolor(rows, cols, seed=None):
 
 
 def donutmath_twocolor(rows, cols, seed=None):
-    pass
+
+    def is_prime(n):
+        n = abs(n)
+        if n == 2 or n == 3: return True
+        if n < 2 or n%2 == 0: return False
+        if n < 9: return True
+        if n%3 == 0: return False
+        r = int(n**0.5)
+        # since all primes > 3 are of the form 6n ± 1
+        # start with f=5 (which is prime)
+        # and test f, f+2 for being prime
+        # then loop by 6.
+        f = 5
+        while f <= r:
+            if n % f == 0: return False
+            if n % (f+2) == 0: return False
+            f += 6
+        return True
+
+    def is_not_prime(n):
+        return not is_prime(n)
+
+    p = random.choice([7, 11, 13, 19, 23, 25, 27, 32, 37, 47, 57, 77, 99])
+
+    # Random choice of which form to use
+    if random.random() < 0.50:
+        f = lambda x, y: int(is_not_prime((x*x & y*y) % p))
+    else:
+        f = lambda x, y: int(is_not_prime((x & y) % p))
+
+    xoffset = 0
+    yoffset = 0
+
+    team1_pattern, team2_pattern = _expression_pattern(
+        rows,
+        cols,
+        seed,
+        f,
+        xoffset=xoffset,
+        yoffset=yoffset,
+    )
+
+    pattern1_url = pattern2url(team1_pattern)
+    pattern2_url = pattern2url(team2_pattern)
+
+    return pattern1_url, pattern2_url
+
+
+def _expression_pattern(
+    rows,
+    cols,
+    seed,
+    f_handle,
+    xoffset=0,
+    yoffset=0,
+):
+    # These store the the .o diagrams (flat=False means these are lists of lists of one char)
+    team1_pattern = get_grid_empty(rows, cols, flat=False)
+    team2_pattern = get_grid_empty(rows, cols, flat=False)
+
+    # Not the most efficient way, but the lazy way
+
+    # Assemble a list of live cell coordinates
+    coordinates = []
+    for xtrue in range(0, cols):
+        for ytrue in range(0, rows):
+            xtransform = xtrue - xoffset
+            ytransform = ytrue - yoffset
+            if f_handle(xtransform, ytransform) == 0:
+                coordinates.append((xtrue, ytrue))
+
+    # Shuffle live cell cordinates
+    random.shuffle(coordinates)
+
+    # Assign live cell coordinates to team 1/2 using serpentine pattern
+    serpentine_pattern = [1, 2, 2, 1]
+    for i, (x, y) in enumerate(coordinates):
+        serpix = i % len(serpentine_pattern)
+        serp_team = serpentine_pattern[serpix]
+        if serp_team == 1:
+            team1_pattern[y][x] = "o"
+        elif serp_team == 2:
+            team2_pattern[y][x] = "o"
+
+    return team1_pattern, team2_pattern
 
 
 @retry_on_failure
@@ -752,26 +836,29 @@ def porchlights_twocolor(rows, cols, seed=None):
 
     jitterx = 4
     jittery = 4
-    intersectys = [(j+1)*rows//(nsegments+1) + random.randint(-jittery, jittery) for j in range(nsegments)]
+    intersectys = [
+        (j + 1) * rows // (nsegments + 1) + random.randint(-jittery, jittery)
+        for j in range(nsegments)
+    ]
     random.shuffle(intersectys)
 
     def _get_bounds(z, dim):
-        zstart = z - dim//2
-        zend = z + (dim - dim//2)
+        zstart = z - dim // 2
+        zend = z + (dim - dim // 2)
         return zstart, zend
 
     # Add the string
-    y1s = intersectys[:len(intersectys)//2]
-    y2s = intersectys[len(intersectys)//2:]
+    y1s = intersectys[: len(intersectys) // 2]
+    y2s = intersectys[len(intersectys) // 2 :]
     for ix in range(0, cols):
 
         for y1 in y1s:
             for iy in range(*_get_bounds(y1, thickness)):
-                team1_pattern[iy][ix] = 'o'
+                team1_pattern[iy][ix] = "o"
 
         for y2 in y2s:
             for iy in range(*_get_bounds(y2, thickness)):
-                team2_pattern[iy][ix] = 'o'
+                team2_pattern[iy][ix] = "o"
 
     # Add some lights to the string
 
@@ -782,17 +869,17 @@ def porchlights_twocolor(rows, cols, seed=None):
         ylightstop = miny - random.randint(2, 3)
         ylightsbot = maxy + random.randint(2, 3)
         ix = random.randint(4, 12)
-        while ix < cols-1:
+        while ix < cols - 1:
             if random.random() < 0.50:
-                team1_pattern[ylightsbot][ix] = 'o'
-                team1_pattern[ylightsbot][ix+1] = 'o'
-                team1_pattern[ylightsbot+1][ix] = 'o'
-                team1_pattern[ylightsbot+1][ix+1] = 'o'
+                team1_pattern[ylightsbot][ix] = "o"
+                team1_pattern[ylightsbot][ix + 1] = "o"
+                team1_pattern[ylightsbot + 1][ix] = "o"
+                team1_pattern[ylightsbot + 1][ix + 1] = "o"
             else:
-                team1_pattern[ylightstop][ix] = 'o'
-                team1_pattern[ylightstop][ix+1] = 'o'
-                team1_pattern[ylightstop-1][ix] = 'o'
-                team1_pattern[ylightstop-1][ix+1] = 'o'
+                team1_pattern[ylightstop][ix] = "o"
+                team1_pattern[ylightstop][ix + 1] = "o"
+                team1_pattern[ylightstop - 1][ix] = "o"
+                team1_pattern[ylightstop - 1][ix + 1] = "o"
             ix += random.randint(10, 12) + random.randint(-jitterx, jitterx)
 
     for y2 in y2s:
@@ -802,17 +889,17 @@ def porchlights_twocolor(rows, cols, seed=None):
         ylightstop = miny - random.randint(2, 3)
         ylightsbot = maxy + random.randint(2, 3)
         ix = random.randint(4, 12)
-        while ix < cols-1:
+        while ix < cols - 1:
             if random.random() < 0.50:
-                team2_pattern[ylightsbot][ix] = 'o'
-                team2_pattern[ylightsbot][ix+1] = 'o'
-                team2_pattern[ylightsbot+1][ix] = 'o'
-                team2_pattern[ylightsbot+1][ix+1] = 'o'
+                team2_pattern[ylightsbot][ix] = "o"
+                team2_pattern[ylightsbot][ix + 1] = "o"
+                team2_pattern[ylightsbot + 1][ix] = "o"
+                team2_pattern[ylightsbot + 1][ix + 1] = "o"
             else:
-                team2_pattern[ylightstop][ix] = 'o'
-                team2_pattern[ylightstop][ix+1] = 'o'
-                team2_pattern[ylightstop-1][ix] = 'o'
-                team2_pattern[ylightstop-1][ix+1] = 'o'
+                team2_pattern[ylightstop][ix] = "o"
+                team2_pattern[ylightstop][ix + 1] = "o"
+                team2_pattern[ylightstop - 1][ix] = "o"
+                team2_pattern[ylightstop - 1][ix + 1] = "o"
             ix += random.randint(10, 12) + random.randint(-jitterx, jitterx)
 
     pattern1_url = pattern2url(team1_pattern)
