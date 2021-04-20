@@ -9,4 +9,3 @@ print(
     + m["url"]
     + f"&rows={rows}&cols={cols}&cellSize=3"
 )
-
