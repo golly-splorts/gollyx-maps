@@ -24,6 +24,10 @@ from .error import GollyXPatternsError, GollyXMapsError
 
 def get_toroidal_pattern_function_map():
     return {
+        "crabdonuts": crabdonuts_twocolor,
+        "randys": randys_twocolor,
+        "porchlights": porchlights_twocolor,
+        "donutmethuselahs": donutmethuselahs_twocolor,
         "donutpi": donutpi_twocolor,
         "doublegaussian": doublegaussian_twocolor,
         "donutcore": donutengine_twocolor,
@@ -35,11 +39,7 @@ def get_toroidal_pattern_function_map():
         "donutmultums": donutmultums_twocolor,
         "bigsegment": donutsegment_twocolor,
         "randomsegment": donutrandomsegment_twocolor,
-        "donutmethuselahs": donutmethuselahs_twocolor,
         "donutmath": donutmath_twocolor,
-        "randys": randys_twocolor,
-        "porchlights": porchlights_twocolor,
-        "crabdonuts": crabdonuts_twocolor,
     }
 
 
