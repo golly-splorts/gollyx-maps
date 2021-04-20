@@ -1032,15 +1032,18 @@ def twomultum_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    L = 22
+
+    mindim = min(rows, cols)
+    if mindim < 200:
+        L = 15
+    else:
+        L = 25
 
     multum_x_loc = [
-        cols // 2 - 3 * L,
         cols // 2 - 2 * L,
         cols // 2 - L,
         cols // 2 + L,
         cols // 2 + 2 * L,
-        cols // 2 + 3 * L,
     ]
 
     multum_y_loc = [rows // 2]
@@ -1054,8 +1057,8 @@ def twomultum_twocolor(rows, cols, seed=None):
     ] * (npoints - npoints // 2)
     random.shuffle(team_assignments)
 
-    jitterx = 14
-    jittery = 10
+    jitterx = 6
+    jittery = 12
 
     team1_patterns = []
     team2_patterns = []

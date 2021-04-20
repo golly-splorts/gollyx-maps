@@ -558,7 +558,7 @@ def donutmultums_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    L = 22
+    L = 17
 
     multum_x_loc = [
         cols // 2 - 4 * L,
@@ -582,18 +582,20 @@ def donutmultums_twocolor(rows, cols, seed=None):
     ] * (npoints - npoints // 2)
     random.shuffle(team_assignments)
 
-    jitterx = 8
-    jittery = 6
+    jitterx = 10
+    jittery = 8
 
     team1_patterns = []
     team2_patterns = []
     for i, (x, y) in enumerate(itertools.product(multum_x_loc, multum_y_loc)):
+        xoff = x + random.randint(-jitterx, jitterx)
+        yoff = y + random.randint(-jittery, jittery)
         m = get_grid_pattern(
             "multuminparvo",
             rows,
             cols,
-            xoffset=x + random.randint(-jitterx, jitterx),
-            yoffset=y + random.randint(-jittery, jittery),
+            xoffset=xoff,
+            yoffset=yoff,
             vflip=(y < rows // 2 or random.random() < 0.25),
         )
         if team_assignments[i] == 1:

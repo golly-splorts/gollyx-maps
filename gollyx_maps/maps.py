@@ -40,7 +40,7 @@ def get_all_map_patterns(cup):
     return list(pattern_map.keys())
 
 
-def get_map_realization(cup, patternname, rows=100, columns=120, cell_size=None):
+def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=None):
     """
     Return a JSON map with map names, zone names, and initial conditions.
 
@@ -60,6 +60,16 @@ def get_map_realization(cup, patternname, rows=100, columns=120, cell_size=None)
         "cellSize:" k
     }
     """
+
+    # Set default sizes if none specified
+    if rows is None and columns is None:
+        if cup=="hellmouth" or cup=="pseudo":
+            rows = 100
+            columns = 120
+        elif cup=="toroidal":
+            rows = 40
+            columns = 280
+
     # Get map data (pattern, name, zone names)
     mapdat = get_map_metadata(cup, patternname)
 
