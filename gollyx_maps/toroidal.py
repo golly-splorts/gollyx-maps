@@ -689,6 +689,7 @@ def donutmethuselahs_twocolor(rows, cols, seed=None):
     return pattern1_url, pattern2_url
 
 
+@retry_on_failure
 def donutmath_twocolor(rows, cols, seed=None):
 
     def is_prime(n):
@@ -712,13 +713,21 @@ def donutmath_twocolor(rows, cols, seed=None):
     def is_not_prime(n):
         return not is_prime(n)
 
-    p = random.choice([7, 11, 13, 19, 23, 25, 27, 32, 37, 47, 57, 77, 99])
 
     # Random choice of which form to use
-    if random.random() < 0.50:
+    coin = random.random()
+
+    if coin < 0.33:
+        p = random.choice([7, 11, 13, 19, 23, 25, 27, 32, 37, 47, 57, 77, 99])
         f = lambda x, y: int(is_not_prime((x*x & y*y) % p))
-    else:
+
+    elif coin < 0.66:
+        p = random.choice([7, 11, 13, 19, 23, 25, 27, 32, 37, 47, 57, 77, 99])
         f = lambda x, y: int(is_not_prime((x & y) % p))
+
+    else:
+        p = random.choice([27, 32, 37, 47, 57, 77, 99])
+        f = lambda x, y: int(is_not_prime((x ^ y) % p))
 
     xoffset = 0
     yoffset = 0
@@ -734,6 +743,9 @@ def donutmath_twocolor(rows, cols, seed=None):
 
     pattern1_url = pattern2url(team1_pattern)
     pattern2_url = pattern2url(team2_pattern)
+
+    if pattern1_url == "[]" or pattern2_url == "[]":
+        raise GollyXPatternsError("Error with bitfield: everything is empty")
 
     return pattern1_url, pattern2_url
 
