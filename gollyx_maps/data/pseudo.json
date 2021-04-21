@@ -26,7 +26,7 @@
         "mapZone2Name": "pins",
         "mapZone3Name": "tumblers",
         "mapZone4Name": "jambs",
-        "mapDescription": "",
+        "mapDescription": "Lockpick methuselahs fenced in by random segments.",
         "mapStartSeason": 0
     },
     {
@@ -76,7 +76,7 @@
         "mapZone2Name": "swing",
         "mapZone3Name": "steps",
         "mapZone4Name": "doggie",
-        "mapDescription": "",
+        "mapDescription": "Thick strings of lights stretching across the grid.",
         "mapStartSeason": 0
     },
     {
