@@ -625,11 +625,8 @@ def donutsegment_twocolor(rows, cols, seed=None):
     maxdim = max(rows, cols)
     gap_probability = random.random() * 0.04
 
-    nhseg = 0
-    nvseg = 0
-    while (nhseg == 0 and nvseg == 0) or (nhseg % 2 != 0 and nvseg == 0):
-        nhseg = random.choice(possible_nhseg)
-        nvseg = random.choice(possible_nvseg)
+    nhseg = random.choice(possible_nhseg)
+    nvseg = random.choice(possible_nvseg)
 
     jitterx = 8
     jittery = 5
@@ -657,7 +654,7 @@ def donutrandomsegment_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    nhseg = random.randint(0, 3)
+    nhseg = random.randint(1, 3)
     nvseg = random.randint(1, 7)
 
     jitterx = 5
