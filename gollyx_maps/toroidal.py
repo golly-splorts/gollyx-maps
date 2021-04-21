@@ -380,8 +380,8 @@ def donutrandompartition_twocolor(rows, cols, seed=None):
     nlivecells = int(ncells * density)
 
     mindim = min(rows, cols)
-    nhpartitions = random.choice([2, 4])
-    nvpartitions = random.choice([2, 4, 6, 8, 10, 12])
+    nhpartitions = random.choice([1, 2, 4])
+    nvpartitions = random.choice([8, 10, 12, 14, 16])
 
     w_vpartition = cols // nvpartitions
     h_hpartition = rows // nhpartitions
@@ -618,12 +618,12 @@ def donutsegment_twocolor(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    possible_nhseg = [0, 1, 3]
+    possible_nhseg = [1, 3]
 
-    possible_nvseg = [1, 2, 3, 5]
+    possible_nvseg = [1, 2, 3, 5, 7, 9]
 
     maxdim = max(rows, cols)
-    gap_probability = random.random() * 0.05
+    gap_probability = random.random() * 0.04
 
     nhseg = 0
     nvseg = 0
