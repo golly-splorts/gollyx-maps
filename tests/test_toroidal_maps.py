@@ -153,7 +153,7 @@ class ToroidalCupMapsTest(unittest.TestCase):
         (artifact: missing any cells for row 0.)
         """
         cup = self.cup
-        random_patterns = ["random", "randompartition"]
+        random_patterns = ["donutrandom", "donutrandompartition"]
         for pattern_name in random_patterns:
             r = 40
             c = 280
