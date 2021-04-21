@@ -86,22 +86,22 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     if cell_size is not None:
         cellSize = cell_size
 
-    elif columns < 100:
+    elif columns < 80:
         cellSize = 10
 
-    elif columns < 125:
+    elif columns < 100:
         cellSize = 8
 
     elif columns < 150:
         cellSize = 7
 
-    elif columns < 175:
+    elif columns < 170:
         cellSize = 5
 
     elif columns < 200:
         cellSize = 4
 
-    elif columns < 275:
+    elif columns < 300:
         cellSize = 3
 
     elif columns < 375:
