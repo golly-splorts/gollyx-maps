@@ -620,7 +620,7 @@ def donutsegment_twocolor(rows, cols, seed=None):
 
     possible_nhseg = [1, 3]
 
-    possible_nvseg = [1, 2, 3, 5, 7, 9]
+    possible_nvseg = [1, 3, 5, 7, 9]
 
     maxdim = max(rows, cols)
     gap_probability = random.random() * 0.04

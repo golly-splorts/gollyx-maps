@@ -304,6 +304,13 @@ def segment_pattern(
             ta_ix = 0
             for y in range(starty, endy + 1):
                 for x in range(startx, endx + 1):
+
+                    # Trying to fix a problem with no hsegments
+                    if y < 0:
+                        y = 1
+                    if x < 0:
+                        x = 1
+
                     if team_assignments[ta_ix] == 1:
                         team1_pattern[y][x] = "o"
                     elif team_assignments[ta_ix] == 2:
@@ -345,10 +352,17 @@ def segment_pattern(
                 for x in range(startx, endx + 1):
                     if x >= cols:
                         continue
+
+                    if y < 0:
+                        y = 1
+                    if x < 0:
+                        x = 1
+
                     if team_assignments[ta_ix] == 1:
                         team1_pattern[y][x] = "o"
                     elif team_assignments[ta_ix] == 2:
                         team2_pattern[y][x] = "o"
+
                     ta_ix += 1
 
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
