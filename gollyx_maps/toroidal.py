@@ -59,7 +59,7 @@ def toroidal_methuselah_quadrants_pattern(
     # Only parameter to modify is number of methuselahs in each quadrant row
     # e.g., hmc = 4 means 4 methuselahs in one row, per quadrant
     if hmc is None:
-        hmcs = [2, 3, 4, 5]
+        hmcs = [2, 4, 6]
     else:
         hmcs = [hmc]
 
