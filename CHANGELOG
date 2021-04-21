@@ -1,5 +1,10 @@
 gollyx-maps:
 
+Version 20.0:
+
+* Add toroidal maps and patterns
+* Fix bugs, generalize for more cups
+
 Version 18.0:
 
 * Add pseudo maps and patterns
