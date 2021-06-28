@@ -7,6 +7,9 @@ name = "matrix"
 COLS = 200
 NPARTS = 8
 ALIVE_DENSITY = 0.5
+MIN_STARS = 3
+MAX_STARS = 9
+MEAN_STREAK_SIZE = 5
 
 
 def make_map(name, seed=None):
@@ -16,7 +19,15 @@ def make_map(name, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    fmap = {"starfield": starfield, "vector": vector, "matrix": matrix, "lake": lake}
+    fmap = {
+        "starfield": starfield,
+        "vector": vector,
+        "matrix": matrix,
+        "lake": lake,
+        "waterfall": waterfall,
+        "river": river,
+        "lighthouse": lighthouse,
+    }
 
     if name not in fmap:
         raise Exception(f"Could not find map name {name}")
@@ -50,15 +61,17 @@ def empty_dragon_patterns(cols):
 
 def starfield(cols, nparts, seed=None):
     """
-    Starfield: very sparse, one partition
+    Starfield: very sparse, one partition.
+    This method does not use the nparts command,
+    just there for consistent method signature.
     """
-    # We don't use nparts, it is just there so we have consistent method signatures
+
     if seed is not None:
         random.seed(seed)
 
     # Parameters:
-    min_stars = 3
-    max_stars = 9
+    min_stars = MIN_STARS
+    max_stars = MAX_STARS
     nstars = random.randint(min_stars, max_stars)
 
     patterns = empty_dragon_patterns(cols)
@@ -74,6 +87,89 @@ def starfield(cols, nparts, seed=None):
     return patterns
 
 
+def waterfall(cols, nparts, seed=None):
+    """
+    Waterfall: two-color random streaks.
+    This method does not use the nparts command,
+    just there for consistent method signature.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    # Parameters:
+    mean_size = MEAN_STREAK_SIZE
+
+    patterns = empty_dragon_patterns(cols)
+
+    ip = 0
+    alivedeadsymbol = "."
+    while ip < cols:
+
+        # Flip the switch
+        if alivedeadsymbol == ".":
+            alivedeadsymbol = "o"
+        elif alivedeadsymbol == "o":
+            alivedeadsymbol = "."
+
+        # Generate a new interval length
+        interval = round(random.expovariate(1.0 / mean_size))
+        if interval == 0:
+            interval = 1
+
+        # Loop over the interval, incrementing ip
+        # and making cells alive as we go.
+        for j in range(interval):
+            color = random.choice([0, 1])
+            patterns[color][ip] = alivedeadsymbol
+            ip += 1
+            if ip >= cols:
+                break
+
+    return patterns
+
+
+def river(cols, nparts, seed=None):
+    """
+    River: two-color big streaks.
+    This method does not use the nparts command,
+    just there for consistent method signature.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    # Parameters:
+    mean_size = MEAN_STREAK_SIZE
+
+    patterns = empty_dragon_patterns(cols)
+
+    ip = 0
+    alivedeadsymbol = "."
+    lastcolor = random.choice([0, 1])
+    while ip < cols:
+
+        # Flip the switch
+        if alivedeadsymbol == ".":
+            alivedeadsymbol = "o"
+            lastcolor = 1-lastcolor
+        elif alivedeadsymbol == "o":
+            alivedeadsymbol = "."
+
+        # Generate a new interval length
+        interval = round(random.expovariate(1.0 / mean_size))
+        if interval == 0:
+            interval = 1
+
+        # Loop over the interval, incrementing ip
+        # and making cells alive as we go.
+        for j in range(interval):
+            patterns[lastcolor][ip] = alivedeadsymbol
+            ip += 1
+            if ip >= cols:
+                break
+
+    return patterns
+
+
 def vector(cols, nparts, seed=None):
     """
     Vector: one-color random split
@@ -83,7 +179,7 @@ def vector(cols, nparts, seed=None):
 
     assert nparts > 0
 
-    if nparts%2 == 1:
+    if nparts % 2 == 1:
         nparts += 1
 
     # Parameters:
@@ -95,7 +191,7 @@ def vector(cols, nparts, seed=None):
     if nparts < 2:
         nparts = 2
 
-    if nparts%2 == 0:
+    if nparts % 2 == 0:
 
         # If even number of partitions,
         # split them 50/50 between color1/color2
@@ -178,17 +274,14 @@ def matrix(cols, nparts, seed=None):
 def lake(cols, nparts, seed=None):
     """
     Lake: one-color streak
+    This method does not use the nparts command,
+    just there for consistent method signature.
     """
     if seed is not None:
         random.seed(seed)
 
-    assert nparts > 0
-
-    if nparts%2 == 1:
-        nparts += 1
-
     # Parameters:
-    mean_size = 5
+    mean_size = MEAN_STREAK_SIZE
 
     patterns = empty_dragon_patterns(cols)
 
@@ -229,5 +322,32 @@ def lake(cols, nparts, seed=None):
     return patterns
 
 
+def lighthouse(cols, nparts, seed=None):
+    """
+    Lighthouse: one-color one cell.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    patterns = empty_dragon_patterns(cols)
+
+    half = nparts // 2
+    partwidth = round(cols / nparts)
+    colorparts = [0,] * half + [
+        1,
+    ] * half
+    random.shuffle(colorparts)
+
+    for i, color in enumerate(colorparts):
+        pstart = i * partwidth
+        # end of partition (exclusive of the end)
+        pend = min((i + 1) * partwidth, cols)
+        pmid = pstart + (pend-pstart)//2
+        loc = pmid + round(random.normalvariate(0, partwidth//4))
+        patterns[color][loc] = "o"
+
+    return patterns
+
+
 if __name__ == "__main__":
-    make_map("lake")
+    make_map("lighthouse")
