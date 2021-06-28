@@ -27,6 +27,7 @@ def make_map(name, seed=None):
         "waterfall": waterfall,
         "river": river,
         "lighthouse": lighthouse,
+        "towers": towers,
     }
 
     if name not in fmap:
@@ -182,14 +183,14 @@ def vector(cols, nparts, seed=None):
     if nparts % 2 == 1:
         nparts += 1
 
+    # We require minimum of 2 partitions
+    if nparts < 2:
+        nparts = 2
+
     # Parameters:
     alive_density = ALIVE_DENSITY
 
     patterns = empty_dragon_patterns(cols)
-
-    # We require minimum of 2 partitions
-    if nparts < 2:
-        nparts = 2
 
     if nparts % 2 == 0:
 
@@ -280,6 +281,9 @@ def lake(cols, nparts, seed=None):
     if seed is not None:
         random.seed(seed)
 
+    if nparts % 2 == 1:
+        nparts += 1
+
     # Parameters:
     mean_size = MEAN_STREAK_SIZE
 
@@ -329,6 +333,11 @@ def lighthouse(cols, nparts, seed=None):
     if seed is not None:
         random.seed(seed)
 
+    assert nparts > 0
+
+    if nparts % 2 == 1:
+        nparts += 1
+
     patterns = empty_dragon_patterns(cols)
 
     half = nparts // 2
@@ -344,10 +353,32 @@ def lighthouse(cols, nparts, seed=None):
         pend = min((i + 1) * partwidth, cols)
         pmid = pstart + (pend-pstart)//2
         loc = pmid + round(random.normalvariate(0, partwidth//4))
+        while (patterns[0][loc] == "o" or patterns[1][loc] == "o"):
+            loc = pmid + round(random.normalvariate(0, partwidth//4))
+        patterns[color][loc] = "o"
+
+    return patterns
+
+
+def towers(cols, nparts, seed=None):
+    """
+    Towers: two-color one cell.
+    This method does not use the nparts command,
+    just there for consistent method signature.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    patterns = empty_dragon_patterns(cols)
+
+    for color in [0, 1]:
+        loc = cols//2 + round(random.normalvariate(0, cols//6))
+        while (patterns[0][loc] == "o" or patterns[1][loc] == "o"):
+            loc = cols//2 + round(random.normalvariate(0, cols//6))
         patterns[color][loc] = "o"
 
     return patterns
 
 
 if __name__ == "__main__":
-    make_map("lighthouse")
+    make_map("towers")
