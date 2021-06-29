@@ -28,6 +28,8 @@ def make_map(name, seed=None):
         "river": river,
         "lighthouse": lighthouse,
         "towers": towers,
+        "isotropic": isotropic,
+        "supercritical": supercritical,
     }
 
     if name not in fmap:
@@ -58,6 +60,11 @@ def empty_dragon_patterns(cols):
     team2_pattern = get_grid_empty(1, cols, flat=False)[0]
     patterns = [team1_pattern, team2_pattern]
     return patterns
+
+
+####################################
+# Two-Color Patterns
+####################################
 
 
 def starfield(cols, nparts, seed=None):
@@ -169,6 +176,58 @@ def river(cols, nparts, seed=None):
                 break
 
     return patterns
+
+
+def towers(cols, nparts, seed=None):
+    """
+    Towers: two-color one cell.
+    This method does not use the nparts command,
+    just there for consistent method signature.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    patterns = empty_dragon_patterns(cols)
+
+    for color in [0, 1]:
+        loc = cols//2 + round(random.normalvariate(0, cols//6))
+        while (patterns[0][loc] == "o" or patterns[1][loc] == "o"):
+            loc = cols//2 + round(random.normalvariate(0, cols//6))
+        patterns[color][loc] = "o"
+
+    return patterns
+
+
+def supercritical(cols, nparts, seed=None):
+    """
+    Supercritical: two-color sparse.
+    Each live cell of color 1 or 2 occurs next to
+    one cell of the opposite color.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    # Parameters:
+    min_stars = MIN_STARS
+    max_stars = MAX_STARS
+    nstars = random.randint(min_stars, max_stars)
+
+    patterns = empty_dragon_patterns(cols)
+
+    for i in range(nstars):
+        loc = random.randint(0, cols-2)
+        while (patterns[0][loc] == "o" or patterns[1][loc] == "o" or patterns[0][loc+1] == "o" or patterns[1][loc+1] == "o"):
+            loc = random.randint(pstart, pend-1)
+        color = random.choice([0, 1])
+        patterns[color][loc] = "o"
+        patterns[1-color][loc+1] = "o"
+
+    return patterns
+
+
+####################################
+# One-Color Patterns
+####################################
 
 
 def vector(cols, nparts, seed=None):
@@ -360,25 +419,47 @@ def lighthouse(cols, nparts, seed=None):
     return patterns
 
 
-def towers(cols, nparts, seed=None):
+def isotropic(cols, nparts, seed=None):
     """
-    Towers: two-color one cell.
-    This method does not use the nparts command,
-    just there for consistent method signature.
+    Isotropic: one-color sparse.
     """
     if seed is not None:
         random.seed(seed)
 
+    assert nparts > 0
+
+    if nparts < 3:
+        nparts = 4
+    if nparts % 2 == 1:
+        nparts += 1
+
+    # Parameters:
+    min_stars = MIN_STARS
+    max_stars = MAX_STARS
+    nstars = random.randint(min_stars, max_stars)
+
     patterns = empty_dragon_patterns(cols)
 
-    for color in [0, 1]:
-        loc = cols//2 + round(random.normalvariate(0, cols//6))
-        while (patterns[0][loc] == "o" or patterns[1][loc] == "o"):
-            loc = cols//2 + round(random.normalvariate(0, cols//6))
-        patterns[color][loc] = "o"
+    half = nparts // 2
+    partwidth = round(cols / nparts)
+    colorparts = [0,] * half + [
+        1,
+    ] * half
+    random.shuffle(colorparts)
+
+    for i, color in enumerate(colorparts):
+        pstart = i * partwidth
+        pend = min((i + 1) * partwidth, cols)
+
+        for j in range(nstars):
+            loc = random.randint(pstart, pend-1)
+            while (patterns[0][loc] == "o" or patterns[1][loc] == "o"):
+                loc = random.randint(pstart, pend-1)
+            patterns[color][loc] = "o"
 
     return patterns
 
 
+
 if __name__ == "__main__":
-    make_map("towers")
+    make_map("supercritical")
