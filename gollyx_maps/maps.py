@@ -152,7 +152,7 @@ def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
     # Lake
     # Lighthouse
     # Isotropic
-    chooseParts = ['vector', 'matrix', 'lake', 'lighthouse', 'isotropic']
+    chooseParts = ['starfield', 'supercritical', 'vector', 'matrix', 'lake', 'lighthouse', 'isotropic']
     if patternname in chooseParts:
         # Select a number of partitions
         nparts = random.randint(1, MAX_PARTS)
@@ -162,7 +162,7 @@ def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
     # Assemble metadata (no zone data for Dragon Cup)
 
     # Add roman numeral suffix to map name if we specified partitions
-    mapname = patternname
+    mapname = patternname.title()
     if nparts > 0:
         mapname += f" {roman.toRoman(nparts)}"
 

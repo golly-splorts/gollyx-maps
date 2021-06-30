@@ -68,10 +68,7 @@ def starfield(cols, nparts, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    # Parameters:
-    min_stars = MIN_STARS
-    max_stars = MAX_STARS
-    nstars = random.randint(min_stars, max_stars)
+    nstars = nparts
 
     patterns = empty_dragon_patterns(cols)
 
@@ -199,16 +196,14 @@ def supercritical(cols, nparts, seed=None):
         random.seed(seed)
 
     # Parameters:
-    min_stars = MIN_STARS
-    max_stars = MAX_STARS
-    nstars = random.randint(min_stars, max_stars)
+    nstars = nparts
 
     patterns = empty_dragon_patterns(cols)
 
     for i in range(nstars):
         loc = random.randint(0, cols-2)
         while (patterns[0][loc] == "o" or patterns[1][loc] == "o" or patterns[0][loc+1] == "o" or patterns[1][loc+1] == "o"):
-            loc = random.randint(pstart, pend-1)
+            loc = random.randint(0, cols-2)
         color = random.choice([0, 1])
         patterns[color][loc] = "o"
         patterns[1-color][loc+1] = "o"
