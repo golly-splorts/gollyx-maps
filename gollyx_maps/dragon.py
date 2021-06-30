@@ -49,8 +49,8 @@ def empty_dragon_patterns(cols):
 
 
 def dragon_pattern_url(patterns):
-    pattern1_url = pattern2url(patterns[0])
-    pattern2_url = pattern2url(patterns[1])
+    pattern1_url = pattern2url([patterns[0]])
+    pattern2_url = pattern2url([patterns[1]])
     return pattern1_url, pattern2_url
 
 
