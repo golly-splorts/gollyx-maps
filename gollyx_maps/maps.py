@@ -75,7 +75,7 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
 
     # Handle Dragon Cup differently
     if cup == "dragon":
-        return get_dragon_realization(patternname, rows=None, columns=None, cell_size=None):
+        return get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
 
     # Set default sizes if none specified
     if rows is None and columns is None:
@@ -152,8 +152,8 @@ def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
     # Lake
     # Lighthouse
     # Isotropic
-    choosePartsPatterns = ['vector', 'matrix', 'lake', 'lighthouse', 'isotropic']
-    if patternName in chooseParts:
+    chooseParts = ['vector', 'matrix', 'lake', 'lighthouse', 'isotropic']
+    if patternname in chooseParts:
         # Select a number of partitions
         nparts = random.randint(1, MAX_PARTS)
     else:
@@ -162,7 +162,7 @@ def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
     # Assemble metadata (no zone data for Dragon Cup)
 
     # Add roman numeral suffix to map name if we specified partitions
-    mapname = patternName
+    mapname = patternname
     if nparts > 0:
         mapname += f" {roman.toRoman(nparts)}"
 
