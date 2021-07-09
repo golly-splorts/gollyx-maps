@@ -208,7 +208,7 @@ def get_map_metadata(cup, patternname):
     for m in all_metadata:
         if m['patternName'] == patternname:
             return m
-    # If we reach this point, we didn't find labels in data/maps.json
+    # If we reach this point, we didn't find labels in data/<cupname>.json
     m = {
         "patternName": patternname,
         "mapName": "Unnamed Map",
