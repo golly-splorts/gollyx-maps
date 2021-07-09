@@ -1,5 +1,10 @@
 gollyx-maps:
 
+Version 31.0:
+
+* Add Dragon Cup maps
+# Expand tests to cover new Dragon Cup maps
+
 Version 20.0:
 
 * Add toroidal maps and patterns
