@@ -1,0 +1,62 @@
+[
+    {
+        "patternName": "starfield",
+        "mapName": "Starfield",
+        "mapStartSeason": 0,
+        "mapDescription": "A small number of alive cells"
+    },
+    {
+        "patternName": "vector",
+        "mapName": "Vector",
+        "mapStartSeason": 0,
+        "mapDescription": "One-color ranom split"
+    },
+    {
+        "patternName": "matrix",
+        "mapName": "Matrix",
+        "mapStartSeason": 0,
+        "mapDescription": "Two-color ranom split"
+    },
+    {
+        "patternName": "lake",
+        "mapName": "Lake",
+        "mapStartSeason": 0,
+        "mapDescription": "One-color random streaks"
+    },
+    {
+        "patternName": "waterfall",
+        "mapName": "Waterfall",
+        "mapStartSeason": 0,
+        "mapDescription": "Two-color random streaks"
+    },
+    {
+        "patternName": "river",
+        "mapName": "River",
+        "mapStartSeason": 0,
+        "mapDescription": "Two-color big streaks"
+    },
+    {
+        "patternName": "lighthouse",
+        "mapName": "Lighthouse",
+        "mapStartSeason": 0,
+        "mapDescription": "One-color one cell"
+    },
+    {
+        "patternName": "towers",
+        "mapName": "Towers",
+        "mapStartSeason": 0,
+        "mapDescription": "Two-color one cell"
+    },
+    {
+        "patternName": "isotropic",
+        "mapName": "Isotropic",
+        "mapStartSeason": 0,
+        "mapDescription": "One-color sparse"
+    },
+    {
+        "patternName": "supercritical",
+        "mapName": "Supercritical",
+        "mapStartSeason": 0,
+        "mapDescription": "Two-color sparse"
+    }
+]
