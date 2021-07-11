@@ -75,7 +75,7 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
 
     # Handle Dragon Cup differently
     if cup == "dragon":
-        return get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
+        return get_dragon_realization(patternname, rows, columns, cell_size)
 
     # Set default sizes if none specified
     if rows is None and columns is None:
