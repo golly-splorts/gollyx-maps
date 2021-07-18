@@ -56,7 +56,7 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     """
     Return a JSON map with map names, zone names, and initial conditions.
 
-    Returns:
+    Non-Dragon Cup returns:
     {
         "patternName": y,
         "mapName": z,
@@ -70,6 +70,18 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         "rows": i,
         "columns": j,
         "cellSize:" k
+    }
+
+    Dragon Cup returns:
+    {
+        "patternName": (vector|matrix|starfield|supercritical|...),
+        "mapName": (same as patternName, but with I/II/III/IV suffix),
+        "initialConditions1": ...,
+        "initialConditions2": ...,
+        "url": ...,
+        "rows": ...,
+        "columns": ...,
+        "cellSize": ...,
     }
     """
 
