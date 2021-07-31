@@ -3,13 +3,17 @@ from gollyx_maps.rainbow import get_rainbow_pattern_function_map
 
 
 rows = 120
-columns = 200
+columns = 180
 
 
 patternmap = get_rainbow_pattern_function_map()
 patternnames = list(patternmap.keys())
 
-for patternname in patternnames:
+print(patternnames)
+
+patternname = "rainbow"
+
+if len(patternname)>0:
 
     print(f"\nURL for map {patternname}:")
     s1, s2, s3, s4 = render_map('rainbow', patternname, rows, columns)
