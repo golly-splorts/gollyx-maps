@@ -15,11 +15,12 @@ from .patterns import (
     cloud_region,
 )
 from .utils import pattern2url, retry_on_failure
-from .error import GollyXPatternsError, GollyXMapsError
+from .error import GollyXMapsError
 from .hellmouth import get_hellmouth_pattern_function_map
 from .pseudo import get_pseudo_pattern_function_map
 from .toroidal import get_toroidal_pattern_function_map
 from .dragon import get_dragon_pattern_function_map, MAX_PARTS
+from .rainbow import get_rainbow_pattern_function_map
 
 
 def get_pattern_function_map(cup):
@@ -28,6 +29,7 @@ def get_pattern_function_map(cup):
         'pseudo': get_pseudo_pattern_function_map,
         'toroidal': get_toroidal_pattern_function_map,
         'dragon': get_dragon_pattern_function_map,
+        'rainbow': get_rainbow_pattern_function_map,
     }
     return m[cup]
 
@@ -89,6 +91,10 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     if cup == "dragon":
         return get_dragon_realization(patternname, rows, columns, cell_size)
 
+    # Handle Rainbow Cup differently too
+    if cup == "rainbow":
+        return get_rainbow_realization(patternname, rows, columns, cell_size)
+
     # Set default sizes if none specified
     if rows is None and columns is None:
         if cup=="hellmouth" or cup=="pseudo":
@@ -143,6 +149,28 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     mapdat["cellSize"] = cellSize
 
     return remove_extra_map_keys(mapdat)
+
+
+def get_rainbow_realization(patternname, rows=None, columns=None, cell_size=None):
+    """
+    Assemble Rainbow Map
+    """
+    # Set default sizes if none specified
+    if rows is None and columns is None:
+        rows = 120
+        columns = 180
+
+    # Get map data (pattern, name, zone names)
+    mapdat = get_map_metadata(cup, patternname)
+
+    # Get the initial condition strings
+    s1, s2, s3, s4 = render_map('rainbow', patternname, rows, columns)
+    url = f"?s1={s1}&s2={s2}&s3={s3}&s4={s4}"
+    m['initialConditions1'] = s1
+    m['initialConditions2'] = s2
+    m['initialConditions3'] = s3
+    m['initialConditions4'] = s4
+    m['url'] = url
 
 
 def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None):

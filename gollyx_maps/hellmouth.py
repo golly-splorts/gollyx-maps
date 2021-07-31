@@ -14,7 +14,6 @@ from .patterns import (
     cloud_region,
 )
 from .utils import pattern2url, retry_on_failure
-from .error import GollyXPatternsError, GollyXMapsError
 
 
 ##############

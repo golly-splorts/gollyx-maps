@@ -5,7 +5,7 @@ import random
 import os
 from glob import glob
 from .geom import hflip_pattern, vflip_pattern, rot_pattern
-from .error import GollyXPatternsError
+from .error import GollyXPatternNotFoundError, GollyXPatternsError
 
 
 def get_pattern_filepaths():
@@ -33,7 +33,7 @@ def get_pattern(pattern_name, hflip=False, vflip=False, rotdeg=0):
             fpath = patternpath
 
     if fpath is None or not os.path.exists(fpath):
-        raise GollyXPatternsError(f"Error: pattern {pattern_name} does not exist!")
+        raise GollyXPatternNotFoundError(f"Error: pattern {pattern_name} does not exist!")
 
     with open(fpath, "r") as f:
         pattern = f.readlines()
