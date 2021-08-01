@@ -11,7 +11,7 @@ patternnames = list(patternmap.keys())
 
 print(patternnames)
 
-patternname = "rainbow"
+patternname = "rainbowmath"
 
 if len(patternname)>0:
 
