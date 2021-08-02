@@ -25,21 +25,22 @@ from .error import GollyXPatternsError, GollyXMapsError
 
 def get_rainbow_pattern_function_map():
     return {
-        "random": random_fourcolor,
         "rainbowmath": rainbowmath_fourcolor,
-        "crabs": crabs_fourcolor,
-        "patiolights": patiolights_fourcolor,
         "rainbow": rainbow_fourcolor,
         "sunburst": sunburst_fourcolor,
         "quadgaussian": quadgaussian_fourcolor,
+        "random": random_fourcolor,
         "timebomb": timebomb_fourcolor,
         "timebombredux": timebomb2_fourcolor,
         "randommethuselahs": randommethuselahs_fourcolor,
+        "crabs": crabs_fourcolor,
+        "patiolights": patiolights_fourcolor,
         "orchard": orchard_fourcolor,
         "justyna": justyna_fourcolor,
         "rabbits": rabbits_fourcolor,
         "multum": multum_fourcolor,
         "eights": eightx_fourcolor,
+        # Need one more
     }
 
 
