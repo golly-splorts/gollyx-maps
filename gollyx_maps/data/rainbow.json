@@ -1,0 +1,152 @@
+[
+    {
+        "patternName": "random",
+        "mapName": "Southeast Hellmouth",
+        "mapZone1Name": "ZONE I",
+        "mapZone2Name": "ZONE II",
+        "mapZone3Name": "ZONE III",
+        "mapZone4Name": "ZONE IV",
+        "mapDescription": "A completely random map layout, with territory split evenly among teams.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "rainbowmath",
+        "mapName": "Rainbow Math",
+        "mapZone1Name": "Quadrant I",
+        "mapZone2Name": "Quadrant II",
+        "mapZone3Name": "Quadrant III",
+        "mapZone4Name": "Quadrant IV",
+        "mapDescription": "Rainbow bitfields.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "crabs",
+        "mapName": "Crabs Go Up",
+        "mapZone1Name": "crabs go up",
+        "mapZone2Name": "crabs go down",
+        "mapZone3Name": "crabs good",
+        "mapZone4Name": "crabs bad",
+        "mapDescription": "Crabstretchers everywhere.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "patiolights",
+        "mapName": "The Porch",
+        "mapZone1Name": "sunset",
+        "mapZone2Name": "swing",
+        "mapZone3Name": "steps",
+        "mapZone4Name": "doggie",
+        "mapDescription": "Thick strings of lights stretching across the grid.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "rainbow",
+        "mapName": "Rainbow Spectrum",
+        "mapZone1Name": "Light I",
+        "mapZone2Name": "Light II",
+        "mapZone3Name": "Darkness III",
+        "mapZone4Name": "Darkness IV",
+        "mapDescription": "A ray of light, split into teams.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "sunburst",
+        "mapName": "Rainbow Sunburst",
+        "mapZone1Name": "SUN I",
+        "mapZone2Name": "SUN II",
+        "mapZone3Name": "SUN III",
+        "mapZone4Name": "SUN IV",
+        "mapDescription": "Radially partitioned random map.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "quadgaussian",
+        "mapName": "Rainbow Quartet",
+        "mapZone1Name": "Quadrant I",
+        "mapZone2Name": "Quadrant II",
+        "mapZone3Name": "Quadrant III",
+        "mapZone4Name": "Quadrant IV",
+        "mapDescription": "Quadruple random Gaussian distributions.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "timebomb",
+        "mapName": "Southwest Hellmouth",
+        "mapZone1Name": "Quadrant I",
+        "mapZone2Name": "Quadrant II",
+        "mapZone3Name": "Quadrant III",
+        "mapZone4Name": "Quadrant IV",
+        "mapDescription": "Quadruple burloaferimeters holding defensive positions against timebomb methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "timebombredux",
+        "mapName": "Southwest Hellmouth's Revenge",
+        "mapZone1Name": "Quadrant I",
+        "mapZone2Name": "Quadrant II",
+        "mapZone3Name": "Quadrant III",
+        "mapZone4Name": "Quadrant IV",
+        "mapDescription": "Large oscillators holding defensive positions against timebomb methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "randommethuselahs",
+        "mapName": "Fistfight at the Opera",
+        "mapZone1Name": "Zone I",
+        "mapZone2Name": "Zone II",
+        "mapZone3Name": "Zone III",
+        "mapZone4Name": "Zone IV",
+        "mapDescription": "A chaotic tangle of methuselahs."
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "orchard",
+        "mapName": "Peaches and Plums",
+        "mapZone1Name": "Zone I",
+        "mapZone2Name": "Zone II",
+        "mapZone3Name": "Zone III",
+        "mapZone4Name": "Zone IV",
+        "mapDescription": "Small seeds grow into big trees.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "justyna",
+        "mapName": "Justyna",
+        "mapZone1Name": "cream",
+        "mapZone2Name": "no sugar no cream",
+        "mapZone3Name": "sugar no cream",
+        "mapZone4Name": "sugar and cream",
+        "mapDescription": "A collection of justyna methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "rabbits",
+        "mapName": "Easter Egg",
+        "mapZone1Name": "Zone I",
+        "mapZone2Name": "Zone II",
+        "mapZone3Name": "Zone III",
+        "mapZone4Name": "Zone IV",
+        "mapDescription": "Multi-colored rabbits scattered across the grid.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "multum",
+        "mapName": "Underwater Cave",
+        "mapZone1Name": "Zone I",
+        "mapZone2Name": "Zone II",
+        "mapZone3Name": "Zone III",
+        "mapZone4Name": "Zone IV",
+        "mapDescription": "Multum in parvo: fast-growing, just add water!",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "eights",
+        "mapName": "Eights Are Wild",
+        "mapZone1Name": "Zone I",
+        "mapZone2Name": "Zone II",
+        "mapZone3Name": "Zone III",
+        "mapZone4Name": "Zone IV",
+        "mapDescription": "A row of randomly-oriented methuselahs.",
+        "mapStartSeason": 0
+    },
+]
