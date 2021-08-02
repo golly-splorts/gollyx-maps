@@ -27,19 +27,19 @@ def get_rainbow_pattern_function_map():
     return {
         "random": random_fourcolor,
         "rainbowmath": rainbowmath_fourcolor,
+        "crabs": crabs_fourcolor,
+        "patiolights": patiolights_fourcolor,
+        "rainbow": rainbow_fourcolor,
+        "sunburst": sunburst_fourcolor,
+        "quadgaussian": quadgaussian_fourcolor,
+        "timebomb": timebomb_fourcolor,
+        "timebombredux": timebomb2_fourcolor,
         "randommethuselahs": randommethuselahs_fourcolor,
         "orchard": orchard_fourcolor,
         "justyna": justyna_fourcolor,
         "rabbits": rabbits_fourcolor,
         "multum": multum_fourcolor,
         "eights": eightx_fourcolor,
-        "patiolights": patiolights_fourcolor,
-        "rainbow": rainbow_fourcolor,
-        "sunburst": sunburst_fourcolor,
-        "timebomb": timebomb_fourcolor,
-        "timebombredux": timebomb2_fourcolor,
-        "crabs": crabs_fourcolor,
-        "doublegaussian": doublegaussian_fourcolor,
     }
 
 
@@ -990,7 +990,7 @@ def crabs_fourcolor(rows, cols, seed=None):
     urls = [pattern2url(pu) for pu in pattern_unions]
     return tuple(urls)
 
-def doublegaussian_fourcolor(rows, cols, seed=None):
+def quadgaussian_fourcolor(rows, cols, seed=None):
 
     if seed is not None:
         random.seed(seed)
