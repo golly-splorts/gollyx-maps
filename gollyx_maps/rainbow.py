@@ -1152,6 +1152,7 @@ def rainbowmath_fourcolor(rows, cols, seed=None):
     elif coin == 8:
 
         ps = [69, 99, 299, 699, 999]
+        p = random.choice(ps)
 
         f = lambda x, y: int(is_not_prime((x*x//(y+1)) % p))
 
