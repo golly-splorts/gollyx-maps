@@ -96,7 +96,7 @@
         "mapZone2Name": "Zone II",
         "mapZone3Name": "Zone III",
         "mapZone4Name": "Zone IV",
-        "mapDescription": "A chaotic tangle of methuselahs."
+        "mapDescription": "A chaotic tangle of methuselahs.",
         "mapStartSeason": 0
     },
     {
@@ -148,5 +148,5 @@
         "mapZone4Name": "Zone IV",
         "mapDescription": "A row of randomly-oriented methuselahs.",
         "mapStartSeason": 0
-    },
+    }
 ]

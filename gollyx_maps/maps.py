@@ -161,16 +161,23 @@ def get_rainbow_realization(patternname, rows=None, columns=None, cell_size=None
         columns = 180
 
     # Get map data (pattern, name, zone names)
-    mapdat = get_map_metadata(cup, patternname)
+    mapdat = get_map_metadata('rainbow', patternname)
 
     # Get the initial condition strings
     s1, s2, s3, s4 = render_map('rainbow', patternname, rows, columns)
     url = f"?s1={s1}&s2={s2}&s3={s3}&s4={s4}"
-    m['initialConditions1'] = s1
-    m['initialConditions2'] = s2
-    m['initialConditions3'] = s3
-    m['initialConditions4'] = s4
-    m['url'] = url
+
+    mapdat['initialConditions1'] = s1
+    mapdat['initialConditions2'] = s2
+    mapdat['initialConditions3'] = s3
+    mapdat['initialConditions4'] = s4
+    mapdat['url'] = url
+
+    mapdat["rows"] = rows
+    mapdat["columns"] = columns
+    mapdat["cellSize"] = 4
+
+    return remove_extra_map_keys(mapdat)
 
 
 def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None):
