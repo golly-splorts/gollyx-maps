@@ -1081,8 +1081,7 @@ def rainbowmath_fourcolor(rows, cols, seed=None):
         return not is_prime(n)
 
     # Random choice of which form to use
-    #coin = random.randint(1,3)
-    coin = 8
+    coin = random.randint(1,8)
 
     if coin == 1:
         p = random.choice([k*k for k in [5, 7, 9, 11]])
