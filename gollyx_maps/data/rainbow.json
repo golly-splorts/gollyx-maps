@@ -46,7 +46,7 @@
         "mapZone2Name": "Light II",
         "mapZone3Name": "Darkness III",
         "mapZone4Name": "Darkness IV",
-        "mapDescription": "A ray of light, split into teams.",
+        "mapDescription": "A ray of light split into a spectrum.",
         "mapStartSeason": 0
     },
     {
@@ -76,7 +76,7 @@
         "mapZone2Name": "Quadrant II",
         "mapZone3Name": "Quadrant III",
         "mapZone4Name": "Quadrant IV",
-        "mapDescription": "Quadruple burloaferimeters holding defensive positions against timebomb methuselahs.",
+        "mapDescription": "Quadruple burloaferimeters paired with timebomb methuselahs.",
         "mapStartSeason": 0
     },
     {
@@ -86,7 +86,7 @@
         "mapZone2Name": "Quadrant II",
         "mapZone3Name": "Quadrant III",
         "mapZone4Name": "Quadrant IV",
-        "mapDescription": "Large oscillators holding defensive positions against timebomb methuselahs.",
+        "mapDescription": "Large oscillators paired with timebomb methuselahs.",
         "mapStartSeason": 0
     },
     {

@@ -9,13 +9,13 @@
         "patternName": "vector",
         "mapName": "Vector",
         "mapStartSeason": 0,
-        "mapDescription": "One-color ranom split"
+        "mapDescription": "One-color random split"
     },
     {
         "patternName": "matrix",
         "mapName": "Matrix",
         "mapStartSeason": 0,
-        "mapDescription": "Two-color ranom split"
+        "mapDescription": "Two-color random split"
     },
     {
         "patternName": "lake",
