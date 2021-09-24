@@ -1,9 +1,13 @@
 gollyx-maps:
 
+Version 42:
+
+* Refresh for new cups release
+
 Version 31.0:
 
 * Add Dragon Cup maps
-# Expand tests to cover new Dragon Cup maps
+* Expand tests to cover new Dragon Cup maps
 
 Version 20.0:
 
