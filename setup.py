@@ -20,6 +20,7 @@ setup(
     name='gollyx-maps',
     version=__version__,
     packages=['gollyx_maps'],
+    package_dir={'gollyx_maps': 'src'},
     package_data = {
       'gollyx_maps': ['data/*.json', 'b3s23_patterns/*.txt', 'b357s238_patterns/*.txt']
     },
