@@ -50,15 +50,14 @@ def stamps(rows, cols, seed=None):
         random.seed(seed)
 
     #stamp_name = 'backedupsink'
-    stamp_name = 'spaceship'
+    #stamp_name = 'spaceship2platform'
+    stamp_name = 'scaffoldunfusing'
 
     team1_pattern = pattern_union([
-            get_grid_stamp(load_stamp(stamp_name), rows, cols, yoffset=40, xoffset=130),
-            get_grid_stamp(load_stamp(stamp_name), rows, cols, yoffset=80, xoffset=38),
+            get_grid_stamp(load_stamp(stamp_name), rows, cols, yoffset=40, xoffset=38),
             ])
     team2_pattern = pattern_union([
-            get_grid_stamp(load_stamp(stamp_name), rows, cols, yoffset=83, xoffset=141),
-            get_grid_stamp(load_stamp(stamp_name), rows, cols, yoffset=44, xoffset=33),
+            get_grid_stamp(load_stamp(stamp_name), rows, cols, yoffset=43, xoffset=141),
             ])
 
     s1 = pattern2url(team1_pattern)
