@@ -5,8 +5,8 @@ import math
 import random
 
 
-ROWS = 120
-COLS = 180
+ROWS = 160
+COLS = 240
 
 
 def make_map3(seed=None):
@@ -38,29 +38,39 @@ def make_map3(seed=None):
 
     # Larger maxkillprob leads to more holes
 
-    # # Sharp contrast in hole densities halfway down
-    # maxkillcounter = 50
-    # maxkillprob = 0.4
+    # Sharp contrast in hole densities halfway down
+    maxkillcounter = 40
+    maxkillprob = 0.5
 
-    # # A little randomness goes a long way
-    # maxkillcounter = 5
-    # maxkillprob = 0.4
+    # Less sharp, less holes
+    maxkillcounter = 30
+    maxkillprob = 0.3
 
-    # # This will be missing its top half
-    # maxkillcounter = 120
-    # maxkillprob = 0.8
+    ## A little randomness goes a long way
+    #maxkillcounter = 5
+    #maxkillprob = 0.4
 
-    # Just a few dead cells
-    maxkillcounter = 20
-    maxkillprob = 0.8
+    ## A little more randomness goes a little further
+    #maxkillcounter = 15
+    #maxkillprob = 0.4
+
+    ## Just a few dead cells makes it interesting
+    #maxkillcounter = 20
+    #maxkillprob = 0.8
+
+    ## Missing many cells at the top leaves a smaller core 
+    ## at the bottom to behave as usual, leaving more room
+    ## for randomness to take over.
+    #maxkillcounter = 60
+    #maxkillprob = 0.8
 
     # Specify whether the two wings of the V are
     # always perfectly vertially aligned
-    valign = True
+    valign = True 
 
     # Set jitter
     jitterx = 7
-    jittery = 2
+    jittery = 8
 
     # ------------
     # Algorithm:
