@@ -152,7 +152,7 @@ def get_grid_pattern(
     return newpattern
 
 
-def pattern_union(patterns):
+def pattern_union(patterns, flatten=True):
     for i in range(1, len(patterns)):
         axis0different = len(patterns[i - 1]) != len(patterns[i])
         axis1different = len(patterns[i - 1][0]) != len(patterns[i][0])
@@ -183,7 +183,8 @@ def pattern_union(patterns):
             if alive:
                 newpattern[iy][ix] = "o"
 
-    newpattern = ["".join(j) for j in newpattern]
+    if flatten:
+        newpattern = ["".join(j) for j in newpattern]
     return newpattern
 
 
