@@ -20,8 +20,15 @@ def flying_v(rows, cols, seed=None):
     # Parameters
 
     # Height and width of rectangles used to assemble diagonal line
-    dy = 6
+    dy = 8
     dx = 4
+
+    # Left/right margin
+    lmargin = 0.1
+
+    # Top/bottom margins
+    tmargin = 0.1
+    bmargin = 0.9
 
     # Adding higher probabilty and fewer max kills
     # causes a weird dynamic:
@@ -76,10 +83,10 @@ def flying_v(rows, cols, seed=None):
     # grid numbers, to ensure the diagonal formation does
     # something interesting, hence the times 2/divided by 2 operation.
 
-    starty = (1*rows)//10 + 2*random.randint(0, jittery)
-    endy = (9*rows)//10 - random.randint(0, jittery)
+    starty = int(tmargin*rows) + 2*random.randint(0, jittery)
+    endy = int(bmargin*rows) - random.randint(0, jittery)
 
-    startx = (1*cols)//10 + (random.randint(0, jitterx)//2)*2
+    startx = int(lmargin*cols) + (random.randint(0, jitterx)//2)*2
     endx = (45*cols)//100 - (random.randint(0, jitterx)//2)*2
 
     # -------------
@@ -164,6 +171,3 @@ def flying_v(rows, cols, seed=None):
 
     url = f"http://192.168.30.20:8888/index.html?s1={s1}&s2={s2}&rows={rows}&cols={cols}&cellSize=3"
     print(url)
-
-
-

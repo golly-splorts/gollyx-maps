@@ -15,25 +15,36 @@ def bars(rows, cols, seed=None):
     team1_pattern = get_grid_empty(rows, cols, flat=False)
     team2_pattern = get_grid_empty(rows, cols, flat=False)
 
+    # ------------
+    # Parameters
+
     jitterx = 4
     jittery = 10
 
-    starty0 = (2*rows)//10
-    endy0 = starty0 + (6*rows)//10
+    tmargin = random.randint(2, 3)/10
+    bmargin = random.randint(7, 8)/10
+
+    xlocs1 = [0.2, 0.6]
+    xlocs2 = [0.4, 0.8]
 
     thickness = random.randint(3, 5)
 
-    gap_prob = 0.4
+    gap_prob = random.randint(2, 3)/10
+
+    st_louis_gap = 4
 
 
     # -------------
     # color 1
 
+    starty0 = int(tmargin*rows)
+    endy0 = int(bmargin*rows)
+
     jit = random.randint(-jittery, jittery)
     starty = starty0 + jit
     endy = endy0 + jit
 
-    startx = (2*cols)//10 + random.randint(-jitterx, jitterx)
+    startx = int(xlocs1[0]*cols) + random.randint(-jitterx, jitterx)
     endx = startx + thickness
 
     for y in range(starty, endy + 1):
@@ -41,8 +52,8 @@ def bars(rows, cols, seed=None):
             if random.random() > gap_prob:
                 team1_pattern[y][x] = "o"
 
-    startx = (6*cols)//10 + random.randint(-jitterx, jitterx)
-    endx = startx + 3
+    startx = int(xlocs1[1]*cols) + random.randint(-jitterx, jitterx)
+    endx = startx + thickness
 
     for y in range(starty, endy + 1):
         for x in range(startx, endx + 1):
@@ -52,11 +63,14 @@ def bars(rows, cols, seed=None):
     # -------------
     # color 2
 
+    starty0 = int(tmargin*rows)
+    endy0 = int(bmargin*rows)
+
     jit = random.randint(-jittery, jittery)
     starty = starty0 + jit
     endy = endy0 + jit
 
-    startx = (4*cols)//10 + random.randint(-jitterx, jitterx)
+    startx = int(xlocs2[0]*cols) + random.randint(-jitterx, jitterx)
     endx = startx + thickness
 
     for y in range(starty, endy + 1):
@@ -64,13 +78,46 @@ def bars(rows, cols, seed=None):
             if random.random() > gap_prob:
                 team2_pattern[y][x] = "o"
 
-    startx = (8*cols)//10 + random.randint(-jitterx, jitterx)
-    endx = startx + 3
+    startx = int(xlocs2[1]*cols) + random.randint(-jitterx, jitterx)
+    endx = startx + thickness
 
     for y in range(starty, endy + 1):
         for x in range(startx, endx + 1):
             if random.random() > gap_prob:
                 team2_pattern[y][x] = "o"
+
+
+    # st louis style
+    for yy in range(rows):
+        if yy%st_louis_gap==0:
+            nx = len(team1_pattern[y])
+            for xx in range(nx):
+                team1_pattern[yy][xx] = '.'
+                team2_pattern[yy][xx] = '.'
+
+
+    # adjust nubmer of live cells of each team to be equal
+    p1 = set()
+    p2 = set()
+    for yy in range(rows):
+        for xx in range(cols):
+            if team1_pattern[yy][xx] == 'o':
+                p1.add((xx,yy))
+            elif team2_pattern[yy][xx] == 'o':
+                p2.add((xx,yy))
+
+    diff = abs(len(p1)-len(p2))
+    if diff != 0:
+        if len(p1)>len(p2):
+            larger = p1
+            patt = team1_pattern
+        else:
+            larger = p2
+            patt = team2_pattern
+        for i in range(diff):
+            pt = larger.pop()
+            patt[pt[1]][pt[0]] = '.'
+
 
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
     team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
