@@ -51,7 +51,10 @@ def stamps(rows, cols, seed=None):
 
     #stamp_name = 'backedupsink'
     #stamp_name = 'spaceship2platform'
-    stamp_name = 'scaffoldunfusing'
+    #stamp_name = 'scaffoldunfusing'
+    #stamp_name = 'simplestablestar'
+    #stamp_name = 'simplestablestarsatellite'
+    stamp_name = 'simpleunstablestar'
 
     team1_pattern = pattern_union([
             get_grid_stamp(load_stamp(stamp_name), rows, cols, yoffset=40, xoffset=38),
