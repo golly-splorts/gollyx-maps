@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # stamps_squarepair(ROWS, COLS)
     # two_stamps(ROWS, COLS)
 
-    #stamps_containment_lines(ROWS, COLS)
-    stamps_square(ROWS, COLS)
+    containment_rectangle(ROWS, COLS)
+    # containment_lines(ROWS, COLS)
 
     # porch(ROWS, COLS)
