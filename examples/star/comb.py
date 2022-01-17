@@ -11,23 +11,41 @@ def comb(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
+    # --------------
+    # Parameters
+
+    jitterx = 8
+    jittery = 8
+
+    thickness = random.randint(3, 5)
+
+    ylocations = [random.randint(20, 45)/100, random.randint(55, 80)/100]
+    yloc_swap_prob = 0.3
+
+    xstart = random.randint(10,25)/100
+    xwidth = random.randint(45,65)/100
+
+    bumps_prob = random.randint(10,50)/100
+
+
+    # -----------------
+    # Algorithm:
+
+    if random.random() < yloc_swap_prob:
+        random.shuffle(ylocations)
+
     # These store the the .o diagrams (flat=False means these are lists of lists of one char)
     team1_pattern = get_grid_empty(rows, cols, flat=False)
     team2_pattern = get_grid_empty(rows, cols, flat=False)
 
-    jitterx = 16
-    jittery = 4
-
-    thickness = random.randint(3, 5)
-
     # -------------
     # color 1
 
-    starty1 = (3*rows)//10 + random.randint(-jittery, jittery)
+    starty1 = int(ylocations[0]*rows) + random.randint(-jittery, jittery)
     endy1 = starty1 + thickness
 
-    startx = (2*cols)//10 + random.randint(-jitterx, jitterx)
-    endx = startx + (6*cols)//10
+    startx = int(xstart*cols) + random.randint(-jitterx, jitterx)
+    endx = startx + int(xwidth*cols)
 
     for y in range(starty1, endy1 + 1):
         for x in range(startx, endx + 1):
@@ -39,17 +57,17 @@ def comb(rows, cols, seed=None):
                 team1_pattern[y][x] = "o"
 
     for x in range(startx, endx+1):
-        if random.random()<0.25:
+        if random.random()<bumps_prob:
             team1_pattern[starty1-1][x] = "o"
 
     # -------------
     # color 2
 
-    starty2 = (7*rows)//10 + random.randint(-jittery, jittery)
+    starty2 = int(ylocations[1]*rows) + random.randint(-jittery, jittery)
     endy2 = starty2 + thickness
 
-    startx = (2*cols)//10 + random.randint(-jitterx, jitterx)
-    endx = startx + (6*cols)//10
+    startx = int(xstart*cols) + random.randint(-jitterx, jitterx)
+    endx = startx + int(xwidth*cols)
 
     for y in range(endy2, starty2-1, -1):
         for x in range(startx, endx + 1):
@@ -61,8 +79,9 @@ def comb(rows, cols, seed=None):
                 team2_pattern[y][x] = "o"
     
     for x in range(startx, endx+1):
-        if random.random()<0.25:
+        if random.random()<bumps_prob:
             team2_pattern[endy2+1][x] = "o"
+
 
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
     team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
@@ -72,6 +91,4 @@ def comb(rows, cols, seed=None):
 
     url = f"http://192.168.30.20:8888/index.html?s1={s1}&s2={s2}&rows={rows}&cols={cols}&cellSize=3"
     print(url)
-
-
 
