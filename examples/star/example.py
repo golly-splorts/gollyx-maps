@@ -1,15 +1,8 @@
 from bars import bars
 from comb import comb
 from flying_v import flying_v
-from stamps import stamps
+from stamps import two_stamps, stamps_squarepair, stamps_containment_lines
 from porch import porch
-from gaussians import (
-    gaussian_pot_pie,
-    gaussian_old_style,
-    gaussian_gliders,
-    gaussian_10and2,
-    gaussian_bimodal,
-)
 
 ROWS = 160
 COLS = 240
@@ -18,17 +11,11 @@ COLS = 240
 if __name__ == "__main__":
 
     # flying_v(ROWS, COLS)
+    # bars(ROWS, COLS)
+    # comb(ROWS, COLS)
+    # stamps_squarepair(ROWS, COLS)
+    # two_stamps(ROWS, COLS)
 
-    bars(ROWS, COLS)
+    stamps_containment_lines(ROWS, COLS)
 
-    #comb(ROWS, COLS)
-
-    # gaussian_pot_pie(ROWS, COLS)
-    # gaussian_old_style(ROWS, COLS)
-    # gaussian_gliders(ROWS, COLS)
-    # gaussian_10and2(ROWS, COLS)
-
-    #stamps(ROWS, COLS)
-    #porch(ROWS, COLS)
-
-
+    # porch(ROWS, COLS)
