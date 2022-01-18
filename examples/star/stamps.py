@@ -8,8 +8,7 @@ import os
 
 def stamps_squarepair(rows, cols, seed=None):
     """
-    Create a stamps map using the squarepair stamps,
-    plus random scattered stars for randomness.
+    Create a stamps map 
     """
     # set rng seed (optional)
     if seed is not None:
@@ -29,8 +28,7 @@ def stamps_squarepair(rows, cols, seed=None):
 
 def stamps_sink(rows, cols, seed=None):
     """
-    Create a stamps map using the squarepair stamps,
-    plus random scattered stars for randomness.
+    Create a stamps map 
     """
     # set rng seed (optional)
     if seed is not None:
@@ -43,16 +41,60 @@ def stamps_sink(rows, cols, seed=None):
         seed=seed,
         stamp_name=stamp_name, 
         stamps_per_team=2,
-        stars_per_stamp_lim=[3, 10], 
+        stars_per_stamp_lim=[1, 10], 
         stars_strategy='neighbors',
     )
 
+
+def stamps_pudding(rows, cols, seed=None):
+    """
+    Create a stamps map 
+    """
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
+    stamp_name = "squarevariation3"
+
+    stamps(
+        rows, 
+        cols, 
+        seed=seed,
+        stamp_name=stamp_name, 
+        stars_name="simpleunstablestar",
+        stamps_per_team=2,
+        stars_per_stamp_lim=[2, 4], 
+        stars_strategy='unfriendly_neighbors',
+    )
+
+
+def stamps_soup(rows, cols, seed=None):
+    """
+    Create a stamps map 
+    """
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
+    stamp_name = "spaceship2platform"
+
+    stamps(
+        rows, 
+        cols, 
+        seed=seed,
+        stamp_name=stamp_name, 
+        stars_name="simpleunstablestar",
+        stamps_per_team=2,
+        stars_per_stamp_lim=[2, 4], 
+        stars_strategy='random',
+    )
 
 def stamps(
     rows,
     cols,
     seed=None,
     stamp_name="squarepair",
+    stars_name="star",
     stamps_per_team=1,
     stars_per_stamp_lim=[5, 10],
     stars_strategy=None
@@ -137,14 +179,14 @@ def stamps(
                 team1_pattern, team2_pattern, rows, cols
             )
             team1_patterns.append(
-                get_grid_stamp(load_stamp("star"), rows, cols, yoffset=yy, xoffset=xx)
+                get_grid_stamp(load_stamp(stars_name), rows, cols, yoffset=yy, xoffset=xx)
             )
 
             xx, yy = get_random_unoccupied_point(
                 team1_pattern, team2_pattern, rows, cols
             )
             team2_patterns.append(
-                get_grid_stamp(load_stamp("star"), rows, cols, yoffset=yy, xoffset=xx)
+                get_grid_stamp(load_stamp(stars_name), rows, cols, yoffset=yy, xoffset=xx)
             )
 
             # Update the patterns we're using so we don't
@@ -171,31 +213,36 @@ def stamps(
                 center2 = (xlocs[1-k], yloc)
 
             for _ in range(stars_per_stamp):
+
                 xx, yy = get_gaussian_unoccupied_point(
                     team1_pattern, team2_pattern, rows, cols, center1
                 )
-                team1_patterns.append(
-                    get_grid_stamp(
-                        load_stamp("star"),
-                        rows,
-                        cols,
-                        yoffset=yy,
-                        xoffset=xx,
-                    )
+                stamp1 = load_stamp(stars_name)
+                if random.random() < 0.50:
+                    stamp1 = vflip_pattern(stamp1)
+                gridstamp = get_grid_stamp(
+                    stamp1,
+                    rows,
+                    cols,
+                    yoffset=yy,
+                    xoffset=xx,
                 )
+                team1_patterns.append(gridstamp)
 
                 xx, yy = get_gaussian_unoccupied_point(
                     team1_pattern, team2_pattern, rows, cols, center2
                 )
-                team2_patterns.append(
-                    get_grid_stamp(
-                        load_stamp("star"),
-                        rows,
-                        cols,
-                        yoffset=yy,
-                        xoffset=xx,
-                    )
+                stamp2 = load_stamp(stars_name)
+                if random.random() < 0.50:
+                    stamp2 = vflip_pattern(stamp2)
+                gridstamp = get_grid_stamp(
+                    stamp2,
+                    rows,
+                    cols,
+                    yoffset=yy,
+                    xoffset=xx,
                 )
+                team2_patterns.append(gridstamp)
 
                 # Update the patterns we're using so we don't
                 # have colliding points
@@ -323,7 +370,7 @@ def get_grid_stamp(pattern, rows, cols, xoffset=0, yoffset=0, flatten=True):
 
 
 def get_random_unoccupied_point(team1_pattern, team2_pattern, rows, cols):
-    x, y = random.randint(0, cols - 1), random.randint(0, rows - 1)
+    x, y = random.randint(1, cols - 2), random.randint(1, rows - 2)
 
     tries = 0
     finished = False
@@ -332,7 +379,9 @@ def get_random_unoccupied_point(team1_pattern, team2_pattern, rows, cols):
         okay = True
         for ix in [-2, -1, 0, 1, 2]:
             for iy in [-2, -1, 0, 1, 2]:
-                if y + iy < rows and x + ix < cols:
+                ix = (ix + cols) % cols
+                iy = (iy + rows) % rows
+                if y + iy < rows-1 and x + ix < cols-1:
                     if (
                         team1_pattern[y + iy][x + ix] == "o"
                         or team2_pattern[y + iy][x + ix] == "o"
@@ -341,7 +390,7 @@ def get_random_unoccupied_point(team1_pattern, team2_pattern, rows, cols):
                         break
         if not okay:
             # Try another point
-            x, y = random.randint(0, cols - 1), random.randint(0, rows - 1)
+            x, y = random.randint(1, cols - 2), random.randint(0, rows - 2)
             tries += 1
             if tries > 10:
                 raise Exception(
@@ -353,7 +402,7 @@ def get_random_unoccupied_point(team1_pattern, team2_pattern, rows, cols):
 
 def get_gaussian_unoccupied_point(team1_pattern, team2_pattern, rows, cols, center):
     cx, cy = center
-    stdx, stdy = [20, 20]
+    stdx, stdy = [25, 25]
 
     def _getxy(rows, cols):
         randx = int(random.gauss(cx, stdx))
