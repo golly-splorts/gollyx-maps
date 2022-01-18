@@ -1,0 +1,32 @@
+[
+    {
+        "patternName": "flyingv1",
+        "mapName": "Flying V 1",
+        "mapDescription": "Flying V Map 1",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "flyingv2",
+        "mapName": "Flying V 2",
+        "mapDescription": "Flying V Map 2",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "stlouis",
+        "mapName": "St. Louis Style",
+        "mapDescription": "St. Louis Style",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "newyork",
+        "mapName": "New York Style",
+        "mapDescription": "New York Style",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "chicago",
+        "mapName": "Chicago Style",
+        "mapDescription": "Chicago Style",
+        "mapStartSeason": 0
+    }
+]

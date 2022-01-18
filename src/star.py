@@ -1,0 +1,355 @@
+import json
+import os
+import random
+from .geom import hflip_pattern, vflip_pattern
+from .utils import pattern2url
+from .patterns import get_grid_empty, pattern_union
+from .utils import pattern2url, retry_on_failure
+
+
+def get_star_pattern_function_map():
+    return {
+        "flyingv1": flyingv1,
+        "flyingv2": flyingv2,
+        "stlouis": stlouis,
+        "newyork": newyork,
+        "chicago": chicago,
+        # "comb": comb,
+        # "precipitation": precipitation,
+        # "evaporation": evaporation,
+        # "sublimation": sublimation,
+        # "denaturation": denaturation,
+        # "gastank": gastank,
+        # "rustytank": rustytank,
+        # "dinnerplate": dinnerplate,
+        # "desertplate": desertplate,
+        # "squarestar": squarestar,
+        # "kitchensink": kitchensink,
+        # "ricepudding": ricepudding,
+        # "fishsoup": fishsoup,
+    }
+
+
+def flyingv1(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _flyingv(
+        rows, cols, seed=seed, dx=3, dy=3, kill_count=10, kill_prob=0.20, valign=True
+    )
+
+
+def flyingv2(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _flyingv(
+        rows,
+        cols,
+        seed=seed,
+        dx=4,
+        dy=8,
+        kill_count=40,
+        kill_prob=0.40,
+        valign=random.random() < 0.50,
+    )
+
+
+def stlouis(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    if random.random() < 0.50:
+        # chicago style
+        return _bars(rows, cols, seed=seed, st_louis_style=True, tmargin_lim=[3, 4], bmargin_lim=[5, 6], thickness_lim=[8, 10])
+    else:
+        # ny style
+        return _bars(rows, cols, seed=seed, st_louis_style=True, thickness_lim=[2, 4])
+
+
+def newyork(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _bars(rows, cols, seed=seed, thickness_lim=[2, 4])
+
+
+def chicago(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _bars(rows, cols, seed=seed, tmargin_lim=[3, 4], bmargin_lim=[5, 6], thickness_lim=[8, 10])
+
+
+#########################################
+
+
+def _flyingv(
+    rows,
+    cols,
+    seed=None,
+    dx=4,
+    dy=8,
+    kill_count=0,
+    kill_prob=0.5,
+    valign=True,
+):
+    if seed is not None:
+        random.seed(seed)
+
+    # These store the the .o diagrams (flat=False means these are lists of lists of one char)
+    team1_pattern = get_grid_empty(rows, cols, flat=False)
+    team2_pattern = get_grid_empty(rows, cols, flat=False)
+
+    # ---------
+    # Parameters
+
+    # Left/right margin
+    lmargin = 0.1
+
+    # Top/bottom margins
+    tmargin = 0.1
+    bmargin = 0.9
+
+    # Set jitter
+    jitterx = 7
+    jittery = 8
+
+    maxkillprob = kill_prob
+    maxkillcounter = kill_count
+
+    # ------------
+    # Algorithm:
+    #
+    # Create diagonal lines by filling in rectangles
+    # connected diagonal-to-diagonal.
+    # The lines only occupy half of the grid.
+    # Create two, flip one of them, and combine to get a V shape.
+    #
+    # It is also crucial to ensure teams start on even
+    # grid numbers, to ensure the diagonal formation does
+    # something interesting, hence the times 2/divided by 2 operation.
+
+    starty = int(tmargin * rows) + 2 * random.randint(0, jittery)
+    endy = int(bmargin * rows) - random.randint(0, jittery)
+
+    startx = int(lmargin * cols) + (random.randint(0, jitterx) // 2) * 2
+    endx = (45 * cols) // 100 - (random.randint(0, jitterx) // 2) * 2
+
+    # -------------
+    # color 1
+
+    killcounter = 0
+
+    if valign:
+        starty1 = starty
+        endy1 = endy
+    else:
+        offset = (random.randint(-jittery, jittery) // 2) * 2
+        starty1 = starty + offset
+        endy1 = endy + offset
+    yy = starty1
+
+    offset = (random.randint(-jitterx, jitterx) // 2) * 2
+    startx1 = startx + offset + 1
+    endx1 = endx + offset
+    xx = startx1
+
+    while yy < endy1 and xx < endx1:
+        for xx_ in range(xx, xx + dx + 1):
+            for yy_ in range(yy, yy + dy + 1):
+                if xx_ == xx:
+                    team1_pattern[yy_][xx_] = "o"
+                elif xx_ == (xx + dx + 1):
+                    team1_pattern[yy_][xx_] = "o"
+                else:
+                    if xx_ % 2 == yy_ % 2:
+                        if (
+                            random.random() < maxkillprob
+                            and killcounter != maxkillcounter
+                        ):
+                            killcounter += 1
+                        else:
+                            team1_pattern[yy_][xx_] = "o"
+        yy += dy
+        xx += dx
+
+    # -------------
+    # color 2
+
+    killcounter = 0
+
+    if valign:
+        starty2 = starty
+        endy2 = endy
+    else:
+        offset = (random.randint(-jittery, jittery) // 2) * 2
+        starty2 = starty + offset
+        endy2 = endy + offset
+    yy = starty2
+
+    offset = (random.randint(-jitterx, jitterx) // 2) * 2
+    startx2 = startx + offset + 1
+    endx2 = endx + offset
+    xx = startx2
+
+    while yy < endy2 and xx < endx2:
+        for xx_ in range(xx, xx + dx + 1):
+            for yy_ in range(yy, yy + dy + 1):
+                if xx_ == xx:
+                    team2_pattern[yy_][xx_] = "o"
+                elif xx_ == (xx + dx + 1):
+                    team2_pattern[yy_][xx_] = "o"
+                else:
+                    if xx_ % 2 == yy_ % 2:
+                        if (
+                            random.random() < maxkillprob
+                            and killcounter != maxkillcounter
+                        ):
+                            killcounter += 1
+                        else:
+                            team2_pattern[yy_][xx_] = "o"
+        yy += dy
+        xx += dx
+
+    # ---------------
+
+    team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
+    team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
+
+    team2_pattern = hflip_pattern(team2_pattern)
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return s1, s2
+
+
+def _bars(
+    rows,
+    cols,
+    tmargin_lim=[2, 3],
+    bmargin_lim=[7, 8],
+    gap_prob_lim=[2, 4],
+    thickness_lim=[3, 5],
+    st_louis_style=False,
+    st_louis_gap=5,
+    seed=None,
+):
+
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
+    # These store the the .o diagrams (flat=False means these are lists of lists of one char)
+    team1_pattern = get_grid_empty(rows, cols, flat=False)
+    team2_pattern = get_grid_empty(rows, cols, flat=False)
+
+    # ------------
+    # Parameters
+
+    jitterx = 4
+    jittery = 10
+
+    tmargin = random.randint(tmargin_lim[0], tmargin_lim[1]) / 10
+    bmargin = random.randint(bmargin_lim[0], bmargin_lim[1]) / 10
+
+    xlocs = [0.2, 0.4, 0.6, 0.8]
+    random.shuffle(xlocs)
+
+    xlocs1 = [xlocs[0], xlocs[1]]
+    xlocs2 = [xlocs[2], xlocs[3]]
+
+    gap_prob = random.randint(gap_prob_lim[0], gap_prob_lim[1]) / 10
+
+    thickness = random.randint(*thickness_lim)
+
+    # -------------
+    # color 1
+
+    starty0 = int(tmargin * rows)
+    endy0 = int(bmargin * rows)
+
+    jit = random.randint(-jittery, jittery)
+    starty = starty0 + jit
+    endy = endy0 + jit
+
+    startx = int(xlocs1[0] * cols) + random.randint(-jitterx, jitterx)
+    endx = startx + thickness
+
+    for y in range(starty, endy + 1):
+        for x in range(startx, endx + 1):
+            if random.random() > gap_prob:
+                team1_pattern[y][x] = "o"
+
+    startx = int(xlocs1[1] * cols) + random.randint(-jitterx, jitterx)
+    endx = startx + thickness
+
+    for y in range(starty, endy + 1):
+        for x in range(startx, endx + 1):
+            if random.random() > gap_prob:
+                team1_pattern[y][x] = "o"
+
+    # -------------
+    # color 2
+
+    starty0 = int(tmargin * rows)
+    endy0 = int(bmargin * rows)
+
+    jit = random.randint(-jittery, jittery)
+    starty = starty0 + jit
+    endy = endy0 + jit
+
+    startx = int(xlocs2[0] * cols) + random.randint(-jitterx, jitterx)
+    endx = startx + thickness
+
+    for y in range(starty, endy + 1):
+        for x in range(startx, endx + 1):
+            if random.random() > gap_prob:
+                team2_pattern[y][x] = "o"
+
+    startx = int(xlocs2[1] * cols) + random.randint(-jitterx, jitterx)
+    endx = startx + thickness
+
+    for y in range(starty, endy + 1):
+        for x in range(startx, endx + 1):
+            if random.random() > gap_prob:
+                team2_pattern[y][x] = "o"
+
+    # ------------------
+    # st louis style
+    if st_louis_style:
+        for yy in range(rows):
+            if yy % st_louis_gap == 0:
+                nx = len(team1_pattern[y])
+                for xx in range(nx):
+                    team1_pattern[yy][xx] = "."
+                    team2_pattern[yy][xx] = "."
+
+    # -----------------
+    # Adjust number of live cells of each team to be equal
+    p1 = set()
+    p2 = set()
+    for yy in range(rows):
+        for xx in range(cols):
+            if team1_pattern[yy][xx] == "o":
+                p1.add((xx, yy))
+            elif team2_pattern[yy][xx] == "o":
+                p2.add((xx, yy))
+
+    diff = abs(len(p1) - len(p2))
+    if diff != 0:
+        if len(p1) > len(p2):
+            larger = p1
+            patt = team1_pattern
+        else:
+            larger = p2
+            patt = team2_pattern
+        for i in range(diff):
+            pt = larger.pop()
+            patt[pt[1]][pt[0]] = "."
+
+    # ------------
+    # Assemble:
+    team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
+    team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return s1, s2
