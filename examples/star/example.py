@@ -2,7 +2,8 @@ from bars import bars
 from comb import comb
 from flying_v import flying_v
 from stamps import two_stamps, stamps_squarepair
-from containment import containment_rectangle, containment_lines
+from containment_rectangle import containment_rectangle
+from containment_lines import containment_lines
 from porch import porch
 
 ROWS = 160
