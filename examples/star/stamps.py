@@ -28,10 +28,14 @@ def stamps_squarepair(rows, cols, seed=None):
     stars_per_stamp = random.randint(5, 15)
 
     stars_strategy = 'random'
-    stars_strategy = 'friendly_neighbors'
+    #stars_strategy = 'friendly_neighbors'
     #stars_strategy = 'unfriendly_neighbors'
 
-    stamp_name = 'squarepair'
+    #stamp_name = 'squarepair'
+    #stamp_name = 'solarsail'
+    #stamp_name = 'spaceship2platform'
+    stamp_name = 'scaffoldunfusing'
+    #stamp_name = 'backedupsink'
 
     # ---------------
     # Algorithm:

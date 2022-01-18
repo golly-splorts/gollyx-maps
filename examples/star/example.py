@@ -15,10 +15,12 @@ if __name__ == "__main__":
     # flying_v(ROWS, COLS)
     # bars(ROWS, COLS)
     # comb(ROWS, COLS)
-    # stamps_squarepair(ROWS, COLS)
-    # two_stamps(ROWS, COLS)
 
-    containment_rectangle(ROWS, COLS)
+    # containment_rectangle(ROWS, COLS)
     # containment_lines(ROWS, COLS)
+
+    stamps_squarepair(ROWS, COLS)
+
+    # two_stamps(ROWS, COLS)
 
     # porch(ROWS, COLS)
