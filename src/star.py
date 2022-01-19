@@ -125,7 +125,7 @@ def denaturation(rows, cols, seed=None):
         cols,
         seed=seed,
         stamp_name='arrow',
-        stamps_per_team_lim=[1, 3],
+        stamps_per_team_lim=[1, 2],
         vertical_stamp_orientation=random.random()<0.5,
         peel_off=True,
     )
@@ -558,7 +558,7 @@ def _containment_lines(
     if stamp_name is None:
         raise Exception("Error: stamp_name parameter required for containment lines")
 
-    jitterx = 8
+    jitterx = 15
     jittery = 8
 
     # ---------------
