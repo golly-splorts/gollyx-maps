@@ -5,7 +5,6 @@ cols = 240
 
 #m = maps.get_map_realization("star", "precipitation", rows=rows, columns=cols)
 #m = maps.get_map_realization("star", "evaporation", rows=rows, columns=cols)
-#m = maps.get_map_realization("star", "sublimation", rows=rows, columns=cols)
 m = maps.get_map_realization("star", "denaturation", rows=rows, columns=cols)
 print(
     "http://192.168.30.20:8888/index.html"
