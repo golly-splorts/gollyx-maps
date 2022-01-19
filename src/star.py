@@ -19,10 +19,10 @@ def get_star_pattern_function_map():
         "precipitation": precipitation,
         "evaporation": evaporation,
         "denaturation": denaturation,
-        # "gastank": gastank,
-        # "rustytank": rustytank,
-        # "dinnerplate": dinnerplate,
-        # "desertplate": desertplate,
+        "gastank": gastank,
+        "rustytank": rustytank,
+        "dinnerplate": dinnerplate,
+        "dessertplate": dessertplate,
         # "squarestar": squarestar,
         # "kitchensink": kitchensink,
         # "ricepudding": ricepudding,
@@ -124,10 +124,70 @@ def denaturation(rows, cols, seed=None):
         rows,
         cols,
         seed=seed,
-        stamp_name='arrow',
+        stamp_name="arrow",
         stamps_per_team_lim=[1, 2],
-        vertical_stamp_orientation=random.random()<0.5,
+        vertical_stamp_orientation=random.random() < 0.5,
         peel_off=True,
+    )
+
+
+def gastank(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _containment_rectangle(
+        rows,
+        cols,
+        seed=seed,
+        ylocs_top_lim=[3, 4],
+        ylocs_bot_lim=[6, 7],
+        xlocs_left_lim=[3, 4],
+        xlocs_right_lim=[6, 7],
+        fill_style="random",
+        thickness=2,
+        fill_density=random.randint(3, 10) / 100
+    )
+
+
+def rustytank(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _containment_rectangle(
+        rows,
+        cols,
+        seed=seed,
+        ylocs_top_lim=[1, 4],
+        ylocs_bot_lim=[6, 9],
+        xlocs_left_lim=[1, 4],
+        xlocs_right_lim=[6, 9],
+        fill_style="bumps",
+        thickness=2,
+        fill_density=random.randint(10, 45)/100
+    )
+
+
+def dinnerplate(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _containment_rectangle(
+        rows,
+        cols,
+        seed=seed,
+        fill_style="squares",
+        thickness=2,
+        stamps_per_team_lim=[1,4]
+    )
+
+
+def dessertplate(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _containment_rectangle(
+        rows,
+        cols,
+        seed=seed,
+        fill_style="splitsquares",
+        thickness=2,
+        stamps_per_team_lim=[2,5]
     )
 
 
@@ -553,7 +613,7 @@ def _containment_lines(
 
     if vertical_stamp_orientation is None:
         vertical_stamp_orientation = random.random() < 0.50
-        #vertical_stamp_orientation = True
+        # vertical_stamp_orientation = True
 
     if stamp_name is None:
         raise Exception("Error: stamp_name parameter required for containment lines")
@@ -645,8 +705,8 @@ def _containment_lines(
 
             stamp1 = get_pattern(
                 stamp_name,
-                hflip = random.random() < 0.50,
-                vflip = random.random() < 0.50,
+                hflip=random.random() < 0.50,
+                vflip=random.random() < 0.50,
             )
 
             xx = xloc + random.randint(-jitterx, jitterx)
@@ -656,8 +716,8 @@ def _containment_lines(
 
             stamp2 = get_pattern(
                 stamp_name,
-                hflip = random.random() < 0.50,
-                vflip = random.random() < 0.50,
+                hflip=random.random() < 0.50,
+                vflip=random.random() < 0.50,
             )
 
             xx = xloc + random.randint(-jitterx, jitterx)
@@ -669,8 +729,8 @@ def _containment_lines(
 
             stamp = get_pattern(
                 stamp_name,
-                hflip = random.random() < 0.50,
-                vflip = random.random() < 0.50,
+                hflip=random.random() < 0.50,
+                vflip=random.random() < 0.50,
             )
 
             xx = xloc + random.randint(-jitterx, jitterx)
@@ -691,4 +751,245 @@ def _containment_lines(
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
 
+    return s1, s2
+
+
+def _containment_rectangle(
+    rows, 
+    cols, 
+    seed=None,
+    fill_style=None,
+    stamps_per_team_lim=[1, 6],
+    ylocs_top_lim=[1, 4],
+    ylocs_bot_lim=[6, 9],
+    xlocs_left_lim=[1, 4],
+    xlocs_right_lim=[6, 9],
+    thickness=2,
+    fill_density=None,
+):
+
+    if seed is not None:
+       random.seed(seed)
+    
+    valid_fill_styles = ["random", "bumps", "squares", "splitsquares"]
+    
+    # --------------
+    # Parameters:
+    
+    # Thickness of >= 2 is impenetrable
+    
+    #ylocs_top = random.randint(10, 40) / 100
+    ylocs_top = random.randint(ylocs_top_lim[0], ylocs_top_lim[1])/10
+    #ylocs_bot = random.randint(60, 90) / 100
+    ylocs_bot = random.randint(ylocs_bot_lim[0], ylocs_bot_lim[1])/10
+    
+    xlocs_left = random.randint(10, 30) / 100
+    xlocs_right = random.randint(70, 90) / 100
+    
+    jitterx = 10
+    jittery = 10
+    
+    if fill_style is None:
+        fill_style = random.choice(valid_fill_styles)
+    elif fill_style not in valid_fill_styles:
+        raise Exception(
+            f"Invalid fill style specified for containment rectangle: {fill_style}"
+        )
+    
+    # fill_style = 'random'
+    # fill_style = 'bumps'
+    # fill_style = 'squares'
+    # fill_style = 'splitsquares'
+    
+    if fill_density is None:
+        fill_density = random.randint(5, 30) / 100
+    
+    stamps_per_team = random.randint(stamps_per_team_lim[0], stamps_per_team_lim[1])
+    
+    # ---------------
+    # Algorithm:
+    
+    team1_patterns = []
+    team2_patterns = []
+    
+    # ---------------
+    # Lines:
+    
+    ylocs = [int(ylocs_top * rows), int(ylocs_bot * rows)]
+    xlocs = [int(xlocs_left * rows), int(xlocs_right * rows)]
+    
+    def _get_bounds(z, dim):
+        zstart = z - dim // 2
+        zend = z + (dim - dim // 2)
+        return zstart, zend
+    
+    team1_hlines = get_grid_empty(rows, cols, flat=False)
+    team2_hlines = get_grid_empty(rows, cols, flat=False)
+    
+    team1_vlines = get_grid_empty(rows, cols, flat=False)
+    team2_vlines = get_grid_empty(rows, cols, flat=False)
+    
+    # Add the line
+    y1 = ylocs[0] - random.randint(0, jittery)
+    y2 = ylocs[1] + random.randint(0, jittery)
+    
+    x1 = xlocs[0] + random.randint(0, jitterx)
+    x2 = xlocs[1] - random.randint(0, jitterx)
+    
+    # If fill style is bumps, handle it
+    bumps = False
+    if fill_style == "bumps":
+        bumps = True
+        fill_points = int((fill_density * (x2 - x1)) // 2)
+        t1bumps = 0
+        t2bumps = 0
+    
+    # make this thickness//2 instead of +-1
+    for ix in range(x1 + 1, x2 - 1):
+        # string 1
+        bounds = _get_bounds(y1, thickness)
+        for iy in range(*bounds):
+            team1_hlines[iy][ix] = "o"
+        if bumps:
+            if t1bumps < fill_points:
+                if random.random() < fill_density:
+                    # add a random bump
+                    team1_hlines[bounds[-1]][ix] = "o"
+                    t1bumps += 1
+    
+        # string 2
+        bounds = _get_bounds(y2, thickness)
+        for iy in range(*bounds):
+            team2_hlines[iy][ix] = "o"
+        if bumps:
+            if t2bumps < fill_points:
+                if random.random() < fill_density:
+                    # add a random bump
+                    team2_hlines[bounds[0] - 1][ix] = "o"
+                    t2bumps += 1
+    
+    if fill_style == "bumps":
+        fill_points = int((fill_density * (y2 - y1)) // 2)
+        t1bumps = 0
+        t2bumps = 0
+    
+    for iy in range(y1 + 1, y2 - 1):
+    
+        # string 1
+        bounds = _get_bounds(x1, thickness)
+        for ix in range(*bounds):
+            team1_vlines[iy][ix] = "o"
+        if bumps:
+            if t1bumps < fill_points:
+                if random.random() < fill_density:
+                    # add a random bump
+                    team1_vlines[iy][bounds[-1]] = "o"
+                    t1bumps += 1
+    
+        # string 2
+        bounds = _get_bounds(x2, thickness)
+        for ix in range(*bounds):
+            team2_vlines[iy][ix] = "o"
+        if bumps:
+            if t2bumps < fill_points:
+                if random.random() < fill_density:
+                    # add a random bump
+                    team2_vlines[iy][bounds[0] - 1] = "o"
+                    t2bumps += 1
+    
+    # swap top/bottom and left/right colors randomly
+    if random.random() < 0.50:
+        temp = team2_hlines[:]
+        team2_hlines = team1_hlines[:]
+        team1_hlines = temp
+    if random.random() < 0.50:
+        temp = team2_vlines[:]
+        team2_vlines = team1_vlines[:]
+        team1_vlines = temp
+    
+    team1_patterns.append(team1_hlines)
+    team1_patterns.append(team1_vlines)
+    
+    team2_patterns.append(team2_hlines)
+    team2_patterns.append(team2_vlines)
+    
+    # --------------------
+    # Fill:
+    
+    # (bumps handled in line construction)
+    
+    def _get_rand_xy(x1, y1, x2, y2, thickness):
+        x_ = x1 + thickness + random.randint(0, x2 - x1 - 2 * thickness)
+        y_ = y1 + thickness + random.randint(0, y2 - y1 - 2 * thickness)
+        return x_, y_
+    
+    if fill_style == "random":
+    
+        team1_pts = get_grid_empty(rows, cols, flat=False)
+        team2_pts = get_grid_empty(rows, cols, flat=False)
+    
+        # Divide this quantity by 2, for each team
+        fill_points = int(
+            (fill_density * (y2 - y1 - 2 * thickness) * (x2 - x1 - 2 * thickness)) // 2
+        )
+    
+        for team in [1, 2]:
+            for _ in range(fill_points):
+                xx, yy = _get_rand_xy(x1, y1, x2, y2, thickness)
+                while team1_pts[yy][xx] == "o" or team2_pts[yy][xx] == "o":
+                    xx, yy = _get_rand_xy(x1, y1, x2, y2, thickness)
+                if team == 1:
+                    team1_pts[yy][xx] = "o"
+                elif team == 2:
+                    team2_pts[yy][xx] = "o"
+    
+        team1_patterns.append(team1_pts)
+        team2_patterns.append(team2_pts)
+    
+    elif fill_style in ["squares", "splitsquares"]:
+    
+        team1_pts = get_grid_empty(rows, cols, flat=False)
+        team2_pts = get_grid_empty(rows, cols, flat=False)
+    
+        for k in range(2 * stamps_per_team):
+            xx, yy = _get_rand_xy(x1, y1, x2, y2, 2 * thickness)
+            while team1_pts[yy][xx] == "o" or team2_pts[yy][xx] == "o":
+                xx, yy = _get_rand_xy(x1, y1, x2, y2, 2 * thickness)
+    
+            # Add squares of one or the other color, or split half/half
+            if fill_style == "splitsquares":
+                if k % 2 == 0:
+                    team1_pts[yy][xx] = "o"
+                    team1_pts[yy][xx + 1] = "o"
+                    team2_pts[yy + 1][xx + 1] = "o"
+                    team2_pts[yy + 1][xx] = "o"
+                if k % 2 == 1:
+                    team2_pts[yy][xx] = "o"
+                    team2_pts[yy][xx + 1] = "o"
+                    team1_pts[yy + 1][xx + 1] = "o"
+                    team1_pts[yy + 1][xx] = "o"
+            elif fill_style == "squares":
+                if k % 2 == 0:
+                    team1_pts[yy][xx] = "o"
+                    team1_pts[yy][xx + 1] = "o"
+                    team1_pts[yy + 1][xx + 1] = "o"
+                    team1_pts[yy + 1][xx] = "o"
+                if k % 2 == 1:
+                    team2_pts[yy][xx] = "o"
+                    team2_pts[yy][xx + 1] = "o"
+                    team2_pts[yy + 1][xx + 1] = "o"
+                    team2_pts[yy + 1][xx] = "o"
+    
+        team1_patterns.append(team1_pts)
+        team2_patterns.append(team2_pts)
+    
+    # --------------------
+    # Final assembly:
+    
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
+    
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+    
     return s1, s2

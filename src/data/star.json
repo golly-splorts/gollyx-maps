@@ -52,5 +52,29 @@
         "mapName": "Denaturation",
         "mapDescription": "Some denaturation",
         "mapStartSeason": 0
+    },
+    {
+        "patternName": "gastank",
+        "mapName": "Gas Tank",
+        "mapDescription": "A gas tank",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "rustytank",
+        "mapName": "Rusty Tank",
+        "mapDescription": "A rusty tank",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dinnerplate",
+        "mapName": "Dinner Plate",
+        "mapDescription": "A dinner plate",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dessertplate",
+        "mapName": "Dessert Plate",
+        "mapDescription": "A dessert plate",
+        "mapStartSeason": 0
     }
 ]
