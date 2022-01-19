@@ -14,19 +14,25 @@
     {
         "patternName": "stlouis",
         "mapName": "St. Louis Style",
-        "mapDescription": "St. Louis Style",
+        "mapDescription": "St. Louis style slices",
         "mapStartSeason": 0
     },
     {
         "patternName": "newyork",
         "mapName": "New York Style",
-        "mapDescription": "New York Style",
+        "mapDescription": "New York style slices",
         "mapStartSeason": 0
     },
     {
         "patternName": "chicago",
         "mapName": "Chicago Style",
-        "mapDescription": "Chicago Style",
+        "mapDescription": "Chicago style slices",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "comb",
+        "mapName": "Combs",
+        "mapDescription": "Pair of combs",
         "mapStartSeason": 0
     }
 ]
