@@ -25,7 +25,6 @@ def get_pattern(pattern_name, hflip=False, vflip=False, rotdeg=0):
     For a given pattern, return the .o diagram
     as a list of strings, one string = one row
     """
-    import pdb; pdb.set_trace()
     patternpaths = get_pattern_filepaths()
     fpath = None
     for patternpath in patternpaths:
