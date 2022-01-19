@@ -108,7 +108,7 @@ def precipitation(rows, cols, seed=None):
 def evaporation(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    stamp_names = ["solarsail", "backedupsink", "squarepair"]
+    stamp_names = ["solarsail", "backedupsink", "squarevariation3"]
     return _containment_lines(
         rows,
         cols,
@@ -640,20 +640,22 @@ def _containment_lines(
             yy1 = min(max(yy1, y1 + thickness // 2), y2 - thickness // 2)
             yy2 = min(max(yy2, y1 + thickness // 2), y2 - thickness // 2)
 
-            stamp1 = get_pattern(stamp_name)
-
-            if random.random() < 0.50:
-                stamp1 = hflip_pattern(stamp1)
+            stamp1 = get_pattern(
+                stamp_name,
+                hflip = random.random() < 0.50,
+                vflip = random.random() < 0.50,
+            )
 
             xx = xloc + random.randint(-jitterx, jitterx)
             gridstamp = get_gridstamp(stamp1, rows, cols, yoffset=yy1, xoffset=xx)
 
             team1_patterns.append(gridstamp)
 
-            stamp2 = get_pattern(stamp_name)
-
-            if random.random() < 0.50:
-                stamp2 = hflip_pattern(stamp2)
+            stamp2 = get_pattern(
+                stamp_name,
+                hflip = random.random() < 0.50,
+                vflip = random.random() < 0.50,
+            )
 
             xx = xloc + random.randint(-jitterx, jitterx)
             gridstamp = get_gridstamp(stamp2, rows, cols, yoffset=yy2, xoffset=xx)
@@ -662,10 +664,11 @@ def _containment_lines(
 
         else:
 
-            stamp = get_pattern(stamp_name)
-
-            if random.random() < 0.50:
-                stamp = hflip_pattern(stamp)
+            stamp = get_pattern(
+                stamp_name,
+                hflip = random.random() < 0.50,
+                vflip = random.random() < 0.50,
+            )
 
             xx = xloc + random.randint(-jitterx, jitterx)
             yy = y1 + int(0.5 * dy) + random.randint(-jittery, jittery)
