@@ -1,0 +1,104 @@
+[
+    {
+        "patternName": "flyingv1",
+        "mapName": "Flying V 1",
+        "mapDescription": "Flying V Map 1",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "flyingv2",
+        "mapName": "Flying V 2",
+        "mapDescription": "Flying V Map 2",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "stlouis",
+        "mapName": "St. Louis Style",
+        "mapDescription": "St. Louis style slices",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "newyork",
+        "mapName": "New York Style",
+        "mapDescription": "New York style slices",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "chicago",
+        "mapName": "Chicago Style",
+        "mapDescription": "Chicago style slices",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "combs",
+        "mapName": "Combs",
+        "mapDescription": "Pair of combs",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "precipitation",
+        "mapName": "Precipitation",
+        "mapDescription": "Some precipitation",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "evaporation",
+        "mapName": "Evaporation",
+        "mapDescription": "Some evaporation",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "denaturation",
+        "mapName": "Denaturation",
+        "mapDescription": "Some denaturation",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "gastank",
+        "mapName": "Gas Tank",
+        "mapDescription": "A gas tank",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "rustytank",
+        "mapName": "Rusty Tank",
+        "mapDescription": "A rusty tank",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dinnerplate",
+        "mapName": "Dinner Plate",
+        "mapDescription": "A dinner plate",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dessertplate",
+        "mapName": "Dessert Plate",
+        "mapDescription": "A dessert plate",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "squarestar",
+        "mapName": "Square Star",
+        "mapDescription": "square shaped star",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "kitchensink",
+        "mapName": "Kitchen Sink",
+        "mapDescription": "everything and the kitchen sink",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "ricepudding",
+        "mapName": "Rice Pudding",
+        "mapDescription": "some rice pudding",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "fishsoup",
+        "mapName": "Fish Soup",
+        "mapDescription": "some fish soup",
+        "mapStartSeason": 0
+    }
+]

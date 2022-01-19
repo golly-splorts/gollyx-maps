@@ -21,6 +21,7 @@ from .pseudo import get_pseudo_pattern_function_map
 from .toroidal import get_toroidal_pattern_function_map
 from .dragon import get_dragon_pattern_function_map, MAX_PARTS
 from .rainbow import get_rainbow_pattern_function_map
+from .star import get_star_pattern_function_map
 
 
 def get_pattern_function_map(cup):
@@ -30,6 +31,7 @@ def get_pattern_function_map(cup):
         'toroidal': get_toroidal_pattern_function_map,
         'dragon': get_dragon_pattern_function_map,
         'rainbow': get_rainbow_pattern_function_map,
+        'star': get_star_pattern_function_map,
     }
     return m[cup]
 

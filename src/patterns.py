@@ -9,9 +9,8 @@ from .error import GollyXPatternNotFoundError, GollyXPatternsError
 
 
 def get_pattern_filepaths():
-    patternfilepaths = glob(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "*_patterns", "*.txt")
-    )
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "*_patterns", "*.txt")
+    patternfilepaths = glob(p)
     return patternfilepaths
 
 
