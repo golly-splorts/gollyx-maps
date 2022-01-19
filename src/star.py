@@ -146,7 +146,7 @@ def gastank(rows, cols, seed=None):
         xlocs_right_lim=[6, 7],
         fill_style="random",
         thickness=2,
-        fill_density=random.randint(3, 10) / 100
+        fill_density=random.randint(3, 10) / 100,
     )
 
 
@@ -163,7 +163,7 @@ def rustytank(rows, cols, seed=None):
         xlocs_right_lim=[6, 9],
         fill_style="bumps",
         thickness=2,
-        fill_density=random.randint(10, 45)/100
+        fill_density=random.randint(10, 45) / 100,
     )
 
 
@@ -176,7 +176,7 @@ def dinnerplate(rows, cols, seed=None):
         seed=seed,
         fill_style="squares",
         thickness=2,
-        stamps_per_team_lim=[1,4]
+        stamps_per_team_lim=[1, 4],
     )
 
 
@@ -189,7 +189,7 @@ def dessertplate(rows, cols, seed=None):
         seed=seed,
         fill_style="splitsquares",
         thickness=2,
-        stamps_per_team_lim=[2,5]
+        stamps_per_team_lim=[2, 5],
     )
 
 
@@ -212,13 +212,13 @@ def kitchensink(rows, cols, seed=None):
         random.seed(seed)
     stamp_name = "backedupsink"
     return _stamps(
-        rows, 
-        cols, 
+        rows,
+        cols,
         seed=seed,
-        stamp_name=stamp_name, 
+        stamp_name=stamp_name,
         stamps_per_team=2,
-        stars_per_stamp_lim=[2, 8], 
-        stars_strategy='neighbors',
+        stars_per_stamp_lim=[2, 8],
+        stars_strategy="neighbors",
     )
 
 
@@ -227,14 +227,14 @@ def ricepudding(rows, cols, seed=None):
         random.seed(seed)
     stamp_name = "squarevariation3"
     return _stamps(
-        rows, 
-        cols, 
+        rows,
+        cols,
         seed=seed,
-        stamp_name=stamp_name, 
+        stamp_name=stamp_name,
         stars_name="simpleunstablestar",
         stamps_per_team=2,
-        stars_per_stamp_lim=[2, 4], 
-        stars_strategy='unfriendly_neighbors',
+        stars_per_stamp_lim=[2, 4],
+        stars_strategy="unfriendly_neighbors",
     )
 
 
@@ -243,18 +243,15 @@ def fishsoup(rows, cols, seed=None):
         random.seed(seed)
     stamp_name = "spaceship2platform"
     return _stamps(
-        rows, 
-        cols, 
+        rows,
+        cols,
         seed=seed,
-        stamp_name=stamp_name, 
+        stamp_name=stamp_name,
         stars_name="simpleunstablestar",
         stamps_per_team=2,
-        stars_per_stamp_lim=[2, 4], 
-        stars_strategy='random',
+        stars_per_stamp_lim=[2, 5],
+        stars_strategy="random",
     )
-
-
-
 
 
 #########################################
@@ -821,8 +818,8 @@ def _containment_lines(
 
 
 def _containment_rectangle(
-    rows, 
-    cols, 
+    rows,
+    cols,
     seed=None,
     fill_style=None,
     stamps_per_team_lim=[1, 6],
@@ -835,73 +832,73 @@ def _containment_rectangle(
 ):
 
     if seed is not None:
-       random.seed(seed)
-    
+        random.seed(seed)
+
     valid_fill_styles = ["random", "bumps", "squares", "splitsquares"]
-    
+
     # --------------
     # Parameters:
-    
+
     # Thickness of >= 2 is impenetrable
-    
-    #ylocs_top = random.randint(10, 40) / 100
-    ylocs_top = random.randint(ylocs_top_lim[0], ylocs_top_lim[1])/10
-    #ylocs_bot = random.randint(60, 90) / 100
-    ylocs_bot = random.randint(ylocs_bot_lim[0], ylocs_bot_lim[1])/10
-    
+
+    # ylocs_top = random.randint(10, 40) / 100
+    ylocs_top = random.randint(ylocs_top_lim[0], ylocs_top_lim[1]) / 10
+    # ylocs_bot = random.randint(60, 90) / 100
+    ylocs_bot = random.randint(ylocs_bot_lim[0], ylocs_bot_lim[1]) / 10
+
     xlocs_left = random.randint(10, 30) / 100
     xlocs_right = random.randint(70, 90) / 100
-    
+
     jitterx = 10
     jittery = 10
-    
+
     if fill_style is None:
         fill_style = random.choice(valid_fill_styles)
     elif fill_style not in valid_fill_styles:
         raise Exception(
             f"Invalid fill style specified for containment rectangle: {fill_style}"
         )
-    
+
     # fill_style = 'random'
     # fill_style = 'bumps'
     # fill_style = 'squares'
     # fill_style = 'splitsquares'
-    
+
     if fill_density is None:
         fill_density = random.randint(5, 30) / 100
-    
+
     stamps_per_team = random.randint(stamps_per_team_lim[0], stamps_per_team_lim[1])
-    
+
     # ---------------
     # Algorithm:
-    
+
     team1_patterns = []
     team2_patterns = []
-    
+
     # ---------------
     # Lines:
-    
+
     ylocs = [int(ylocs_top * rows), int(ylocs_bot * rows)]
     xlocs = [int(xlocs_left * rows), int(xlocs_right * rows)]
-    
+
     def _get_bounds(z, dim):
         zstart = z - dim // 2
         zend = z + (dim - dim // 2)
         return zstart, zend
-    
+
     team1_hlines = get_grid_empty(rows, cols, flat=False)
     team2_hlines = get_grid_empty(rows, cols, flat=False)
-    
+
     team1_vlines = get_grid_empty(rows, cols, flat=False)
     team2_vlines = get_grid_empty(rows, cols, flat=False)
-    
+
     # Add the line
     y1 = ylocs[0] - random.randint(0, jittery)
     y2 = ylocs[1] + random.randint(0, jittery)
-    
+
     x1 = xlocs[0] + random.randint(0, jitterx)
     x2 = xlocs[1] - random.randint(0, jitterx)
-    
+
     # If fill style is bumps, handle it
     bumps = False
     if fill_style == "bumps":
@@ -909,7 +906,7 @@ def _containment_rectangle(
         fill_points = int((fill_density * (x2 - x1)) // 2)
         t1bumps = 0
         t2bumps = 0
-    
+
     # make this thickness//2 instead of +-1
     for ix in range(x1 + 1, x2 - 1):
         # string 1
@@ -922,7 +919,7 @@ def _containment_rectangle(
                     # add a random bump
                     team1_hlines[bounds[-1]][ix] = "o"
                     t1bumps += 1
-    
+
         # string 2
         bounds = _get_bounds(y2, thickness)
         for iy in range(*bounds):
@@ -933,14 +930,14 @@ def _containment_rectangle(
                     # add a random bump
                     team2_hlines[bounds[0] - 1][ix] = "o"
                     t2bumps += 1
-    
+
     if fill_style == "bumps":
         fill_points = int((fill_density * (y2 - y1)) // 2)
         t1bumps = 0
         t2bumps = 0
-    
+
     for iy in range(y1 + 1, y2 - 1):
-    
+
         # string 1
         bounds = _get_bounds(x1, thickness)
         for ix in range(*bounds):
@@ -951,7 +948,7 @@ def _containment_rectangle(
                     # add a random bump
                     team1_vlines[iy][bounds[-1]] = "o"
                     t1bumps += 1
-    
+
         # string 2
         bounds = _get_bounds(x2, thickness)
         for ix in range(*bounds):
@@ -962,7 +959,7 @@ def _containment_rectangle(
                     # add a random bump
                     team2_vlines[iy][bounds[0] - 1] = "o"
                     t2bumps += 1
-    
+
     # swap top/bottom and left/right colors randomly
     if random.random() < 0.50:
         temp = team2_hlines[:]
@@ -972,33 +969,33 @@ def _containment_rectangle(
         temp = team2_vlines[:]
         team2_vlines = team1_vlines[:]
         team1_vlines = temp
-    
+
     team1_patterns.append(team1_hlines)
     team1_patterns.append(team1_vlines)
-    
+
     team2_patterns.append(team2_hlines)
     team2_patterns.append(team2_vlines)
-    
+
     # --------------------
     # Fill:
-    
+
     # (bumps handled in line construction)
-    
+
     def _get_rand_xy(x1, y1, x2, y2, thickness):
         x_ = x1 + thickness + random.randint(0, x2 - x1 - 2 * thickness)
         y_ = y1 + thickness + random.randint(0, y2 - y1 - 2 * thickness)
         return x_, y_
-    
+
     if fill_style == "random":
-    
+
         team1_pts = get_grid_empty(rows, cols, flat=False)
         team2_pts = get_grid_empty(rows, cols, flat=False)
-    
+
         # Divide this quantity by 2, for each team
         fill_points = int(
             (fill_density * (y2 - y1 - 2 * thickness) * (x2 - x1 - 2 * thickness)) // 2
         )
-    
+
         for team in [1, 2]:
             for _ in range(fill_points):
                 xx, yy = _get_rand_xy(x1, y1, x2, y2, thickness)
@@ -1008,20 +1005,20 @@ def _containment_rectangle(
                     team1_pts[yy][xx] = "o"
                 elif team == 2:
                     team2_pts[yy][xx] = "o"
-    
+
         team1_patterns.append(team1_pts)
         team2_patterns.append(team2_pts)
-    
+
     elif fill_style in ["squares", "splitsquares"]:
-    
+
         team1_pts = get_grid_empty(rows, cols, flat=False)
         team2_pts = get_grid_empty(rows, cols, flat=False)
-    
+
         for k in range(2 * stamps_per_team):
             xx, yy = _get_rand_xy(x1, y1, x2, y2, 2 * thickness)
             while team1_pts[yy][xx] == "o" or team2_pts[yy][xx] == "o":
                 xx, yy = _get_rand_xy(x1, y1, x2, y2, 2 * thickness)
-    
+
             # Add squares of one or the other color, or split half/half
             if fill_style == "splitsquares":
                 if k % 2 == 0:
@@ -1045,19 +1042,19 @@ def _containment_rectangle(
                     team2_pts[yy][xx + 1] = "o"
                     team2_pts[yy + 1][xx + 1] = "o"
                     team2_pts[yy + 1][xx] = "o"
-    
+
         team1_patterns.append(team1_pts)
         team2_patterns.append(team2_pts)
-    
+
     # --------------------
     # Final assembly:
-    
+
     team1_pattern = pattern_union(team1_patterns)
     team2_pattern = pattern_union(team2_patterns)
-    
+
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
-    
+
     return s1, s2
 
 
@@ -1069,13 +1066,18 @@ def _stamps(
     stars_name="star",
     stamps_per_team=1,
     stars_per_stamp_lim=[5, 10],
-    stars_strategy=None
+    stars_strategy=None,
 ):
     # set rng seed (optional)
     if seed is not None:
         random.seed(seed)
 
-    valid_stars_strategies = ["random", "neighbors", "friendly_neighbors", "unfriendly_neighbors"]
+    valid_stars_strategies = [
+        "random",
+        "neighbors",
+        "friendly_neighbors",
+        "unfriendly_neighbors",
+    ]
 
     # Summary:
     # - add a variable number of squarepair stamps
@@ -1093,15 +1095,15 @@ def _stamps(
         raise Exception(f"Invalid stars strategy specified: {stars_strategy}")
 
     potential_stamp_names = [
-        'squarepair',
-        'solarsail',
-        'spaceship2platform',
-        'scaffoldunfusing',
-        'backedupsink'
+        "squarepair",
+        "solarsail",
+        "spaceship2platform",
+        "scaffoldunfusing",
+        "backedupsink",
     ]
 
-    jitterx = 8
-    jittery = 8
+    jitterx = 9
+    jittery = 9
 
     # ---------------
     # Algorithm:
@@ -1121,7 +1123,6 @@ def _stamps(
     for yy_ in ylocs:
 
         yy = yy_ + random.randint(-jittery, jittery)
-
         xx = xlocs[0] + random.randint(-jitterx, jitterx)
         stamp1 = get_pattern(stamp_name)
 
@@ -1133,6 +1134,7 @@ def _stamps(
         gridstamp = get_gridstamp(stamp1, rows, cols, yoffset=yy, xoffset=xx)
         team1_patterns.append(gridstamp)
 
+        yy = yy_ + random.randint(-jittery, jittery)
         xx = xlocs[1] + random.randint(-jitterx, jitterx)
         stamp2 = get_pattern(stamp_name)
 
@@ -1153,20 +1155,24 @@ def _stamps(
                 team1_pattern, team2_pattern, rows, cols
             )
             team1_patterns.append(
-                get_gridstamp(get_pattern(stars_name), rows, cols, yoffset=yy, xoffset=xx)
+                get_gridstamp(
+                    get_pattern(stars_name), rows, cols, yoffset=yy, xoffset=xx
+                )
             )
 
             xx, yy = get_random_unoccupied_point(
                 team1_pattern, team2_pattern, rows, cols
             )
             team2_patterns.append(
-                get_gridstamp(get_pattern(stars_name), rows, cols, yoffset=yy, xoffset=xx)
+                get_gridstamp(
+                    get_pattern(stars_name), rows, cols, yoffset=yy, xoffset=xx
+                )
             )
 
             ## Update the patterns we're using so we don't
             ## have colliding points
-            #team1_pattern = pattern_union(team1_patterns)
-            #team2_pattern = pattern_union(team2_patterns)
+            # team1_pattern = pattern_union(team1_patterns)
+            # team2_pattern = pattern_union(team2_patterns)
 
     elif stars_strategy in ["neighbors", "friendly_neighbors", "unfriendly_neighbors"]:
 
@@ -1184,7 +1190,7 @@ def _stamps(
                 # dealer's choice
                 k = random.randint(0, 1)
                 center1 = (xlocs[k], yloc)
-                center2 = (xlocs[1-k], yloc)
+                center2 = (xlocs[1 - k], yloc)
 
             for _ in range(stars_per_stamp):
 
@@ -1220,8 +1226,8 @@ def _stamps(
 
                 ## Update the patterns we're using so we don't
                 ## have colliding points
-                #team1_pattern = pattern_union(team1_patterns)
-                #team2_pattern = pattern_union(team2_patterns)
+                # team1_pattern = pattern_union(team1_patterns)
+                # team2_pattern = pattern_union(team2_patterns)
 
     else:
         raise Exception(f"Error: Invalid stars strategy specified: {stars_strategy}")
@@ -1233,6 +1239,7 @@ def _stamps(
     s2 = pattern2url(team2_pattern)
 
     return s1, s2
+
 
 def get_random_unoccupied_point(team1_pattern, team2_pattern, rows, cols):
     x, y = random.randint(1, cols - 2), random.randint(1, rows - 2)
@@ -1246,7 +1253,7 @@ def get_random_unoccupied_point(team1_pattern, team2_pattern, rows, cols):
             for iy in [-2, -1, 0, 1, 2]:
                 ix = (ix + cols) % cols
                 iy = (iy + rows) % rows
-                if y + iy < rows-1 and x + ix < cols-1:
+                if y + iy < rows - 1 and x + ix < cols - 1:
                     if (
                         team1_pattern[y + iy][x + ix] == "o"
                         or team2_pattern[y + iy][x + ix] == "o"
