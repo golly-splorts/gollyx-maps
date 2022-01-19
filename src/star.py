@@ -18,8 +18,7 @@ def get_star_pattern_function_map():
         # containment lines
         "precipitation": precipitation,
         "evaporation": evaporation,
-        # "sublimation": sublimation,
-        # "denaturation": denaturation,
+        "denaturation": denaturation,
         # "gastank": gastank,
         # "rustytank": rustytank,
         # "dinnerplate": dinnerplate,
@@ -118,16 +117,18 @@ def evaporation(rows, cols, seed=None):
     )
 
 
-def sublimation(rows, cols, seed=None):
-    if seed is not None:
-        random.seed(seed)
-    return _containment_lines(rows, cols, seed=seed)
-
-
 def denaturation(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    return _containment_lines(rows, cols, seed=seed)
+    return _containment_lines(
+        rows,
+        cols,
+        seed=seed,
+        stamp_name='arrow',
+        stamps_per_team_lim=[1, 3],
+        vertical_stamp_orientation=random.random()<0.5,
+        peel_off=True,
+    )
 
 
 #########################################
@@ -532,6 +533,7 @@ def _containment_lines(
     peel_off=False,
     thickness=2,
     stamps_per_team_lim=[3, 6],
+    vertical_stamp_orientation=None,
     seed=None,
 ):
     """
@@ -549,8 +551,9 @@ def _containment_lines(
 
     stamps_per_team = random.randint(stamps_per_team_lim[0], stamps_per_team_lim[1])
 
-    # vertical_stamp_orientation = random.random() < 0.50
-    vertical_stamp_orientation = True
+    if vertical_stamp_orientation is None:
+        vertical_stamp_orientation = random.random() < 0.50
+        #vertical_stamp_orientation = True
 
     if stamp_name is None:
         raise Exception("Error: stamp_name parameter required for containment lines")
@@ -672,7 +675,7 @@ def _containment_lines(
 
             xx = xloc + random.randint(-jitterx, jitterx)
             yy = y1 + int(0.5 * dy) + random.randint(-jittery, jittery)
-            gridstamp = get_gridgridstamp(stamp, rows, cols, yoffset=yy, xoffset=xx)
+            gridstamp = get_gridstamp(stamp, rows, cols, yoffset=yy, xoffset=xx)
 
             if team_assignments[i] == 1:
                 team1_patterns.append(gridstamp)
