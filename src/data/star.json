@@ -34,5 +34,17 @@
         "mapName": "Combs",
         "mapDescription": "Pair of combs",
         "mapStartSeason": 0
+    },
+    {
+        "patternName": "precipitation",
+        "mapName": "Precipitation",
+        "mapDescription": "Some precipitation",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "evaporation",
+        "mapName": "Evaporation",
+        "mapDescription": "Some evaporation",
+        "mapStartSeason": 0
     }
 ]

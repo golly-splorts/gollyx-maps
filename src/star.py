@@ -3,7 +3,7 @@ import os
 import random
 from .geom import hflip_pattern, vflip_pattern
 from .utils import pattern2url
-from .patterns import get_grid_empty, pattern_union
+from .patterns import get_grid_empty, pattern_union, get_pattern, get_grid_pattern
 from .utils import pattern2url, retry_on_failure
 
 
@@ -15,8 +15,9 @@ def get_star_pattern_function_map():
         "newyork": newyork,
         "chicago": chicago,
         "combs": combs,
-        # "precipitation": precipitation,
-        # "evaporation": evaporation,
+        # containment lines
+        "precipitation": precipitation,
+        "evaporation": evaporation,
         # "sublimation": sublimation,
         # "denaturation": denaturation,
         # "gastank": gastank,
@@ -75,6 +76,38 @@ def chicago(rows, cols, seed=None):
         random.seed(seed)
     return _bars(rows, cols, seed=seed, tmargin_lim=[3, 4], bmargin_lim=[5, 6], thickness_lim=[8, 10])
 
+
+def precipitation(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _containment_lines(
+        rows, 
+        cols, 
+        seed=seed,
+        stamp_name='scaffoldunfusing',
+        peel_off=False,
+    )
+
+def evaporation(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _containment_lines(
+        rows, 
+        cols, 
+        seed=seed,
+        stamp_name='scaffoldunfusing',
+        peel_off=True,
+    )
+
+def sublimation(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _containment_lines(rows, cols, seed=seed)
+
+def denaturation(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return _containment_lines(rows, cols, seed=seed)
 
 #########################################
 
@@ -437,6 +470,176 @@ def combs(rows, cols, seed=None):
 
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
     team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return s1, s2
+
+
+def _containment_lines(rows, cols, stamp_name=None, peel_off=False, thickness=2, stamps_per_team_lim=[1, 6], seed=None):
+    """
+    Create a map with lines forming a rectangle.
+    This requires a source of randomness.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    # --------------
+    # Parameters:
+
+    # Thickness of >= 2 is impenetrable
+    # If peel_off set to true, leave a crack to allow lines to peel off
+
+    stamps_per_team = random.randint(stamps_per_team_lim[0], stamps_per_team_lim[1])
+
+    #vertical_stamp_orientation = random.random() < 0.50
+    vertical_stamp_orientation = True
+
+    if stamp_name is None:
+        raise Exception("Error: stamp_name parameter required for containment lines")
+
+    jitterx = 12
+    jittery = 8
+
+    # ---------------
+    # Algorithm:
+
+    team1_patterns = []
+    team2_patterns = []
+
+    # ----------------
+    # Lines:
+
+    def _get_bounds(z, dim):
+        zstart = z - dim//2
+        zend = z + (dim - dim//2)
+        return zstart, zend
+
+
+    line_ylocs_top = random.randint(1,4)/10
+    line_ylocs_bot = random.randint(6,9)/10
+
+    line_ylocs = [int(line_ylocs_top*rows), int(line_ylocs_bot*rows)]
+
+    team1_lines = get_grid_empty(rows, cols, flat=False)
+    team2_lines = get_grid_empty(rows, cols, flat=False)
+
+    y1 = line_ylocs[0] + random.randint(0, jittery)
+    y2 = line_ylocs[1] - random.randint(0, jittery)
+
+    if peel_off:
+        start = 1
+    else:
+        start = 0
+
+    # Add the line
+    for ix in range(start, cols):
+        # string 1
+        for iy in range(*_get_bounds(y1, thickness)):
+            team1_lines[iy][ix] = 'o'
+        # string 2
+        for iy in range(*_get_bounds(y2, thickness)):
+            team2_lines[iy][ix] = 'o'
+
+    # Vertical flip
+    if random.random() < 0.50:
+        team1_lines = [j for j in team1_lines[::-1]]
+        team2_lines = [j for j in team2_lines[::-1]]
+        old_y1 = y1
+        old_y2 = y2
+        y1 = rows - old_y2
+        y2 = rows - old_y1
+
+    team1_patterns.append(team1_lines)
+    team2_patterns.append(team2_lines)
+
+    # ----------------
+    # Stamps:
+
+    team_assignments = [1,]*stamps_per_team + [2,]*stamps_per_team
+    random.shuffle(team_assignments)
+
+    # approximately evenly spaced in x dir
+    if vertical_stamp_orientation:
+        xlocs = [int(((j+1)/(stamps_per_team+1))*cols) for j in range(stamps_per_team)]
+    else:
+        xlocs = [int(((j+1)/(2*stamps_per_team+1))*cols) for j in range(2*stamps_per_team)]
+
+    dy = y2-y1
+
+    for i, xloc in enumerate(xlocs):
+
+        xx = xloc + random.randint(-jitterx, jitterx)
+
+        if vertical_stamp_orientation:
+            yy1 = y1 + int((1/3)*dy) + random.randint(-jittery, jittery)
+            yy2 = y1 + int((2/3)*dy) + random.randint(-jittery, jittery) 
+
+            yy1 = min(max(yy1, y1+thickness//2), y2-thickness//2)
+            yy2 = min(max(yy2, y1+thickness//2), y2-thickness//2)
+
+            stamp1 = get_pattern(stamp_name)
+
+            if random.random()<0.50:
+                stamp1 = hflip_pattern(stamp1)
+            if random.random()<0.50:
+                stamp1 = vflip_pattern(stamp1)
+
+            gridstamp = get_grid_pattern( 
+                stamp1,
+                rows, 
+                cols, 
+                yoffset=yy1, 
+                xoffset=xx
+            )
+
+            team1_patterns.append(gridstamp)
+
+            stamp2 = get_pattern(stamp_name)
+
+            if random.random()<0.50:
+                stamp2 = hflip_pattern(stamp2)
+            if random.random()<0.50:
+                stamp2 = vflip_pattern(stamp2)
+
+            gridstamp = get_grid_pattern( 
+                stamp2,
+                rows, 
+                cols, 
+                yoffset=yy2, 
+                xoffset=xx
+            )
+
+            team2_patterns.append(gridstamp)
+
+        else:
+
+            stamp = get_pattern(stamp_name)
+
+            if random.random() < 0.50:
+                stamp = hflip_pattern(stamp)
+            if random.random() < 0.50:
+                stamp = vflip_pattern(stamp)
+
+            yy = y1 + int(0.5*dy) + random.randint(-jittery, jittery) 
+            gridstamp = get_grid_pattern( 
+                rows, 
+                cols, 
+                yoffset=yy, 
+                xoffset=xx
+            )
+
+            if team_assignments[i] == 1:
+                team1_patterns.append(gridstamp)
+            elif team_assignments[i] == 2:
+                team2_patterns.append(gridstamp)
+
+    # --------------------
+    # Final assembly:
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
 
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)

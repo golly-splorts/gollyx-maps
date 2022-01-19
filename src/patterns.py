@@ -9,9 +9,8 @@ from .error import GollyXPatternNotFoundError, GollyXPatternsError
 
 
 def get_pattern_filepaths():
-    patternfilepaths = glob(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "*_patterns", "*.txt")
-    )
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "*_patterns", "*.txt")
+    patternfilepaths = glob(p)
     return patternfilepaths
 
 
@@ -26,6 +25,7 @@ def get_pattern(pattern_name, hflip=False, vflip=False, rotdeg=0):
     For a given pattern, return the .o diagram
     as a list of strings, one string = one row
     """
+    import pdb; pdb.set_trace()
     patternpaths = get_pattern_filepaths()
     fpath = None
     for patternpath in patternpaths:
