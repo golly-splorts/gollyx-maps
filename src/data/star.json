@@ -46,5 +46,11 @@
         "mapName": "Evaporation",
         "mapDescription": "Some evaporation",
         "mapStartSeason": 0
+    },
+    {
+        "patternName": "denaturation",
+        "mapName": "Denaturation",
+        "mapDescription": "Some denaturation",
+        "mapStartSeason": 0
     }
 ]
