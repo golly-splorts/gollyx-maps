@@ -59,7 +59,15 @@ def stlouis(rows, cols, seed=None):
         random.seed(seed)
     if random.random() < 0.50:
         # chicago style
-        return _bars(rows, cols, seed=seed, st_louis_style=True, tmargin_lim=[3, 4], bmargin_lim=[5, 6], thickness_lim=[8, 10])
+        return _bars(
+            rows,
+            cols,
+            seed=seed,
+            st_louis_style=True,
+            tmargin_lim=[3, 4],
+            bmargin_lim=[5, 6],
+            thickness_lim=[8, 10],
+        )
     else:
         # ny style
         return _bars(rows, cols, seed=seed, st_louis_style=True, thickness_lim=[2, 4])
@@ -74,40 +82,53 @@ def newyork(rows, cols, seed=None):
 def chicago(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    return _bars(rows, cols, seed=seed, tmargin_lim=[3, 4], bmargin_lim=[5, 6], thickness_lim=[8, 10])
+    return _bars(
+        rows,
+        cols,
+        seed=seed,
+        tmargin_lim=[3, 4],
+        bmargin_lim=[5, 6],
+        thickness_lim=[8, 10],
+    )
 
 
 def precipitation(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
+    stamp_names = ["solarsail", "backedupsink", "squarevariation3"]
     return _containment_lines(
-        rows, 
-        cols, 
+        rows,
+        cols,
         seed=seed,
-        stamp_name='scaffoldunfusing',
+        stamp_name=random.choice(stamp_names),
         peel_off=False,
     )
+
 
 def evaporation(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
+    stamp_names = ["solarsail", "backedupsink", "squarepair"]
     return _containment_lines(
-        rows, 
-        cols, 
+        rows,
+        cols,
         seed=seed,
-        stamp_name='scaffoldunfusing',
+        stamp_name=random.choice(stamp_names),
         peel_off=True,
     )
+
 
 def sublimation(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     return _containment_lines(rows, cols, seed=seed)
 
+
 def denaturation(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     return _containment_lines(rows, cols, seed=seed)
+
 
 #########################################
 
@@ -404,14 +425,13 @@ def combs(rows, cols, seed=None):
 
     thickness = random.randint(3, 5)
 
-    ylocations = [random.randint(20, 45)/100, random.randint(55, 80)/100]
+    ylocations = [random.randint(20, 45) / 100, random.randint(55, 80) / 100]
     yloc_swap_prob = 0.3
 
-    xstart = random.randint(10,25)/100
-    xwidth = random.randint(45,65)/100
+    xstart = random.randint(10, 25) / 100
+    xwidth = random.randint(45, 65) / 100
 
-    bumps_prob = random.randint(10,50)/100
-
+    bumps_prob = random.randint(10, 50) / 100
 
     # -----------------
     # Algorithm:
@@ -426,47 +446,46 @@ def combs(rows, cols, seed=None):
     # -------------
     # color 1
 
-    starty1 = int(ylocations[0]*rows) + random.randint(-jittery, jittery)
+    starty1 = int(ylocations[0] * rows) + random.randint(-jittery, jittery)
     endy1 = starty1 + thickness
 
-    startx = int(xstart*cols) + random.randint(-jitterx, jitterx)
-    endx = startx + int(xwidth*cols)
+    startx = int(xstart * cols) + random.randint(-jitterx, jitterx)
+    endx = startx + int(xwidth * cols)
 
     for y in range(starty1, endy1 + 1):
         for x in range(startx, endx + 1):
-            if y==starty1:
+            if y == starty1:
                 team1_pattern[y][x] = "o"
-            elif y==endy1:
-                team1_pattern[y][x] = team1_pattern[y-1][x]
-            elif (x%2==y%2):
+            elif y == endy1:
+                team1_pattern[y][x] = team1_pattern[y - 1][x]
+            elif x % 2 == y % 2:
                 team1_pattern[y][x] = "o"
 
-    for x in range(startx, endx+1):
-        if random.random()<bumps_prob:
-            team1_pattern[starty1-1][x] = "o"
+    for x in range(startx, endx + 1):
+        if random.random() < bumps_prob:
+            team1_pattern[starty1 - 1][x] = "o"
 
     # -------------
     # color 2
 
-    starty2 = int(ylocations[1]*rows) + random.randint(-jittery, jittery)
+    starty2 = int(ylocations[1] * rows) + random.randint(-jittery, jittery)
     endy2 = starty2 + thickness
 
-    startx = int(xstart*cols) + random.randint(-jitterx, jitterx)
-    endx = startx + int(xwidth*cols)
+    startx = int(xstart * cols) + random.randint(-jitterx, jitterx)
+    endx = startx + int(xwidth * cols)
 
-    for y in range(endy2, starty2-1, -1):
+    for y in range(endy2, starty2 - 1, -1):
         for x in range(startx, endx + 1):
-            if y==starty2:
-                team2_pattern[y][x] = team2_pattern[y+1][x]
-            elif y==endy2:
+            if y == starty2:
+                team2_pattern[y][x] = team2_pattern[y + 1][x]
+            elif y == endy2:
                 team2_pattern[y][x] = "o"
-            elif (x%2==y%2):
+            elif x % 2 == y % 2:
                 team2_pattern[y][x] = "o"
-    
-    for x in range(startx, endx+1):
-        if random.random()<bumps_prob:
-            team2_pattern[endy2+1][x] = "o"
 
+    for x in range(startx, endx + 1):
+        if random.random() < bumps_prob:
+            team2_pattern[endy2 + 1][x] = "o"
 
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
     team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
@@ -477,7 +496,44 @@ def combs(rows, cols, seed=None):
     return s1, s2
 
 
-def _containment_lines(rows, cols, stamp_name=None, peel_off=False, thickness=2, stamps_per_team_lim=[1, 6], seed=None):
+def get_gridstamp(pattern, rows, cols, yoffset, xoffset, flatten=True):
+
+    ogpattern = [list(j) for j in pattern if len(j) > 0]
+    blank_row = ["."] * cols
+    newpattern = [blank_row[:] for r in range(rows)]
+    (pattern_h, pattern_w) = (len(ogpattern), len(ogpattern[0]))
+
+    # given offset is offset for the center of the pattern,
+    # so do some algebra to determine where we should start
+    xstart = xoffset - pattern_w // 2
+    xend = xstart + pattern_w
+    ystart = yoffset - pattern_h // 2
+    yend = ystart + pattern_h
+
+    # iterate through the pattern and copy over the cells that are in the final grid
+    for iy, y in enumerate(range(ystart, yend)):
+        if y > 0 and y < len(newpattern):
+            for ix, x in enumerate(range(xstart, xend)):
+                if x > 0 and x < len(newpattern[iy]):
+                    xx = (x + cols) % cols
+                    yy = (y + rows) % rows
+                    newpattern[yy][xx] = ogpattern[iy][ix]
+
+    if flatten:
+        newpattern = ["".join(j) for j in newpattern]
+
+    return newpattern
+
+
+def _containment_lines(
+    rows,
+    cols,
+    stamp_name=None,
+    peel_off=False,
+    thickness=2,
+    stamps_per_team_lim=[3, 6],
+    seed=None,
+):
     """
     Create a map with lines forming a rectangle.
     This requires a source of randomness.
@@ -493,13 +549,13 @@ def _containment_lines(rows, cols, stamp_name=None, peel_off=False, thickness=2,
 
     stamps_per_team = random.randint(stamps_per_team_lim[0], stamps_per_team_lim[1])
 
-    #vertical_stamp_orientation = random.random() < 0.50
+    # vertical_stamp_orientation = random.random() < 0.50
     vertical_stamp_orientation = True
 
     if stamp_name is None:
         raise Exception("Error: stamp_name parameter required for containment lines")
 
-    jitterx = 12
+    jitterx = 8
     jittery = 8
 
     # ---------------
@@ -512,15 +568,14 @@ def _containment_lines(rows, cols, stamp_name=None, peel_off=False, thickness=2,
     # Lines:
 
     def _get_bounds(z, dim):
-        zstart = z - dim//2
-        zend = z + (dim - dim//2)
+        zstart = z - dim // 2
+        zend = z + (dim - dim // 2)
         return zstart, zend
 
+    line_ylocs_top = random.randint(1, 4) / 10
+    line_ylocs_bot = random.randint(6, 9) / 10
 
-    line_ylocs_top = random.randint(1,4)/10
-    line_ylocs_bot = random.randint(6,9)/10
-
-    line_ylocs = [int(line_ylocs_top*rows), int(line_ylocs_bot*rows)]
+    line_ylocs = [int(line_ylocs_top * rows), int(line_ylocs_bot * rows)]
 
     team1_lines = get_grid_empty(rows, cols, flat=False)
     team2_lines = get_grid_empty(rows, cols, flat=False)
@@ -537,10 +592,10 @@ def _containment_lines(rows, cols, stamp_name=None, peel_off=False, thickness=2,
     for ix in range(start, cols):
         # string 1
         for iy in range(*_get_bounds(y1, thickness)):
-            team1_lines[iy][ix] = 'o'
+            team1_lines[iy][ix] = "o"
         # string 2
         for iy in range(*_get_bounds(y2, thickness)):
-            team2_lines[iy][ix] = 'o'
+            team2_lines[iy][ix] = "o"
 
     # Vertical flip
     if random.random() < 0.50:
@@ -557,59 +612,51 @@ def _containment_lines(rows, cols, stamp_name=None, peel_off=False, thickness=2,
     # ----------------
     # Stamps:
 
-    team_assignments = [1,]*stamps_per_team + [2,]*stamps_per_team
+    team_assignments = [1,] * stamps_per_team + [
+        2,
+    ] * stamps_per_team
     random.shuffle(team_assignments)
 
     # approximately evenly spaced in x dir
     if vertical_stamp_orientation:
-        xlocs = [int(((j+1)/(stamps_per_team+1))*cols) for j in range(stamps_per_team)]
+        xlocs = [
+            int(((j + 1) / (stamps_per_team + 1)) * cols)
+            for j in range(stamps_per_team)
+        ]
     else:
-        xlocs = [int(((j+1)/(2*stamps_per_team+1))*cols) for j in range(2*stamps_per_team)]
+        xlocs = [
+            int(((j + 1) / (2 * stamps_per_team + 1)) * cols)
+            for j in range(2 * stamps_per_team)
+        ]
 
-    dy = y2-y1
+    dy = y2 - y1
 
     for i, xloc in enumerate(xlocs):
 
-        xx = xloc + random.randint(-jitterx, jitterx)
-
         if vertical_stamp_orientation:
-            yy1 = y1 + int((1/3)*dy) + random.randint(-jittery, jittery)
-            yy2 = y1 + int((2/3)*dy) + random.randint(-jittery, jittery) 
+            yy1 = y1 + int((1 / 3) * dy) + random.randint(-jittery, jittery)
+            yy2 = y1 + int((2 / 3) * dy) + random.randint(-jittery, jittery)
 
-            yy1 = min(max(yy1, y1+thickness//2), y2-thickness//2)
-            yy2 = min(max(yy2, y1+thickness//2), y2-thickness//2)
+            yy1 = min(max(yy1, y1 + thickness // 2), y2 - thickness // 2)
+            yy2 = min(max(yy2, y1 + thickness // 2), y2 - thickness // 2)
 
             stamp1 = get_pattern(stamp_name)
 
-            if random.random()<0.50:
+            if random.random() < 0.50:
                 stamp1 = hflip_pattern(stamp1)
-            if random.random()<0.50:
-                stamp1 = vflip_pattern(stamp1)
 
-            gridstamp = get_grid_pattern( 
-                stamp1,
-                rows, 
-                cols, 
-                yoffset=yy1, 
-                xoffset=xx
-            )
+            xx = xloc + random.randint(-jitterx, jitterx)
+            gridstamp = get_gridstamp(stamp1, rows, cols, yoffset=yy1, xoffset=xx)
 
             team1_patterns.append(gridstamp)
 
             stamp2 = get_pattern(stamp_name)
 
-            if random.random()<0.50:
+            if random.random() < 0.50:
                 stamp2 = hflip_pattern(stamp2)
-            if random.random()<0.50:
-                stamp2 = vflip_pattern(stamp2)
 
-            gridstamp = get_grid_pattern( 
-                stamp2,
-                rows, 
-                cols, 
-                yoffset=yy2, 
-                xoffset=xx
-            )
+            xx = xloc + random.randint(-jitterx, jitterx)
+            gridstamp = get_gridstamp(stamp2, rows, cols, yoffset=yy2, xoffset=xx)
 
             team2_patterns.append(gridstamp)
 
@@ -619,16 +666,10 @@ def _containment_lines(rows, cols, stamp_name=None, peel_off=False, thickness=2,
 
             if random.random() < 0.50:
                 stamp = hflip_pattern(stamp)
-            if random.random() < 0.50:
-                stamp = vflip_pattern(stamp)
 
-            yy = y1 + int(0.5*dy) + random.randint(-jittery, jittery) 
-            gridstamp = get_grid_pattern( 
-                rows, 
-                cols, 
-                yoffset=yy, 
-                xoffset=xx
-            )
+            xx = xloc + random.randint(-jitterx, jitterx)
+            yy = y1 + int(0.5 * dy) + random.randint(-jittery, jittery)
+            gridstamp = get_gridgridstamp(stamp, rows, cols, yoffset=yy, xoffset=xx)
 
             if team_assignments[i] == 1:
                 team1_patterns.append(gridstamp)
@@ -645,4 +686,3 @@ def _containment_lines(rows, cols, stamp_name=None, peel_off=False, thickness=2,
     s2 = pattern2url(team2_pattern)
 
     return s1, s2
-
