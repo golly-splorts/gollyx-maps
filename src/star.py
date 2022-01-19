@@ -1163,10 +1163,10 @@ def _stamps(
                 get_gridstamp(get_pattern(stars_name), rows, cols, yoffset=yy, xoffset=xx)
             )
 
-            # Update the patterns we're using so we don't
-            # have colliding points
-            team1_pattern = pattern_union(team1_patterns)
-            team2_pattern = pattern_union(team2_patterns)
+            ## Update the patterns we're using so we don't
+            ## have colliding points
+            #team1_pattern = pattern_union(team1_patterns)
+            #team2_pattern = pattern_union(team2_patterns)
 
     elif stars_strategy in ["neighbors", "friendly_neighbors", "unfriendly_neighbors"]:
 
@@ -1218,10 +1218,10 @@ def _stamps(
                 )
                 team2_patterns.append(gridstamp)
 
-                # Update the patterns we're using so we don't
-                # have colliding points
-                team1_pattern = pattern_union(team1_patterns)
-                team2_pattern = pattern_union(team2_patterns)
+                ## Update the patterns we're using so we don't
+                ## have colliding points
+                #team1_pattern = pattern_union(team1_patterns)
+                #team2_pattern = pattern_union(team2_patterns)
 
     else:
         raise Exception(f"Error: Invalid stars strategy specified: {stars_strategy}")
