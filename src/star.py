@@ -19,14 +19,16 @@ def get_star_pattern_function_map():
         "precipitation": precipitation,
         "evaporation": evaporation,
         "denaturation": denaturation,
+        # containment rectangles
         "gastank": gastank,
         "rustytank": rustytank,
         "dinnerplate": dinnerplate,
         "dessertplate": dessertplate,
-        # "squarestar": squarestar,
-        # "kitchensink": kitchensink,
-        # "ricepudding": ricepudding,
-        # "fishsoup": fishsoup,
+        # stamps
+        "squarestar": squarestar,
+        "kitchensink": kitchensink,
+        "ricepudding": ricepudding,
+        "fishsoup": fishsoup,
     }
 
 
@@ -189,6 +191,70 @@ def dessertplate(rows, cols, seed=None):
         thickness=2,
         stamps_per_team_lim=[2,5]
     )
+
+
+def squarestar(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    stamp_name = "squarepair"
+    return _stamps(
+        rows,
+        cols,
+        seed=seed,
+        stamp_name=stamp_name,
+        stamps_per_team=1,
+        stars_per_stamp_lim=[5, 23],
+    )
+
+
+def kitchensink(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    stamp_name = "backedupsink"
+    return _stamps(
+        rows, 
+        cols, 
+        seed=seed,
+        stamp_name=stamp_name, 
+        stamps_per_team=2,
+        stars_per_stamp_lim=[2, 8], 
+        stars_strategy='neighbors',
+    )
+
+
+def ricepudding(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    stamp_name = "squarevariation3"
+    return _stamps(
+        rows, 
+        cols, 
+        seed=seed,
+        stamp_name=stamp_name, 
+        stars_name="simpleunstablestar",
+        stamps_per_team=2,
+        stars_per_stamp_lim=[2, 4], 
+        stars_strategy='unfriendly_neighbors',
+    )
+
+
+def fishsoup(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    stamp_name = "spaceship2platform"
+    return _stamps(
+        rows, 
+        cols, 
+        seed=seed,
+        stamp_name=stamp_name, 
+        stars_name="simpleunstablestar",
+        stamps_per_team=2,
+        stars_per_stamp_lim=[2, 4], 
+        stars_strategy='random',
+    )
+
+
+
 
 
 #########################################
@@ -993,3 +1059,248 @@ def _containment_rectangle(
     s2 = pattern2url(team2_pattern)
     
     return s1, s2
+
+
+def _stamps(
+    rows,
+    cols,
+    seed=None,
+    stamp_name=None,
+    stars_name="star",
+    stamps_per_team=1,
+    stars_per_stamp_lim=[5, 10],
+    stars_strategy=None
+):
+    # set rng seed (optional)
+    if seed is not None:
+        random.seed(seed)
+
+    valid_stars_strategies = ["random", "neighbors", "friendly_neighbors", "unfriendly_neighbors"]
+
+    # Summary:
+    # - add a variable number of squarepair stamps
+    # - two columns, 1-3 stamps per team
+    # - add random stars, using various methods
+
+    # ---------------
+    # Parameters:
+
+    stars_per_stamp = random.randint(*stars_per_stamp_lim)
+
+    if stars_strategy is None:
+        stars_strategy = random.choice(valid_stars_strategies)
+    if stars_strategy not in valid_stars_strategies:
+        raise Exception(f"Invalid stars strategy specified: {stars_strategy}")
+
+    potential_stamp_names = [
+        'squarepair',
+        'solarsail',
+        'spaceship2platform',
+        'scaffoldunfusing',
+        'backedupsink'
+    ]
+
+    jitterx = 8
+    jittery = 8
+
+    # ---------------
+    # Algorithm:
+
+    # xlocs = [int(0.25*cols), int(0.75*cols)]
+    xlocs = [
+        int(random.randint(10, 40) / 100 * cols),
+        int(random.randint(60, 90) / 100 * cols),
+    ]
+    ylocs = [
+        int(((j + 1) / (stamps_per_team + 1)) * rows) for j in range(stamps_per_team)
+    ]
+
+    team1_patterns = []
+    team2_patterns = []
+
+    for yy_ in ylocs:
+
+        yy = yy_ + random.randint(-jittery, jittery)
+
+        xx = xlocs[0] + random.randint(-jitterx, jitterx)
+        stamp1 = get_pattern(stamp_name)
+
+        if random.random() < 0.50:
+            stamp1 = hflip_pattern(stamp1)
+        if random.random() < 0.50:
+            stamp1 = vflip_pattern(stamp1)
+
+        gridstamp = get_gridstamp(stamp1, rows, cols, yoffset=yy, xoffset=xx)
+        team1_patterns.append(gridstamp)
+
+        xx = xlocs[1] + random.randint(-jitterx, jitterx)
+        stamp2 = get_pattern(stamp_name)
+
+        if random.random() < 0.50:
+            stamp2 = hflip_pattern(stamp2)
+        if random.random() < 0.50:
+            stamp2 = vflip_pattern(stamp2)
+
+        gridstamp = get_gridstamp(stamp2, rows, cols, yoffset=yy, xoffset=xx)
+        team2_patterns.append(gridstamp)
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
+
+    if stars_strategy == "random":
+        for _ in range(stars_per_stamp * stamps_per_team):
+            xx, yy = get_random_unoccupied_point(
+                team1_pattern, team2_pattern, rows, cols
+            )
+            team1_patterns.append(
+                get_gridstamp(get_pattern(stars_name), rows, cols, yoffset=yy, xoffset=xx)
+            )
+
+            xx, yy = get_random_unoccupied_point(
+                team1_pattern, team2_pattern, rows, cols
+            )
+            team2_patterns.append(
+                get_gridstamp(get_pattern(stars_name), rows, cols, yoffset=yy, xoffset=xx)
+            )
+
+            # Update the patterns we're using so we don't
+            # have colliding points
+            team1_pattern = pattern_union(team1_patterns)
+            team2_pattern = pattern_union(team2_patterns)
+
+    elif stars_strategy in ["neighbors", "friendly_neighbors", "unfriendly_neighbors"]:
+
+        for yloc in ylocs:
+
+            if stars_strategy == "friendly_neighbors":
+                # color assignment matches stamps above
+                center1 = (xlocs[0], yloc)
+                center2 = (xlocs[1], yloc)
+            elif stars_strategy == "unfriendly_neighbors":
+                # swap x locs, so stamps are surrounded by opp color
+                center1 = (xlocs[1], yloc)
+                center2 = (xlocs[0], yloc)
+            else:
+                # dealer's choice
+                k = random.randint(0, 1)
+                center1 = (xlocs[k], yloc)
+                center2 = (xlocs[1-k], yloc)
+
+            for _ in range(stars_per_stamp):
+
+                xx, yy = get_gaussian_unoccupied_point(
+                    team1_pattern, team2_pattern, rows, cols, center1
+                )
+                stamp1 = get_pattern(stars_name)
+                if random.random() < 0.50:
+                    stamp1 = vflip_pattern(stamp1)
+                gridstamp = get_gridstamp(
+                    stamp1,
+                    rows,
+                    cols,
+                    yoffset=yy,
+                    xoffset=xx,
+                )
+                team1_patterns.append(gridstamp)
+
+                xx, yy = get_gaussian_unoccupied_point(
+                    team1_pattern, team2_pattern, rows, cols, center2
+                )
+                stamp2 = get_pattern(stars_name)
+                if random.random() < 0.50:
+                    stamp2 = vflip_pattern(stamp2)
+                gridstamp = get_gridstamp(
+                    stamp2,
+                    rows,
+                    cols,
+                    yoffset=yy,
+                    xoffset=xx,
+                )
+                team2_patterns.append(gridstamp)
+
+                # Update the patterns we're using so we don't
+                # have colliding points
+                team1_pattern = pattern_union(team1_patterns)
+                team2_pattern = pattern_union(team2_patterns)
+
+    else:
+        raise Exception(f"Error: Invalid stars strategy specified: {stars_strategy}")
+
+    team1_pattern = pattern_union(team1_patterns)
+    team2_pattern = pattern_union(team2_patterns)
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return s1, s2
+
+def get_random_unoccupied_point(team1_pattern, team2_pattern, rows, cols):
+    x, y = random.randint(1, cols - 2), random.randint(1, rows - 2)
+
+    tries = 0
+    finished = False
+    while not finished:
+        # Check if this randomly-chosen point has neighbors
+        okay = True
+        for ix in [-2, -1, 0, 1, 2]:
+            for iy in [-2, -1, 0, 1, 2]:
+                ix = (ix + cols) % cols
+                iy = (iy + rows) % rows
+                if y + iy < rows-1 and x + ix < cols-1:
+                    if (
+                        team1_pattern[y + iy][x + ix] == "o"
+                        or team2_pattern[y + iy][x + ix] == "o"
+                    ):
+                        okay = False
+                        break
+        if not okay:
+            # Try another point
+            x, y = random.randint(1, cols - 2), random.randint(0, rows - 2)
+            tries += 1
+            if tries > 10:
+                raise Exception(
+                    f"Error: Failed to find unoccupied x,y point in 10 tries"
+                )
+        else:
+            return x, y
+
+
+def get_gaussian_unoccupied_point(team1_pattern, team2_pattern, rows, cols, center):
+    cx, cy = center
+    stdx, stdy = [25, 25]
+
+    def _getxy(rows, cols):
+        randx = int(random.gauss(cx, stdx))
+        randx = (randx + cols) % cols
+
+        randy = int(random.gauss(cy, stdy))
+        randy = (randy + rows) % rows
+
+        return randx, randy
+
+    x, y = _getxy(rows, cols)
+
+    tries = 0
+    finished = False
+    while not finished:
+        # Check if this randomly-chosen point has neighbors
+        okay = True
+        for ix in [-2, -1, 0, 1, 2]:
+            for iy in [-2, -1, 0, 1, 2]:
+                if y + iy < rows and x + ix < cols:
+                    if (
+                        team1_pattern[y + iy][x + ix] == "o"
+                        or team2_pattern[y + iy][x + ix] == "o"
+                    ):
+                        okay = False
+                        break
+        if not okay:
+            # Try another point
+            x, y = _getxy(rows, cols)
+            tries += 1
+            if tries > 100:
+                raise Exception(
+                    f"Error: Failed to find unoccupied x,y point in 10 tries"
+                )
+        else:
+            return x, y

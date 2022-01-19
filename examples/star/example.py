@@ -22,7 +22,7 @@ if __name__ == "__main__":
     #stamps_squarepair(ROWS, COLS)
     #stamps_sink(ROWS, COLS)
     #stamps_pudding(ROWS, COLS)
-    stamps_soup(ROWS, COLS)
+    #stamps_soup(ROWS, COLS)
 
     # two_stamps(ROWS, COLS)
 

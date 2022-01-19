@@ -76,5 +76,29 @@
         "mapName": "Dessert Plate",
         "mapDescription": "A dessert plate",
         "mapStartSeason": 0
+    },
+    {
+        "patternName": "squarestar",
+        "mapName": "Square Star",
+        "mapDescription": "square shaped star",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "kitchensink",
+        "mapName": "Kitchen Sink",
+        "mapDescription": "everything and the kitchen sink",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "ricepudding",
+        "mapName": "Rice Pudding",
+        "mapDescription": "some rice pudding",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "fishsoup",
+        "mapName": "Fish Soup",
+        "mapDescription": "some fish soup",
+        "mapStartSeason": 0
     }
 ]
