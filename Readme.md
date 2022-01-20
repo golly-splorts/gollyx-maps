@@ -1,7 +1,5 @@
 # gollyx-maps
 
-[![Travis](https://travis-ci.com/golly-splorts/gollyx-maps.svg?branch=main)](https://travis-ci.com/golly-splorts/gollyx-maps.svg?branch=main)
-
 Code for turning cellular autonoma patterns into GollyX maps (ListLife arrays).
 
 To use gollyx-maps, install it directly from the git repo by adding the following
@@ -76,46 +74,11 @@ from gollyx_maps import patterns
 print(patterns.get_patterns())
 rabbit = get_pattern('rabbit', rotdeg=90)
 ```
+## Patterns
 
-## List of Patterns
+See the patterns directories in the `src/` directory
+for patterns for different rules:
 
-### B3/S23 - Classic Life
-
-Incomplete list of patterns from the classic Game of Life,
-rule B3/S23:
-
-* 78p70
-* acorn
-* backrake2
-* bheptomino
-* block
-* cheptomino
-* coespaceship
-* cthulhu
-* dinnertable
-* dinnertablecenter
-* dinnertableedges
-* eheptomino
-* heavyweightspaceship
-* justyna
-* koksgalaxy
-* lightweightspaceship
-* middleweightspaceship
-* multuminparvo
-* piheptomino
-* quadrupleburloaferimeter
-* rabbit
-* rpentomino
-* spaceshipgrower
-* switchengine
-* tagalong
-* timebomb
-* twoglidermess
-* unidimensionalinfinitegrowth
-* unidimensionalsixgliders
-* x66
-
-# Todo
-
-Need to fix up nomenclature - maps, patterns, pattern-mappings, it is very confusing.
-
+[b3s23_patterns](src/b3s23_patterns)
+[b357s238_patterns](src/b357s238_patterns)
+[b2s345c4_patterns](src/b2s345c4_patterns)
