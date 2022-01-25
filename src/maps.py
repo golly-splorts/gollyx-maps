@@ -76,6 +76,8 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         "cellSize:" k
     }
 
+    (Star Cup leaves out zone names)
+
     Dragon Cup returns:
     {
         "patternName": (vector|matrix|starfield|supercritical|...),
@@ -105,9 +107,15 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         elif cup=="toroidal":
             rows = 40
             columns = 280
+        elif cup=="star":
+            rows = 160
+            columns = 240
 
     # Get map data (pattern, name, zone names)
-    mapdat = get_map_metadata(cup, patternname)
+    zone_labels = True
+    if cup=="star":
+        zone_labels = False
+    mapdat = get_map_metadata(cup, patternname, zone_labels=zone_labels)
 
     # Get the initial conditions for this map
     s1, s2 = render_map(cup, patternname, rows, columns)
@@ -119,6 +127,7 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     # Include geometry info
     maxdim = max(rows, columns)
 
+    # These feel a bit too big
     if cell_size is not None:
         cellSize = cell_size
 
@@ -146,6 +155,10 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     else:
         cellSize = 1
 
+    # Hard code
+    if cup=="star":
+        cellSize = 3
+
     mapdat["rows"] = rows
     mapdat["columns"] = columns
     mapdat["cellSize"] = cellSize
@@ -163,7 +176,7 @@ def get_rainbow_realization(patternname, rows=None, columns=None, cell_size=None
         columns = 180
 
     # Get map data (pattern, name, zone names)
-    mapdat = get_map_metadata('rainbow', patternname)
+    mapdat = get_map_metadata('rainbow', patternname, zone_labels=True)
 
     # Get the initial condition strings
     s1, s2, s3, s4 = render_map('rainbow', patternname, rows, columns)
@@ -249,23 +262,35 @@ def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
 # Metadata methods
 
 
-def get_map_metadata(cup, patternname):
+def get_map_metadata(cup, patternname, zone_labels=True):
     """
     Get map metadata for the specified cup and pattern
     """
     all_metadata = get_all_map_metadata(cup)
     for m in all_metadata:
         if m['patternName'] == patternname:
+            if not zone_labels:
+                del m['mapZone1Name']
+                del m['mapZone2Name']
+                del m['mapZone3Name']
+                del m['mapZone4Name']
             return m
     # If we reach this point, we didn't find labels in data/<cupname>.json
-    m = {
-        "patternName": patternname,
-        "mapName": "Unnamed Map",
-        "mapZone1Name": "Zone 1",
-        "mapZone2Name": "Zone 2",
-        "mapZone3Name": "Zone 3",
-        "mapZone4Name": "Zone 4",
-    }
+    if zone_labels:
+        m = {
+            "patternName": patternname,
+            "mapName": "Anonymous Map",
+            "mapZone1Name": "Zone 1",
+            "mapZone2Name": "Zone 2",
+            "mapZone3Name": "Zone 3",
+            "mapZone4Name": "Zone 4",
+        }
+    else:
+        m = {
+            "patternName": patternname,
+            "mapName": "Anonymous Map"
+        }
+
     return m
 
 
