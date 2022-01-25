@@ -270,10 +270,10 @@ def get_map_metadata(cup, patternname, zone_labels=True):
     for m in all_metadata:
         if m['patternName'] == patternname:
             if not zone_labels:
-                del m['mapZone1Name']
-                del m['mapZone2Name']
-                del m['mapZone3Name']
-                del m['mapZone4Name']
+                keys = [f'mapZone{i+1}Name' for i in range(4)]
+                for key in keys:
+                    if key in m:
+                        del m[key]
             return m
     # If we reach this point, we didn't find labels in data/<cupname>.json
     if zone_labels:

@@ -53,6 +53,13 @@ map_realization_req_keys = [
     "cellSize",
 ]
 
+map_realization_unreq_keys = [
+    "mapZone1Name",
+    "mapZone2Name",
+    "mapZone3Name",
+    "mapZone4Name"
+]
+
 
 class StarCupMapsTest(unittest.TestCase):
     """
@@ -76,12 +83,32 @@ class StarCupMapsTest(unittest.TestCase):
     def test_get_all_map_metadata(self):
         cup = self.cup
 
-        # -----
-        # Check first batch of maps (Season 1)
+
+    def test_01_get_map_realization(self):
+        cup = self.cup
+        for pattern_name in STAR_PATTERNS:
+            # Get realization with no size specified
+            r = 160
+            c = 240
+            m = get_map_realization(cup, pattern_name)
+            # Check we got default rows/cols back
+            self.assertEqual(r, m['rows'])
+            self.assertEqual(c, m['columns'])
+
+            # Get map realization with a custom size
+            r = 100
+            c = 120
+            m = get_map_realization(cup, pattern_name, rows=r, columns=c)
+            # Check
+            self.assertEqual(r, m['rows'])
+            self.assertEqual(c, m['columns'])
+
+    def test_02_map_metadata(self):
+        cup = self.cup
+
+        # Check season 1 maps
         season0 = 0
         map_data0 = get_all_map_metadata(cup, season0)
-
-        # Check the metadata returned
         for m in map_data0:
             for rk in map_metadata_req_keys:
                 self.assertIn(rk, m)
@@ -90,25 +117,15 @@ class StarCupMapsTest(unittest.TestCase):
         patterns0 = [m['patternName'] for m in map_data0]
         self.assertEqual(sorted(patterns0), sorted(STAR_PATTERNS_S0))
 
-    def test_get_map_realization(self):
-        cup = self.cup
+        # Check the metadata from map realization
         for pattern_name in STAR_PATTERNS:
-            r = 160
-            c = 240
-            m = get_map_realization(cup, pattern_name, rows=r, columns=c)
+            m = get_map_realization(cup, pattern_name)
             for rk in map_realization_req_keys:
                 self.assertIn(rk, m.keys())
+            for urk in map_realization_unreq_keys:
+                self.assertNotIn(urk, m.keys())
 
-    def test_get_map_01_basicget(self):
-        cup = self.cup
-        for pattern_name in STAR_PATTERNS:
-            with self.subTest(pattern_name=pattern_name):
-                # Standard size
-                r = 160
-                c = 240
-                get_map_realization(cup, pattern_name, rows=r, columns=c)
-
-    def test_get_map_02_no_exceptions(self):
+    def test_03_no_exceptions(self):
         cup = self.cup
 
         # Get each map 25 times
