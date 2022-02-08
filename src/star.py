@@ -9,6 +9,7 @@ from .utils import pattern2url, retry_on_failure
 
 def get_star_pattern_function_map():
     return {
+        "random": random,
         "flyingv1": flyingv1,
         "flyingv2": flyingv2,
         "stlouis": stlouis,
@@ -30,6 +31,60 @@ def get_star_pattern_function_map():
         "ricepudding": ricepudding,
         "fishsoup": fishsoup,
     }
+
+
+def random(rows, cols, seed=None):
+    """
+    Generate a random two-color list life initialization.
+
+    Returns: two listlife strings, state1 and state2,
+    with the random initializations.
+
+    Strategy: generate a set of (x,y) tuples,
+    convert to list, split in half. Use those
+    point sets to create listLife URL strings.
+    """
+    if seed is not None:
+        random.seed(seed)
+    ncells = rows * cols
+    nlivecells = ncells * (random.randint(10,20)/100)
+    points = set()
+    while len(points) < nlivecells:
+        randy = random.randint(0, rows - 1)
+        randx = random.randint(0, cols - 1)
+        points.add((randx, randy))
+
+    points = list(points)
+    points1 = set(points[: len(points) // 2])  # noqa
+    points2 = set(points[len(points) // 2 :])  # noqa
+    pattern1 = []
+    pattern2 = []
+    for y in range(rows):
+        row1 = []
+        row2 = []
+
+        # team 1 row
+        for x in range(cols):
+            if (x, y) in points1:
+                row1.append("o")
+            else:
+                row1.append(".")
+        row1str = "".join(row1)
+        pattern1.append(row1str)
+
+        # team 2 row
+        for x in range(cols):
+            if (x, y) in points2:
+                row2.append("o")
+            else:
+                row2.append(".")
+        row2str = "".join(row2)
+        pattern2.append(row2str)
+
+    pattern1_url = pattern2url(pattern1)
+    pattern2_url = pattern2url(pattern2)
+
+    return pattern1_url, pattern2_url
 
 
 def flyingv1(rows, cols, seed=None):
