@@ -9,7 +9,7 @@ from .utils import pattern2url, retry_on_failure
 
 def get_star_pattern_function_map():
     return {
-        "random": random,
+        "random": random_2color,
         "flyingv1": flyingv1,
         "flyingv2": flyingv2,
         "stlouis": stlouis,
@@ -33,7 +33,7 @@ def get_star_pattern_function_map():
     }
 
 
-def random(rows, cols, seed=None):
+def random_2color(rows, cols, seed=None):
     """
     Generate a random two-color list life initialization.
 
