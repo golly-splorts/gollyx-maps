@@ -47,7 +47,7 @@ def random(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     ncells = rows * cols
-    nlivecells = ncells * (random.randint(10,20)/100)
+    nlivecells = ncells * (random.randint(10, 17)/100)
     points = set()
     while len(points) < nlivecells:
         randy = random.randint(0, rows - 1)
