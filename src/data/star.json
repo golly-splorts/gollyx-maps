@@ -1,5 +1,11 @@
 [
     {
+        "patternName": "random",
+        "mapName": "East Hellmouth",
+        "mapDescription": "A completely random map layout, territory split 50/50",
+        "mapStartSeason": 0
+    },
+    {
         "patternName": "flyingv1",
         "mapName": "Flying V 1",
         "mapDescription": "Flying V Map 1",
