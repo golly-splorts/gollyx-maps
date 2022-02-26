@@ -94,7 +94,6 @@
         "mapName": "The Quad",
         "mapDescription": "Two fast-growing acorn methuselahs placed in the top and bottom halves of the grid.",
         "mapStartSeason": 0
-        "mapEndSeason": 12
     },
     {
         "patternName": "twomultum",
@@ -107,7 +106,6 @@
         "mapName": "Spacetime Complex",
         "mapDescription": "Two spaceship generators sending spaceships across fields of boxes.",
         "mapStartSeason": 0
-        "mapEndSeason": 12
     },
     {
         "patternName": "bigsegment",
@@ -162,12 +160,5 @@
         "mapName": "Carcinization",
         "mapDescription": "Crabstretchers in each corner.",
         "mapStartSeason": 0
-    },
-    {
-        "patternName": "twospaceshipgenerators",
-        "mapName": "Spacetime Complex",
-        "mapDescription": "Two spaceship generators sending spaceships across fields of boxes.",
-        "mapStartSeason": 0,
-    },
+    }
 ]
-

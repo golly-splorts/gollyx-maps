@@ -6,7 +6,7 @@ from .utils import pattern2url
 from .patterns import get_grid_empty, pattern_union, get_pattern, get_grid_pattern
 from .utils import pattern2url, retry_on_failure
 
-from .hellmouth import 
+from .hellmouth import (
     eightpi_twocolor,
     eightr_twocolor,
     fourrabbits_twocolor,

@@ -22,6 +22,7 @@ from .toroidal import get_toroidal_pattern_function_map
 from .dragon import get_dragon_pattern_function_map, MAX_PARTS
 from .rainbow import get_rainbow_pattern_function_map
 from .star import get_star_pattern_function_map
+from .klein import get_klein_pattern_function_map
 
 
 def get_pattern_function_map(cup):
@@ -32,6 +33,7 @@ def get_pattern_function_map(cup):
         'dragon': get_dragon_pattern_function_map,
         'rainbow': get_rainbow_pattern_function_map,
         'star': get_star_pattern_function_map,
+        'klein': get_klein_pattern_function_map,
     }
     return m[cup]
 
@@ -76,7 +78,7 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         "cellSize:" k
     }
 
-    (Star Cup leaves out zone names)
+    (Star Cup and Klein Cup leave out zone names)
 
     Dragon Cup returns:
     {
@@ -110,10 +112,13 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         elif cup=="star":
             rows = 160
             columns = 240
+        elif cup=="klein":
+            rows = 100
+            columns = 200
 
     # Get map data (pattern, name, zone names)
     zone_labels = True
-    if cup=="star":
+    if cup in ["star", "klein"]:
         zone_labels = False
     mapdat = get_map_metadata(cup, patternname, zone_labels=zone_labels)
 
@@ -158,6 +163,8 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     # Hard code
     if cup=="star":
         cellSize = 3
+    if cup=="klein":
+        cellSize = 4
 
     mapdat["rows"] = rows
     mapdat["columns"] = columns
