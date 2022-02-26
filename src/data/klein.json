@@ -1,18 +1,18 @@
 [
     {
-        "patternName": "donutmath",
+        "patternName": "kleinmath",
         "mapName": "Because Math",
         "mapDescription": "Map initial conditions created from mathematical expressions for bitfields.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "donuttimebomb",
+        "patternName": "kleintimebomb",
         "mapName": "West Donut Desert",
         "mapDescription": "Three quadruple burloaferimeters holding defensive positions against timebomb methuselahs.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "donuttimebombredux",
+        "patternName": "kleintimebombredux",
         "mapName": "West Donut Dessert",
         "mapDescription": "Three large oscillators holding defensive positions against timebomb methuselahs.",
         "mapStartSeason": 0
@@ -78,15 +78,9 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "timebomb",
+        "patternName": "classictimebomb",
         "mapName": "West Hellmouth",
         "mapDescription": "Three quadruple burloaferimeters holding defensive positions against timebomb methuselahs.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "timebombredux",
-        "mapName": "West Hellmouth's Revenge",
-        "mapDescription": "Three large oscillators holding defensive positions against timebomb methuselahs.",
         "mapStartSeason": 0
     },
     {

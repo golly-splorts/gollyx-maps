@@ -42,12 +42,13 @@ from .toroidal import (
 def get_klein_pattern_function_map():
     return {
         # Toroidal
-        "donutmath": donutmath_twocolor,
-        "donuttimebomb": donuttimebomb_twocolor,
-        "donuttimebombredux": donuttimebombredux_twocolor,
+        "kleinmath": donutmath_twocolor,
+        "kleintimebomb": donuttimebomb_twocolor,
+        "kleintimebombredux": donuttimebombredux_twocolor,
         "doublegaussian": doublegaussian_twocolor,
         "porchlights": porchlights_twocolor,
         # Hellmouth
+        "classictimebomb": timebomb_oscillators_twocolor,
         "eightpi": eightpi_twocolor,
         "eightr": eightr_twocolor,
         "fourrabbits": fourrabbits_twocolor,
@@ -56,8 +57,6 @@ def get_klein_pattern_function_map():
         "randompartition": randompartition_twocolor,
         "spaceshipcluster": spaceshipcluster_twocolor,
         "spaceshipcrash": spaceshipcrash_twocolor,
-        "timebomb": timebomb_oscillators_twocolor,
-        "timebombredux": timebomb_randomoscillators_twocolor,
         "twoacorn": twoacorn_twocolor,
         "twomultum": twomultum_twocolor,
         "twospaceshipgenerators": twospaceshipgenerators_twocolor,
