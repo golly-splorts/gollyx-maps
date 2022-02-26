@@ -1,0 +1,164 @@
+[
+    {
+        "patternName": "donutmath",
+        "mapName": "Because Math",
+        "mapDescription": "Map initial conditions created from mathematical expressions for bitfields.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donuttimebomb",
+        "mapName": "West Donut Desert",
+        "mapDescription": "Three quadruple burloaferimeters holding defensive positions against timebomb methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "donuttimebombredux",
+        "mapName": "West Donut Dessert",
+        "mapDescription": "Three large oscillators holding defensive positions against timebomb methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "doublegaussian",
+        "mapName": "Double Rainbow",
+        "mapDescription": "A bimodal Gaussian of random points.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "porchlights",
+        "mapName": "Donut Hot Tub",
+        "mapDescription": "A string of porch lights stretching across the map.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "eightpi",
+        "mapName": "The Zoo",
+        "mapDescription": "A row of Pi pentominos with some vertical jitter.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "eightr",
+        "mapName": "Sunbeam Moondog",
+        "mapDescription": "A row of R pentominos with some vertical jitter.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "fourrabbits",
+        "mapName": "Parking Garage",
+        "mapDescription": "Fast-growing rabbit methuselahs, one in each quadrant.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "quadjustyna",
+        "mapName": "Justyna",
+        "mapDescription": "Four justyna methuselahs, randomly oriented.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "random",
+        "mapName": "East Hellmouth",
+        "mapDescription": "A completely random map layout, territory split 50/50.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "randompartition",
+        "mapName": "East Hellmouth's Revenge",
+        "mapDescription": "Randomly partitioned random maps, with teams placed in alternating partitions.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spaceshipcluster",
+        "mapName": "Charlie Foxtrot",
+        "mapDescription": "Glider clouds all aiming for the origin.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spaceshipcrash",
+        "mapName": "Crash and Burn",
+        "mapDescription": "Glider clouds aimed at quadruple burloaferimeters.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "timebomb",
+        "mapName": "West Hellmouth",
+        "mapDescription": "Three quadruple burloaferimeters holding defensive positions against timebomb methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "timebombredux",
+        "mapName": "West Hellmouth's Revenge",
+        "mapDescription": "Three large oscillators holding defensive positions against timebomb methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "twoacorn",
+        "mapName": "The Quad",
+        "mapDescription": "Two fast-growing acorn methuselahs placed in the top and bottom halves of the grid.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "twomultum",
+        "mapName": "Underground Cave Complex",
+        "mapDescription": "Multum in parvo methuselahs performing acts of reverse disappearing.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "twospaceshipgenerators",
+        "mapName": "Spacetime Complex",
+        "mapDescription": "Two spaceship generators sending spaceships across fields of boxes.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bigsegment",
+        "mapName": "The Perimeter",
+        "mapDescription": "A map cut by horizontal and vertical segments of solid colors.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "randomsegment",
+        "mapName": "Candy Palace",
+        "mapDescription": "A map cut by horizontal and vertical segments of random colors.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spaceshipsegment",
+        "mapName": "Morning Commute",
+        "mapDescription": "A cluster of lightweight spaceships fly next to a horizontal segment.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "randommethuselahs",
+        "mapName": "Fistfight at the Opera",
+        "mapDescription": "A map littered with various fast-growing methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "switchengines",
+        "mapName": "Engine Room",
+        "mapDescription": "A cluster of switch engines placed in each quadrant.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "orchard",
+        "mapName": "The Orchard",
+        "mapDescription": "A cluster of acorn methuselahs placed in each quadrant.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "rabbitfarm",
+        "mapName": "Rabbit Farm",
+        "mapDescription": "A cluster of fenced-in rabbit methuselahs in each quadrant.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spiders",
+        "mapName": "Spider Cave",
+        "mapDescription": "Spiders weave their webs whilst spaceships and crabs clash above and below.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "crabs",
+        "mapName": "Carcinization",
+        "mapDescription": "Crabstretchers in each corner.",
+        "mapStartSeason": 0
+    }
+]
