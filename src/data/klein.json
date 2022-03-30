@@ -108,12 +108,6 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "randomsegment",
-        "mapName": "Candy Palace",
-        "mapDescription": "A map cut by horizontal and vertical segments of random colors.",
-        "mapStartSeason": 0
-    },
-    {
         "patternName": "spaceshipsegment",
         "mapName": "Morning Commute",
         "mapDescription": "A cluster of lightweight spaceships fly next to a horizontal segment.",
