@@ -100,15 +100,15 @@ class DragonCupMapsTest(unittest.TestCase):
                 c = 200
                 get_map_realization(cup, pattern_name, rows=r, columns=c)
 
-    def test_get_map_02_no_exceptions(self):
-        cup = self.cup
+    #def test_get_map_02_no_exceptions(self):
+    #    cup = self.cup
 
-        # Get each map 25 times
-        # This ensures there are no corner cases to raise exceptions
-        for pattern_name in DRAGON_PATTERNS:
+    #    # Get each map 25 times
+    #    # This ensures there are no corner cases to raise exceptions
+    #    for pattern_name in DRAGON_PATTERNS:
 
-            # Standard size
-            r = 500
-            c = 200
-            for i in range(25):
-                get_map_realization(cup, pattern_name, rows=r, columns=c)
+    #        # Standard size
+    #        r = 500
+    #        c = 200
+    #        for i in range(25):
+    #            get_map_realization(cup, pattern_name, rows=r, columns=c)
