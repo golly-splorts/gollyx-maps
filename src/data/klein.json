@@ -142,5 +142,16 @@
         "mapName": "Carcinization",
         "mapDescription": "Crabstretchers in each corner.",
         "mapStartSeason": 0
+    },
+    {
+        "patternName": "bigsegment",
+        "mapName": "The Perimeter",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "randomsegment",
+        "mapName": "Candy Palace",
+        "mapDescription": "A map cut by horizontal and vertical segments of random colors.",
+        "mapStartSeason": 0
     }
 ]
