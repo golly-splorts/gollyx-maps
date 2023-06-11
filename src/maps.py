@@ -23,6 +23,7 @@ from .dragon import get_dragon_pattern_function_map, MAX_PARTS
 from .rainbow import get_rainbow_pattern_function_map
 from .star import get_star_pattern_function_map
 from .klein import get_klein_pattern_function_map
+from .ii import get_ii_pattern_function_map
 
 
 def get_pattern_function_map(cup):
@@ -34,6 +35,7 @@ def get_pattern_function_map(cup):
         'rainbow': get_rainbow_pattern_function_map,
         'star': get_star_pattern_function_map,
         'klein': get_klein_pattern_function_map,
+        'ii': get_ii_pattern_function_map,
     }
     return m[cup]
 
@@ -115,10 +117,13 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         elif cup=="klein":
             rows = 100
             columns = 200
+        elif cup=="ii":
+            rows = 100
+            columns = 200
 
     # Get map data (pattern, name, zone names)
     zone_labels = True
-    if cup in ["star", "klein"]:
+    if cup in ["star", "klein", "ii"]:
         zone_labels = False
     mapdat = get_map_metadata(cup, patternname, zone_labels=zone_labels)
 
@@ -164,6 +169,8 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     if cup=="star":
         cellSize = 3
     if cup=="klein":
+        cellSize = 4
+    if cup=="ii":
         cellSize = 4
 
     mapdat["rows"] = rows
