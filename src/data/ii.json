@@ -146,6 +146,7 @@
     {
         "patternName": "bigsegment",
         "mapName": "The Perimeter",
+        "mapDescription": "A map cut by horizontal and vertical segments of solid colors.",
         "mapStartSeason": 0
     },
     {
