@@ -1,0 +1,110 @@
+[
+    {
+        "patternName": "random",
+        "mapName": "East Hellmouth",
+        "mapDescription": "A completely random split",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "flyingv1",
+        "mapName": "Flying V 1",
+        "mapDescription": "The Flying V, variation 1",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "flyingv2",
+        "mapName": "Flying V 2",
+        "mapDescription": "The Flying V, variation 2",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "stlouis",
+        "mapName": "St. Louis Style",
+        "mapDescription": "St. Louis style slices",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "newyork",
+        "mapName": "New York Style",
+        "mapDescription": "New York style slices",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "chicago",
+        "mapName": "Chicago Style",
+        "mapDescription": "Chicago style slices",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "combs",
+        "mapName": "Combs",
+        "mapDescription": "A pair of fine combs",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "precipitation",
+        "mapName": "Precipitation",
+        "mapDescription": "Methuselahs trapped between unmoving walls",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "evaporation",
+        "mapName": "Evaporation",
+        "mapDescription": "Methuselahs trapped between evaporating walls",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "denaturation",
+        "mapName": "Denaturation",
+        "mapDescription": "Arrow methuselahs trapped between two denaturating strands",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "gastank",
+        "mapName": "Gas Tank",
+        "mapDescription": "An exploding tank seeded with random alive cells",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "rustytank",
+        "mapName": "Rusty Tank",
+        "mapDescription": "An exploding tank with rusty insides",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dinnerplate",
+        "mapName": "Dinner Plate",
+        "mapDescription": "A plate with small squares and fast coverage",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dessertplate",
+        "mapName": "Dessert Plate",
+        "mapDescription": "A plate with fruity color combos and fast coverage",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "squarestar",
+        "mapName": "Square Star",
+        "mapDescription": "A double-square methuselah explodes into a starfield",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "kitchensink",
+        "mapName": "Kitchen Sink",
+        "mapDescription": "A backed-up kitchen sink explodes into a starfield",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "ricepudding",
+        "mapName": "Rice Pudding",
+        "mapDescription": "Spaceship-making orbiters face off",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "fishsoup",
+        "mapName": "Fish Soup",
+        "mapDescription": "Spaceship-making orbiters face off against supernova methuselahs",
+        "mapStartSeason": 0
+    }
+]
