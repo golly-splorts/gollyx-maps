@@ -1,1 +1,6 @@
-include requirements*.txt Readme.md data/*.json b3s23_patterns/*.txt
+include requirements*.txt
+include Readme.md
+include src/data/*.json
+include src/b3s23_patterns/*.txt
+include src/b357s238_patterns/*.txt
+include src/2s345c4_patterns/*.json
