@@ -1,10 +1,6 @@
 import json
 import os
 import random
-from .geom import hflip_pattern, vflip_pattern
-from .utils import pattern2url
-from .patterns import get_grid_empty, pattern_union, get_pattern, get_grid_pattern
-from .utils import pattern2url, retry_on_failure
 
 from .hellmouth import (
     eightpi_twocolor,
