@@ -14,8 +14,20 @@ def get_pattern_filepaths():
     return patternfilepaths
 
 
+def get_b3s23_pattern_filepaths():
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "b3s23_patterns", "*.txt")
+    patternfilepaths = glob(p)
+    return patternfilepaths
+
+
 def get_patterns():
     patternpaths = get_pattern_filepaths()
+    patternfiles = [os.path.basename(os.path.splitext(p)[0]) for p in patternpaths]
+    return patternfiles
+
+
+def get_b3s23_patterns():
+    patternpaths = get_b3s23_pattern_filepaths()
     patternfiles = [os.path.basename(os.path.splitext(p)[0]) for p in patternpaths]
     return patternfiles
 
