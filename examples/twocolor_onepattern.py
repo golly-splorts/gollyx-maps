@@ -24,8 +24,8 @@ def crashing_spaceships(seed=None):
     centerx2 = cols//4
     centery2 = rows//2
 
-    pattern1 = get_grid_pattern('bisectingpuffers', rows, cols, xoffset=centerx1+5, yoffset=centery1+5)
-    pattern2 = get_grid_pattern('bisectingpuffers', rows, cols, xoffset=centerx2,   yoffset=centery2, hflip=True)
+    pattern1 = get_grid_pattern('flotilla_14wss', rows, cols, xoffset=centerx1+5, yoffset=centery1+5)
+    pattern2 = get_grid_pattern('flotilla_14wss', rows, cols, xoffset=centerx2,   yoffset=centery2, hflip=True)
 
     s1 = pattern2url(pattern1)
     s2 = pattern2url(pattern2)
