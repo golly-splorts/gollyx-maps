@@ -9,100 +9,79 @@ COLS = 240
 SEED = None
 
 
-def main():
+def west_baltimore():
     """
-    fix the y-values
-    fix the y-jitter (minimal)
-    set the x-values
-    fix the x-jitter (main source of variation)
+    Four oscillators in the corners
+    Two methuselahs in the middle
     """
     rows = ROWS
     cols = COLS
     if SEED is not None:
         random.seed(SEED)
 
-    # Assemble tuples of points
-    team1_points = []
-    team2_points = []
+    centerx = cols//2
+    centery = rows//2
 
-    if vspace is None or vspace < 0:
-        vspace = random.randint(20, 35)
+    lengthscale = 30
+    xjitter = lambda: random.randint(-lengthscale//2, lengthscale//2)
+    yjitter = lambda: random.randint(-lengthscale//2, lengthscale//2)
 
-    n_placements = ROWS//vspace
-    n_placements_even = (n_placements//2)*2
+    # --------------------
+    # Oscillator locations
 
-    placements = [1,]*(n_placements_even//2) + [0,]*(n_placements_even//2)
-    random.shuffle(placements)
-
-    team1_spaceships  = []
     team1_oscillators = []
-
-    team2_spaceships  = []
     team2_oscillators = []
 
-    spaceship_pattern  = random.choice(spaceships)
-    oscillator_pattern = random.choice(oscillators)
+    nw_x = sw_x = cols//4
+    ne_x = se_x = 3*cols//4
 
-    if not are_spaceships_large:
-        nspaceships = random.randint(1, 3)
+    nw_y = ne_y = rows//4
+    sw_y = se_y = 3*rows//4
+
+    mode = random.randint(0,1)
+    if mode==0:
+        team1_oscillators.append((nw_x, nw_y))
+        team1_oscillators.append((sw_x, sw_y))
+        team2_oscillators.append((ne_x, ne_y))
+        team2_oscillators.append((se_x, se_y))
     else:
-        nspaceships = 1
+        team1_oscillators.append((nw_x, nw_y))
+        team2_oscillators.append((sw_x, sw_y))
+        team1_oscillators.append((ne_x, ne_y))
+        team2_oscillators.append((se_x, se_y))
 
-    for i, p in enumerate(placements):
+    oscillator = 'quadrupleburloaferimeter'
 
-        # Wider x-jitter
-        xjitter = lambda: random.randint(0, vspace)
-        centerx1 = int(cols//6)   + xjitter()
-        centerx2 = int(5*cols//6) - xjitter()
-        
-        #orient_l2r = bool(random.randint(0,1))
-        orient_l2r = i%2==0
-
-        if orient_l2r:
-            xxs, xxo = centerx1, centerx2
-        else:
-            xxo, xxs = centerx1, centerx2
-
-        # Limited y-jitter
-        if not are_spaceships_large:
-            yjitter = lambda: random.randint(-9, 9)
-        else:
-            yjitter = lambda: random.randint(-3, 3)
-        yys = int(((i+1)/(n_placements_even+1))*rows) + yjitter()
-        yyo = int(((i+1)/(n_placements_even+1))*rows) + yjitter()
-
-        def gen_spaceship(x, y):
-            yy = int(((i+1)/(n_placements_even+1))*rows) + yjitter()
+    def _assemble_patterns(team_oscillators):
+        team_pattern = []
+        for i, (x_, y_) in enumerate(team_oscillators):
+            xx = x_ + xjitter()
+            yy = y_ + yjitter()
             vf = bool(random.randint(0,1))
-            return get_grid_pattern(spaceship_pattern, rows, cols, xoffset=x, yoffset=yy, vflip=vf, hflip=orient_l2r)
-
-        if p==0:
             hf = bool(random.randint(0,1))
-            team1_oscillators.append(                                                                
-                get_grid_pattern(oscillator_pattern, rows, cols, xoffset=xxo, yoffset=yyo, hflip=hf)
-            )
-            team1_spaceships.append(gen_spaceship(xxs, yys))
-            if nspaceships > 1:
-                # Second spaceship
-                team1_spaceships.append(gen_spaceship(xxs-20, yys))
-                if nspaceships > 2:
-                    # Third spaceship
-                    team1_spaceships.append(gen_spaceship(xxs+20, yys))
-        else:
-            hf = bool(random.randint(0,1))
-            team2_oscillators.append(                                                                
-                get_grid_pattern(oscillator_pattern, rows, cols, xoffset=xxo, yoffset=yyo, hflip=hf)
-            )
-            team2_spaceships.append(gen_spaceship(xxs, yys))
-            if nspaceships > 1:
-                # Second spaceship
-                team2_spaceships.append(gen_spaceship(xxs-20, yys))
-                if nspaceships > 2:
-                    # Third spaceship
-                    team2_spaceships.append(gen_spaceship(xxs+20, yys))
+            if i==0:
+                team_pattern = get_grid_pattern(oscillator, rows, cols, xoffset=xx, yoffset=yy, vflip=vf, hflip=hf)
+            else:
+                team_pattern = pattern_union([team_pattern, get_grid_pattern(oscillator, rows, cols, xoffset=xx, yoffset=yy, vflip=vf, hflip=hf)])
+        return team_pattern
 
-    team1_pattern = pattern_union(team1_spaceships + team1_oscillators)
-    team2_pattern = pattern_union(team2_spaceships + team2_oscillators)
+    team1_pattern = _assemble_patterns(team1_oscillators)
+    team2_pattern = _assemble_patterns(team2_oscillators)
+
+    # --------------------
+    # Methuselah locations
+
+    xx1 = cols//3 + xjitter()
+    xx2 = 2*cols//3 + xjitter()
+    yy = rows//2 + yjitter()
+
+    m = ['grandpa_42100', 'timebomb', 'mustardseed', 'spaceshipgrower']
+    methuselah = random.choice(m)
+
+    vf = bool(random.randint(0,1))
+    hf = bool(random.randint(0,1))
+    team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=xx1, yoffset=yy, vflip=vf, hflip=hf)])
+    team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=xx2, yoffset=yy, vflip=vf, hflip=hf)])
 
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
@@ -111,13 +90,103 @@ def main():
     print(url)
 
 
+def west_seattle():
+    """
+    o m o
+    o m o
+    """
+    rows = ROWS
+    cols = COLS
+    if SEED is not None:
+        random.seed(SEED)
+
+    centerx = cols//2
+    centery = rows//2
+
+    lengthscale = 40
+    xjitter = lambda: random.randint(-lengthscale//2, lengthscale//2)
+    yjitter = lambda: random.randint(-lengthscale//2, lengthscale//2)
+
+    # --------------------
+    # Oscillator locations
+
+    team1_oscillators = []
+    team2_oscillators = []
+
+    nw_x = sw_x = cols//4
+    ne_x = se_x = 3*cols//4
+
+    nw_y = ne_y = rows//4
+    sw_y = se_y = 3*rows//4
+
+    mode = random.randint(0,1)
+    if mode==0:
+        team1_oscillators.append((nw_x, nw_y))
+        team1_oscillators.append((sw_x, sw_y))
+        team2_oscillators.append((ne_x, ne_y))
+        team2_oscillators.append((se_x, se_y))
+    else:
+        team1_oscillators.append((nw_x, nw_y))
+        team2_oscillators.append((sw_x, sw_y))
+        team1_oscillators.append((ne_x, ne_y))
+        team2_oscillators.append((se_x, se_y))
+
+    oscillator = 'quadrupleburloaferimeter'
+
+    def _assemble_patterns(team_oscillators):
+        team_pattern = []
+        for i, (x_, y_) in enumerate(team_oscillators):
+            xx = x_ + xjitter()
+            yy = y_ + yjitter()
+            vf = bool(random.randint(0,1))
+            hf = bool(random.randint(0,1))
+            if i==0:
+                team_pattern = get_grid_pattern(oscillator, rows, cols, xoffset=xx, yoffset=yy, vflip=vf, hflip=hf)
+            else:
+                team_pattern = pattern_union([team_pattern, get_grid_pattern(oscillator, rows, cols, xoffset=xx, yoffset=yy, vflip=vf, hflip=hf)])
+        return team_pattern
+
+    team1_pattern = _assemble_patterns(team1_oscillators)
+    team2_pattern = _assemble_patterns(team2_oscillators)
+
+    # --------------------
+    # Methuselah locations
+
+    xx = cols//2 + xjitter()
+    yy1 = rows//4 + yjitter()
+    yy2 = 3*rows//4 + yjitter()
+
+    def _swap(a, b):
+        temp = a
+        a = b
+        b = temp
+
+    if bool(random.randint(0,1)):
+        _swap(yy1, yy2)
+
+    m = ['grandpa_42100', 'timebomb', 'mustardseed', 'spaceshipgrower']
+    methuselah = random.choice(m)
+
+    vf = bool(random.randint(0,1))
+    hf = bool(random.randint(0,1))
+    team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=xx, yoffset=yy1, vflip=vf, hflip=hf)])
+    team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=xx, yoffset=yy2, vflip=vf, hflip=hf)])
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    url = f"http://localhost:8000/simulator/index.html?s1={s1}&s2={s2}"
+    print(url)
 
 
+def west_sacramento():
+    pass
 
 
-
-
+def west_elko():
+    pass
 
 
 if __name__=="__main__":
-    main()
+    #west_baltimore()
+    west_seattle()
