@@ -37,7 +37,7 @@ def deuceswild():
 
     flip = bool(random.randint(0, 1))
 
-    team1_pattern = get_grid_pattern(gun, rows, cols, xoffset=x1, yoffset=y1, vflip=flip, hflip=flip)
+    team1_pattern = get_grid_pattern(gun, rows, cols, xoffset=x1, yoffset=y1, vflip=flip,     hflip=flip)
     team2_pattern = get_grid_pattern(gun, rows, cols, xoffset=x2, yoffset=y2, vflip=not flip, hflip=not flip)
 
 
@@ -47,14 +47,15 @@ def deuceswild():
     methuselahs = ['multuminparvo', 'acorn', 'bunnies', 'twoglidermess']
     methuselah = random.choice(methuselahs)
 
-    nw_x = random.randint(cols//6, cols//4)
-    nw_y = random.randint(rows//6, rows//4)
+    nw_x = cols//6 # random.randint(cols//6, cols//4)
+    nw_y = rows//6 # random.randint(rows//6, rows//4)
 
-    se_x = random.randint(3*cols//4, 5*cols//6)
-    se_y = random.randint(3*rows//4, 5*rows//6)
+    se_x = 5*cols//6 # random.randint(3*cols//4, 5*cols//6)
+    se_y = 5*rows//6 # random.randint(3*rows//4, 5*rows//6)
 
-    xjitter = lambda: random.randint(-15, 15)
-    yjitter = lambda: random.randint(-15, 15)
+    d = 15
+    xjitter = lambda: random.randint(-d, d)
+    yjitter = lambda: random.randint(0, 2*d)
 
     r = lambda: bool(random.randint(0,1))
 
