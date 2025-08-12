@@ -1,7 +1,9 @@
+import itertools
+import random
+
 from gollyx_maps.patterns import get_pattern_size, get_grid_pattern, pattern_union
 from gollyx_maps.geom import hflip_pattern, vflip_pattern, rot_pattern
 from gollyx_maps.utils import pattern2url
-import random
 
 
 ROWS = 150
@@ -179,14 +181,86 @@ def west_seattle():
     print(url)
 
 
-def west_sacramento():
-    pass
+def west_milwaukee():
+    """
+    o                     o
+    o  bisecting puffers  o
+    o                     o
+    """
+    rows = ROWS
+    cols = COLS
+    if SEED is not None:
+        random.seed(SEED)
 
+    centerx = cols//2
+    centery = rows//2
 
-def west_elko():
-    pass
+    lengthscale = 30
+    xjitter = lambda: random.randint(-lengthscale//2, lengthscale//2)
+    yjitter = lambda: random.randint(-lengthscale//2, lengthscale//2)
+
+    # --------------------
+    # Oscillator locations
+
+    team1_oscillators = []
+    team2_oscillators = []
+
+    xx1 = cols//6
+    xx2 = 5*cols//6
+
+    yy1 = rows//4
+    yy2 = rows//2
+    yy3 = 3*rows//4
+
+    order = [1,]*3 + [0,]*3
+    random.shuffle(order)
+
+    points = itertools.product([xx1, xx2], [yy1, yy2, yy3])
+
+    for o, p in zip(order, points):
+        if o==0:
+            team1_oscillators.append(p)
+        elif o==1:
+            team2_oscillators.append(p)
+
+    oscillator = 'quadrupleburloaferimeter'
+
+    def _assemble_patterns(team_oscillators):
+        team_pattern = []
+        for i, (x_, y_) in enumerate(team_oscillators):
+            xx = x_ + xjitter()
+            yy = y_ + yjitter()
+            vf = bool(random.randint(0,1))
+            hf = bool(random.randint(0,1))
+            if i==0:
+                team_pattern = get_grid_pattern(oscillator, rows, cols, xoffset=xx, yoffset=yy, vflip=vf, hflip=hf)
+            else:
+                team_pattern = pattern_union([team_pattern, get_grid_pattern(oscillator, rows, cols, xoffset=xx, yoffset=yy, vflip=vf, hflip=hf)])
+        return team_pattern
+
+    team1_pattern = _assemble_patterns(team1_oscillators)
+    team2_pattern = _assemble_patterns(team2_oscillators)
+
+    # ----------------
+    # Puffer locations
+
+    xx = cols//2 + xjitter()
+    yy1 = rows//4 + yjitter()
+    yy2 = 3*rows//4 + yjitter()
+
+    methuselah = 'bisectingpuffers'
+    team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=xx, yoffset=yy1, hflip=False)])
+    team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=xx, yoffset=yy2, hflip=True)])
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    url = f"http://localhost:8000/simulator/index.html?s1={s1}&s2={s2}"
+    print(url)
+
 
 
 if __name__=="__main__":
     #west_baltimore()
-    west_seattle()
+    #west_seattle()
+    west_milwaukee()
