@@ -11,40 +11,47 @@ SEED = None
 
 def crash1():
 
-    # # Nice solid crunch
-    # s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
-    # o = ['ring64']
-    # crash(s, o, are_spaceships_large=False, vspace=random.randint(20, 35))
+    # Nice solid crunch
+    s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
+    o = ['ring64']
+    crash(s, o, are_spaceships_large=False, vspace=random.randint(20, 35))
 
-    # # Large methuselahs and large spaceships
-    # s = ['x66']
-    # o = ['fred', 'wilma', 'grandpa_305230', 'grandpa_42100', 'ring64']
-    # crash(s, o, are_spaceships_large=True, vspace=random.randint(35, 50))
+def crash2():
+
+    # Large methuselahs and large spaceships
+    s = ['x66']
+    o = ['fred', 'wilma', 'grandpa_305230', 'grandpa_42100', 'ring64']
+    crash(s, o, are_spaceships_large=True, vspace=random.randint(35, 50))
+
+def crash3():
 
     # Big spaceships, big oscillators and methuselahs
     s = ['tagalong']
     o = ['pulsar25', '13on30', 'ring64', 'fred', 'wilma']
     crash(s, o, are_spaceships_large=True, vspace=random.randint(32, 35))
 
-def crash2():
+def crash4():
 
-    # # Sea turtles vs simple methuselahs
-    # s = ['x66']
-    # o = ['rpentomino', 'piheptomino']
-    # crash(s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
+    # Sea turtles vs simple methuselahs
+    s = ['x66']
+    o = ['rpentomino', 'piheptomino']
+    crash(s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
+
+def crash5():
 
     # Big spaceships, tiny methuselahs
     s = ['tagalong']
     o = ['bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
     crash(s, o, are_spaceships_large=True, vspace=random.randint(25, 35))
 
+def crash6():
 
-def crash3():
+    # Spaceships vs simple methuselahs
+    s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
+    o = ['rpentomino', 'bunnies', 'timebomb', 'multuminparvo']
+    crash(s, o, are_spaceships_large=False, vspace=random.randint(25, 35))
 
-    # # Spaceships vs simple methuselahs
-    # s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
-    # o = ['rpentomino', 'bunnies', 'timebomb', 'multuminparvo']
-    # crash(s, o, are_spaceships_large=False, vspace=random.randint(25, 35))
+def crash7():
 
     # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship', 'x66']
@@ -52,7 +59,15 @@ def crash3():
     crash(s, o, are_spaceships_large=False, vspace=random.randint(31, 50))
 
 
-def crash(spaceships, oscillators, are_spaceships_large=False, vspace=None):
+def crash8():
+
+    # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
+    s = ['flotilla_14wss']
+    o = ['bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
+    crash(s, o, are_spaceships_large=False, vspace=random.randint(31, 50), rotate_spaceships=True)
+
+
+def crash(spaceships, oscillators, are_spaceships_large=False, vspace=None, rotate_spaceships=False):
     """
     fix the y-values
     fix the y-jitter (minimal)
@@ -116,8 +131,15 @@ def crash(spaceships, oscillators, are_spaceships_large=False, vspace=None):
 
         def gen_spaceship(x, y):
             yy = int(((i+1)/(n_placements_even+1))*rows) + yjitter()
-            vf = bool(random.randint(0,1))
-            return get_grid_pattern(spaceship_pattern, rows, cols, xoffset=x, yoffset=yy, vflip=vf, hflip=orient_l2r)
+            if rotate_spaceships:
+                rdeg = 90
+                hf = False
+                vf = False
+            else:
+                rdeg = 0
+                hf = orient_l2r
+                vf = bool(random.randint(0,1))
+            return get_grid_pattern(spaceship_pattern, rows, cols, xoffset=x, yoffset=yy, vflip=vf, hflip=hf, rotdeg=rdeg)
 
         if p==0:
             hf = bool(random.randint(0,1))
@@ -157,4 +179,9 @@ def crash(spaceships, oscillators, are_spaceships_large=False, vspace=None):
 if __name__=="__main__":
     #crash1()
     #crash2()
-    crash3()
+    #crash3()
+    #crash4()
+    #crash5()
+    #crash6()
+    #crash7()
+    crash8()
