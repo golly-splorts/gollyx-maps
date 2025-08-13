@@ -9,7 +9,7 @@ COLS = 240
 SEED = None
 
 
-def deuceswild():
+def standoff():
     """
     guns in the middle, methuselahs at the corners
     """
@@ -44,14 +44,17 @@ def deuceswild():
     # -----------
     # Methuselahs
 
-    methuselahs = ['multuminparvo', 'acorn', 'bunnies', 'twoglidermess']
-    methuselah = random.choice(methuselahs)
+    garden_methuselahs = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
+    small_methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
+    large_methuselahs = ['fred', 'wilma', 'grandpa_42100', 'grandpa_13629876']
 
-    nw_x = cols//6 # random.randint(cols//6, cols//4)
-    nw_y = rows//6 # random.randint(rows//6, rows//4)
+    methuselah = random.choice(garden_methuselahs)
 
-    se_x = 5*cols//6 # random.randint(3*cols//4, 5*cols//6)
-    se_y = 5*rows//6 # random.randint(3*rows//4, 5*rows//6)
+    nw_x = cols//6
+    nw_y = rows//6
+
+    se_x = 5*cols//6
+    se_y = 5*rows//6
 
     d = 15
     xjitter = lambda: random.randint(-d, d)
@@ -69,6 +72,5 @@ def deuceswild():
     print(url)
 
 
-
 if __name__=="__main__":
-    deuceswild()
+    standoff()
