@@ -14,49 +14,49 @@ def crash1():
     # Nice solid crunch
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
     o = ['ring64']
-    crash(s, o, are_spaceships_large=False, vspace=random.randint(20, 35))
+    _crash(s, o, are_spaceships_large=False, vspace=random.randint(20, 35))
 
 def crash2():
 
     # Large methuselahs and large spaceships
     s = ['x66']
     o = ['fred', 'wilma', 'grandpa_305230', 'grandpa_42100', 'ring64']
-    crash(s, o, are_spaceships_large=True, vspace=random.randint(35, 50))
+    _crash(s, o, are_spaceships_large=True, vspace=random.randint(35, 50))
 
 def crash3():
 
     # Big spaceships, big oscillators and methuselahs
     s = ['tagalong']
     o = ['pulsar25', '13on30', 'ring64', 'fred', 'wilma']
-    crash(s, o, are_spaceships_large=True, vspace=random.randint(32, 35))
+    _crash(s, o, are_spaceships_large=True, vspace=random.randint(32, 35))
 
 def crash4():
 
     # Sea turtles vs simple methuselahs
     s = ['x66']
     o = ['rpentomino', 'piheptomino']
-    crash(s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
+    _crash(s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
 
 def crash5():
 
     # Big spaceships, tiny methuselahs
     s = ['tagalong']
     o = ['bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
-    crash(s, o, are_spaceships_large=True, vspace=random.randint(25, 35))
+    _crash(s, o, are_spaceships_large=True, vspace=random.randint(25, 35))
 
 def crash6():
 
     # Spaceships vs simple methuselahs
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
     o = ['rpentomino', 'bunnies', 'timebomb', 'multuminparvo']
-    crash(s, o, are_spaceships_large=False, vspace=random.randint(25, 35))
+    _crash(s, o, are_spaceships_large=False, vspace=random.randint(25, 35))
 
 def crash7():
 
     # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship', 'x66']
     o = ['rpentomino', 'bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
-    crash(s, o, are_spaceships_large=False, vspace=random.randint(31, 50))
+    _crash(s, o, are_spaceships_large=False, vspace=random.randint(31, 50))
 
 
 def crash8():
@@ -64,10 +64,10 @@ def crash8():
     # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
     s = ['flotilla_14wss']
     o = ['bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
-    crash(s, o, are_spaceships_large=False, vspace=random.randint(31, 50), rotate_spaceships=True)
+    _crash(s, o, are_spaceships_large=False, vspace=random.randint(31, 50), rotate_spaceships=True)
 
 
-def crash(spaceships, oscillators, are_spaceships_large=False, vspace=None, rotate_spaceships=False):
+def _crash(spaceships, oscillators, are_spaceships_large=False, vspace=None, rotate_spaceships=False):
     """
     fix the y-values
     fix the y-jitter (minimal)
