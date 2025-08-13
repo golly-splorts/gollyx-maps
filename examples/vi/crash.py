@@ -9,49 +9,49 @@ COLS = 240
 SEED = None
 
 
-def crash1():
+def crunchy_crash():
 
     # Nice solid crunch
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
     o = ['ring64']
     _crash(s, o, are_spaceships_large=False, vspace=random.randint(20, 35))
 
-def crash2():
+def spaceship_crash():
 
     # Large methuselahs and large spaceships
     s = ['x66']
     o = ['fred', 'wilma', 'grandpa_305230', 'grandpa_42100', 'ring64']
     _crash(s, o, are_spaceships_large=True, vspace=random.randint(35, 50))
 
-def crash3():
-
-    # Big spaceships, big oscillators and methuselahs
-    s = ['tagalong']
-    o = ['pulsar25', '13on30', 'ring64', 'fred', 'wilma']
-    _crash(s, o, are_spaceships_large=True, vspace=random.randint(32, 35))
-
-def crash4():
-
-    # Sea turtles vs simple methuselahs
-    s = ['x66']
-    o = ['rpentomino', 'piheptomino']
-    _crash(s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
-
-def crash5():
+def spaceship_crash2():
 
     # Big spaceships, tiny methuselahs
     s = ['tagalong']
     o = ['bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
     _crash(s, o, are_spaceships_large=True, vspace=random.randint(25, 35))
 
-def crash6():
+def big_crash():
+
+    # Big spaceships, big oscillators and methuselahs
+    s = ['tagalong']
+    o = ['pulsar25', '13on30', 'ring64', 'fred', 'wilma']
+    _crash(s, o, are_spaceships_large=True, vspace=random.randint(32, 35))
+
+def sea_turtles():
+
+    # Sea turtles vs simple methuselahs
+    s = ['x66']
+    o = ['rpentomino', 'piheptomino']
+    _crash(s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
+
+def beach_crash():
 
     # Spaceships vs simple methuselahs
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
     o = ['rpentomino', 'bunnies', 'timebomb', 'multuminparvo']
     _crash(s, o, are_spaceships_large=False, vspace=random.randint(25, 35))
 
-def crash7():
+def mountain_crash():
 
     # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship', 'x66']
@@ -59,7 +59,7 @@ def crash7():
     _crash(s, o, are_spaceships_large=False, vspace=random.randint(31, 50))
 
 
-def crash8():
+def flotilla_crash():
 
     # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
     s = ['flotilla_14wss']
@@ -177,11 +177,11 @@ def _crash(spaceships, oscillators, are_spaceships_large=False, vspace=None, rot
 
 
 if __name__=="__main__":
-    #crash1()
-    #crash2()
-    #crash3()
-    #crash4()
-    #crash5()
-    #crash6()
-    #crash7()
-    crash8()
+    #crunchy_crash()
+    #spaceship_crash()
+    #spaceship_crash2()
+    #big_crash()
+    #sea_turtles()
+    #beach_crash()
+    #mountain_crash()
+    flotilla_crash()
