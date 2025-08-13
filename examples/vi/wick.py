@@ -61,7 +61,7 @@ def wick1():
     print(url)
 
 
-def wick3():
+def wick2():
     rows = ROWS
     cols = COLS
     if SEED is not None:
@@ -169,5 +169,5 @@ def wick3():
 
 
 if __name__=="__main__":
-    #wick1()
-    wick3()
+    wick1()
+    wick2()
