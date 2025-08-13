@@ -9,7 +9,19 @@ COLS = 240
 SEED = None
 
 
-def quad():
+def quad_garden():
+    m = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
+    quad(m)
+
+def quad_small():
+    m = ['timebomb', 'multuminparvo', 'twoglidermess']
+    quad(m)
+
+def quad_large():
+    m = ['fred', 'wilma', 'grandpa_42100', 'grandpa_13629876']
+    quad(m)
+
+def quad(methuselahs):
     """
     four methuselahs in the four quadrant corners
     """
@@ -21,10 +33,7 @@ def quad():
     centerx = cols//2
     centery = rows//2
 
-    garden_methuselahs = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
-    small_methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
-    large_methuselahs = ['fred', 'wilma', 'grandpa_42100', 'grandpa_13629876']
-    methuselah = random.choice(small_methuselahs)
+    methuselah = random.choice(methuselahs)
 
     nw_x = sw_x = cols//4
     ne_x = se_x = 3*cols//4
@@ -74,4 +83,6 @@ def quad():
 
 
 if __name__=="__main__":
-    quad()
+    #quad_garden()
+    #quad_small()
+    quad_large()
