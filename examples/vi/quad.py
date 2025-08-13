@@ -11,17 +11,17 @@ SEED = None
 
 def quad_garden():
     m = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
-    quad(m)
+    _quad(m)
 
 def quad_small():
     m = ['timebomb', 'multuminparvo', 'twoglidermess']
-    quad(m)
+    _quad(m)
 
 def quad_large():
     m = ['fred', 'wilma', 'grandpa_42100', 'grandpa_13629876']
-    quad(m)
+    _quad(m)
 
-def quad(methuselahs):
+def _quad(methuselahs):
     """
     four methuselahs in the four quadrant corners
     """
