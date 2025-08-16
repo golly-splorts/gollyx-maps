@@ -33,6 +33,10 @@ def large_standoff():
     methuselahs = ['grandpa_42100', 'grandpa_13629876']
     _standoff(methuselahs)
 
+def bisecting_standoff():
+    methuselahs = ['bisectingpuffers']
+    _standoff(methuselahs)
+
 def oops_all_standoff():
     # This makes for some deliciously long and tricky paths to victory
     methuselahs = ['gosper_gun']
@@ -116,7 +120,9 @@ if __name__=="__main__":
     #small_standoff()
     #large_standoff()
 
-    garden_standoff2()
+    #garden_standoff2()
     #small_standoff2()
+
+    bisecting_standoff()
 
     #oops_all_standoff()
