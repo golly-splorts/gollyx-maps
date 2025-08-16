@@ -19,6 +19,16 @@ def st_h():
     _spacetime_complex_h(m, rotdeg=90)
 
 
+def b_v():
+    m = ['bisectingpuffers']
+    _spacetime_complex_v(m)
+
+
+def b_h():
+    m = ['bisectingpuffers']
+    _spacetime_complex_h(m, rotdeg=90)
+
+
 def _spacetime_complex_h(messmakers, rotdeg=None):
     """
             < mess-making
@@ -192,5 +202,7 @@ def _spacetime_complex_v(messmakers, rotdeg=None):
 
 if __name__=="__main__":
     #st_v()
-    st_h()
+    #st_h()
+    #b_v()
+    b_h()
 
