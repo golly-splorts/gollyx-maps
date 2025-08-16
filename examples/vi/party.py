@@ -101,6 +101,6 @@ def _party(methuselahs, spacing_range):
 if __name__=="__main__":
     #bunny_party()
     #domino_party()
-    #dove_party()
-    multum_in_party()
+    dove_party()
+    #multum_in_party()
 

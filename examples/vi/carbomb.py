@@ -15,11 +15,27 @@ def detroit_carbomb():
 
 
 def jersey_carbomb():
-    m = ['timebomb', 'rabbit', 'bunnies', 'multuminparvo', 'twoglidermess', 'cheptomino', 'piheptomino', 'rpentomino']
+    m = ['timebomb', 'rabbit', 'bunnies', 'multuminparvo', 'acorn', 'twoglidermess', 'spaceshipgrower']
     carbomb(m, False)
 
 
-def carbomb(methuselahs, are_methuselahs_large):
+def northdakota_carbomb():
+    p = [
+        #('x66', 90),
+        #('flotilla_14wss', 0),
+        ('heavyweightspaceship', 90),
+        #('bisectingpuffers', 270),
+    ]
+    methuselah, rotdeg = random.choice(p)
+    carbomb([methuselah], True, rotdeg=rotdeg)
+
+
+def elko_carbomb():
+    m = ['crabstretcher']
+    carbomb(m, True)
+
+
+def carbomb(methuselahs, are_methuselahs_large, rotdeg=None):
     """
     top half/third: wicks
     bottom half/third: methuselahs
@@ -140,8 +156,14 @@ def carbomb(methuselahs, are_methuselahs_large):
 
     methuselah = random.choice(methuselahs)
 
-    team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=centerx1,   yoffset=centery1, vflip=bool(random.randint(0,1)), hflip=bool(random.randint(0,1)))])
-    team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=centerx2,   yoffset=centery2, vflip=bool(random.randint(0,1)), hflip=bool(random.randint(0,1)))])
+    if rotdeg is None:
+        # Random orientation (vlips/hflips)
+        team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=centerx1,   yoffset=centery1, vflip=bool(random.randint(0,1)), hflip=bool(random.randint(0,1)))])
+        team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=centerx2,   yoffset=centery2, vflip=bool(random.randint(0,1)), hflip=bool(random.randint(0,1)))])
+    else:
+        # specific orientation
+        team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=centerx1,   yoffset=centery1, rotdeg=rotdeg)])
+        team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=centerx2,   yoffset=centery2, rotdeg=rotdeg)])
 
     if bool(random.randint(0,1)):
         team1_pattern = hflip_pattern(team1_pattern)
@@ -160,6 +182,8 @@ def carbomb(methuselahs, are_methuselahs_large):
 
 if __name__=="__main__":
     #detroit_carbomb()
-    jersey_carbomb()
+    #jersey_carbomb()
+    #northdakota_carbomb()
+    elko_carbomb()
 
 

@@ -12,9 +12,53 @@ SEED = None
 
 
 def west_baltimore():
+    """west1 configuration, classic timebomb/aferimeter"""
+    methuselahs = ['timebomb']
+    oscillators = ['quadrupleburloaferimeter']
+    _west1(methuselahs, oscillators)
+
+
+def west_boston():
+    """west1 configuration, wider variety of methuselahs and oscillators"""
+    methuselahs = ['mustardseed', 'multuminparvo', 'twoglidermess']
+    oscillators = ['koksgalaxy', 'ring64', 'switchbox']
+    _west1(methuselahs, oscillators)
+
+
+def west_seattle():
+    """west2 configuration, classic timebomb/aferimeter"""
+    methuselahs = ['timebomb']
+    oscillators = ['quadrupleburloaferimeter']
+    _west2(methuselahs, oscillators)
+
+
+def west_salt_lake():
+    """west2 configuration, wider variety of methuselahs and oscillators"""
+    methuselahs = ['mustardseed', 'multuminparvo', 'twoglidermess']
+    oscillators = ['koksgalaxy', 'ring64', 'switchbox']
+    _west2(methuselahs, oscillators)
+
+
+def west_milwaukee():
+    """west3 with classic aferimeters"""
+    oscillators = ['quadrupleburloaferimeter']
+    _west3(oscillators)
+
+
+def west_detroit():
+    """west3 with classic aferimeters"""
+    oscillators = ['koksgalaxy', 'ring64', 'switchbox', 'dinnertable']
+    _west3(oscillators)
+
+
+# --------------------
+
+
+def _west1(methuselahs, oscillators):
     """
-    Four oscillators in the corners
-    Two methuselahs in the middle
+    o     o
+      m m 
+    o     o
     """
     rows = ROWS
     cols = COLS
@@ -52,7 +96,7 @@ def west_baltimore():
         team1_oscillators.append((ne_x, ne_y))
         team2_oscillators.append((se_x, se_y))
 
-    oscillator = 'quadrupleburloaferimeter'
+    oscillator = random.choice(oscillators)
 
     def _assemble_patterns(team_oscillators):
         team_pattern = []
@@ -92,7 +136,7 @@ def west_baltimore():
     print(url)
 
 
-def west_seattle():
+def _west2(oscillators, methuselahs):
     """
     o m o
     o m o
@@ -181,7 +225,7 @@ def west_seattle():
     print(url)
 
 
-def west_milwaukee():
+def _west3(oscillators):
     """
     o                     o
     o  bisecting puffers  o
@@ -223,7 +267,7 @@ def west_milwaukee():
         elif o==1:
             team2_oscillators.append(p)
 
-    oscillator = 'quadrupleburloaferimeter'
+    oscillator = random.choice(oscillators)
 
     def _assemble_patterns(team_oscillators):
         team_pattern = []
@@ -261,6 +305,15 @@ def west_milwaukee():
 
 
 if __name__=="__main__":
-    #west_baltimore()
-    #west_seattle()
+    # west1
+    west_baltimore()
+    west_boston()
+
+    # west2
+    west_seattle()
+    west_salt_lake()
+
+    # west3
     west_milwaukee()
+    west_detroit()
+
