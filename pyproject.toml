@@ -46,9 +46,6 @@ where = ["src"]
 # Get __version__ variable from package's __init__.py
 version = { attr = "gollyx_maps.__init__.__version__" }
 
-[tool.setuptools.packages]
-list = ["gollyx_maps"]
-
 [tool.setuptools.package-data]
 # This includes all your non-Python data files inside the package.
 # It replaces both `package_data` in setup.py and the `MANIFEST.in` file.
