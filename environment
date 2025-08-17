@@ -1,3 +1,0 @@
-#!/bin/bash
-
-export GOLLYX_MAPS_HOME="$HOME/golly/core/gollyx-maps"
