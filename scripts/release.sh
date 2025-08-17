@@ -5,11 +5,6 @@ set -x
 
 REMOTE="ghx"
 
-if [ -z "${GOLLYX_MAPS_HOME}" ]; then
-	echo 'You must set the $GOLLYX_MAPS_HOME environment variable to proceed.'
-	exit 1
-fi
-
 POSITIONAL=
 
 if [[ $# != 2 ]]; then
