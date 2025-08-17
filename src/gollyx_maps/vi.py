@@ -1,3 +1,4 @@
+import itertools
 import json
 import os
 import random
@@ -82,14 +83,14 @@ def detroit_carbomb(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['fred', 'wilma', 'grandpa_42100', 'grandpa_13629876']
-    _carbomb(rows, cols, m, True)
+    return _carbomb(rows, cols, m, True)
 
 
 def jersey_carbomb(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['timebomb', 'rabbit', 'bunnies', 'multuminparvo', 'acorn', 'twoglidermess', 'spaceshipgrower']
-    _carbomb(rows, cols, m, False)
+    return _carbomb(rows, cols, m, False)
 
 
 def northdakota_carbomb(rows, cols, seed=None):
@@ -101,14 +102,14 @@ def northdakota_carbomb(rows, cols, seed=None):
         ('bisectingpuffers', 270),
     ]
     methuselah, rotdeg = random.choice(p)
-    _carbomb(rows, cols, [methuselah], True, rotdeg=rotdeg)
+    return _carbomb(rows, cols, [methuselah], True, rotdeg=rotdeg)
 
 
 def elko_carbomb(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['crabstretcher']
-    _carbomb(rows, cols, m, True)
+    return _carbomb(rows, cols, m, True)
 
 
 def _carbomb(rows, cols, methuselahs, are_methuselahs_large, rotdeg=None):
@@ -128,7 +129,7 @@ def _carbomb(rows, cols, methuselahs, are_methuselahs_large, rotdeg=None):
     end_y = rows//2 - random.randint(spacing, 2*spacing)
     color_mode = random.randint(1,2)
 
-    n_placements = ROWS//spacing
+    n_placements = rows//spacing
 
     if color_mode == 1:
 
@@ -261,7 +262,7 @@ def crunchy_crash(rows, cols, seed=None):
     # Nice solid crunch
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
     o = ['ring64']
-    _crash(rows, cols, s, o, are_spaceships_large=False, vspace=random.randint(20, 35))
+    return _crash(rows, cols, s, o, are_spaceships_large=False, vspace=random.randint(20, 35))
 
 def tasty_crash(rows, cols, seed=None):
     if seed is not None:
@@ -269,7 +270,7 @@ def tasty_crash(rows, cols, seed=None):
     # Large methuselahs and large spaceships
     s = ['x66']
     o = ['fred', 'wilma', 'grandpa_305230', 'grandpa_42100', 'ring64']
-    _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(35, 50))
+    return _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(35, 50))
 
 def butterfly_crash(rows, cols, seed=None):
     if seed is not None:
@@ -277,7 +278,7 @@ def butterfly_crash(rows, cols, seed=None):
     # Big spaceships, tiny methuselahs
     s = ['tagalong']
     o = ['bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
-    _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(25, 35))
+    return _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(25, 35))
 
 def elephant_crash(rows, cols, seed=None):
     if seed is not None:
@@ -285,7 +286,7 @@ def elephant_crash(rows, cols, seed=None):
     # Big spaceships, big oscillators and methuselahs
     s = ['tagalong']
     o = ['pulsar25', '13on30', 'ring64', 'fred', 'wilma']
-    _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(32, 35))
+    return _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(32, 35))
 
 def sea_turtles(rows, cols, seed=None):
     if seed is not None:
@@ -293,7 +294,7 @@ def sea_turtles(rows, cols, seed=None):
     # Sea turtles vs simple methuselahs
     s = ['x66']
     o = ['rpentomino', 'piheptomino']
-    _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
+    return _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
 
 def beach_crash(rows, cols, seed=None):
     if seed is not None:
@@ -301,7 +302,7 @@ def beach_crash(rows, cols, seed=None):
     # Spaceships vs simple methuselahs
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship']
     o = ['rpentomino', 'bunnies', 'timebomb', 'multuminparvo']
-    _crash(rows, cols, s, o, are_spaceships_large=False, vspace=random.randint(25, 35))
+    return _crash(rows, cols, s, o, are_spaceships_large=False, vspace=random.randint(25, 35))
 
 def cave_crash(rows, cols, seed=None):
     if seed is not None:
@@ -309,7 +310,7 @@ def cave_crash(rows, cols, seed=None):
     # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship', 'x66']
     o = ['rpentomino', 'bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
-    _crash(rows, cols, s, o, are_spaceships_large=False, vspace=random.randint(31, 50))
+    return _crash(rows, cols, s, o, are_spaceships_large=False, vspace=random.randint(31, 50))
 
 
 def flotilla_crash(rows, cols, seed=None):
@@ -318,7 +319,7 @@ def flotilla_crash(rows, cols, seed=None):
     # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
     s = ['flotilla_14wss']
     o = ['bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
-    _crash(rows, cols, s, o, are_spaceships_large=False, vspace=random.randint(31, 50), rotate_spaceships=True)
+    return _crash(rows, cols, s, o, are_spaceships_large=False, vspace=random.randint(31, 50), rotate_spaceships=True)
 
 
 def _crash(rows, cols, spaceships, oscillators, are_spaceships_large=False, vspace=None, rotate_spaceships=False):
@@ -335,7 +336,7 @@ def _crash(rows, cols, spaceships, oscillators, are_spaceships_large=False, vspa
     if vspace is None or vspace < 0:
         vspace = random.randint(20, 35)
 
-    n_placements = ROWS//vspace
+    n_placements = rows//vspace
     n_placements_even = (n_placements//2)*2
 
     placements = [1,]*(n_placements_even//2) + [0,]*(n_placements_even//2)
@@ -432,39 +433,34 @@ def bunny_party(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['rabbit', 'bunnies']
-    _party(rows, cols, methuselahs, (5, 25))
+    return _party(rows, cols, methuselahs, (5, 25))
 
 
 def domino_party(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['cheptomino', 'piheptomino', 'rpentomino']
-    _party(rows, cols, methuselahs, (5, 16))
+    return _party(rows, cols, methuselahs, (5, 16))
 
 
 def dove_party(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['wing', 'dove']
-    _party(rows, cols, methuselahs, (4, 13))
+    return _party(rows, cols, methuselahs, (4, 13))
 
 
 def multum_in_party(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['acorn', 'multuminparvo', 'mustardseed']
-    _party(rows, cols, methuselahs, (5, 25))
+    return _party(rows, cols, methuselahs, (5, 25))
 
 
-def _party(methuselahs, spacing_range):
+def _party(rows, cols, methuselahs, spacing_range):
     """
     line of methuselahs thru the middle, with some vertical jitter
     """
-    rows = ROWS
-    cols = COLS
-    if SEED is not None:
-        random.seed(SEED)
-
     centerx = cols//2
     centery = rows//2
 
@@ -538,32 +534,27 @@ def quad_beatty(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
-    _quad(rows, cols, m)
+    return _quad(rows, cols, m)
 
 
 def quad_barstow(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['timebomb', 'multuminparvo', 'twoglidermess']
-    _quad(rows, cols, m)
+    return _quad(rows, cols, m)
 
 
 def quad_bakersfield(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['fred', 'wilma', 'grandpa_42100', 'grandpa_13629876']
-    _quad(rows, cols, m)
+    return _quad(rows, cols, m)
 
 
 def _quad(rows, cols, methuselahs):
     """
     four methuselahs in the four quadrant corners
     """
-    rows = ROWS
-    cols = COLS
-    if SEED is not None:
-        random.seed(SEED)
-
     centerx = cols//2
     centery = rows//2
 
@@ -624,31 +615,31 @@ def complex_v(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['backrake2']
-    _spacetime_complex_v(m)
+    return _spacetime_complex_v(rows, cols, m)
 
 
 def complex_h(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['backrake2']
-    _spacetime_complex_h(m, rotdeg=90)
+    return _spacetime_complex_h(rows, cols, m, rotdeg=90)
 
 
 def bifurcating_v(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['bisectingpuffers']
-    _spacetime_complex_v(m, rotdeg=90)
+    return _spacetime_complex_v(rows, cols, m, rotdeg=90)
 
 
 def bifurcating_h(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['bisectingpuffers']
-    _spacetime_complex_h(m)
+    return _spacetime_complex_h(rows, cols, m)
 
 
-def _spacetime_complex_h(messmakers, rotdeg=None):
+def _spacetime_complex_h(rows, cols, messmakers, rotdeg=None):
     """
             < mess-making
             < spaceships
@@ -656,11 +647,6 @@ def _spacetime_complex_h(messmakers, rotdeg=None):
             < mess-making
             < spaceships
     """
-    rows = ROWS
-    cols = COLS
-    if SEED is not None:
-        random.seed(SEED)
-
     # This is the messmaker pattern
     messmaker = random.choice(messmakers)
 
@@ -742,7 +728,7 @@ def _spacetime_complex_h(messmakers, rotdeg=None):
     return s1, s2
 
 
-def _spacetime_complex_v(messmakers, rotdeg=None):
+def _spacetime_complex_v(rows, cols, messmakers, rotdeg=None):
     """
 
      ^ ^      .    ^ ^
@@ -751,11 +737,6 @@ def _spacetime_complex_v(messmakers, rotdeg=None):
               .
         row of boxes
     """
-    rows = ROWS
-    cols = COLS
-    if SEED is not None:
-        random.seed(SEED)
-
     # This is the messmaker pattern
     messmaker = random.choice(messmakers)
 
@@ -841,49 +822,49 @@ def tacoma_standoff(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
-    _standoff(rows, cols, methuselahs)
+    return _standoff(rows, cols, methuselahs)
 
 
 def tombstone_standoff(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
-    _standoff(rows, cols, methuselahs, opposite_day=True)
+    return _standoff(rows, cols, methuselahs, opposite_day=True)
 
 
 def red_rock_standoff(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['cheptomino', 'rpentomino']
-    _standoff(rows, cols, methuselahs)
+    return _standoff(rows, cols, methuselahs)
 
 
 def cheyenne_showdown(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
-    _standoff(rows, cols, methuselahs)
+    return _standoff(rows, cols, methuselahs)
 
 
 def santa_fe_standoff(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
-    _standoff(rows, cols, methuselahs, opposite_day=True)
+    return _standoff(rows, cols, methuselahs, opposite_day=True)
 
 
 def caliente_standoff(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['grandpa_42100', 'grandpa_13629876']
-    _standoff(rows, cols, methuselahs)
+    return _standoff(rows, cols, methuselahs)
 
 
 def spaceport_standoff(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     methuselahs = ['bisectingpuffers']
-    _standoff(rows, cols, methuselahs)
+    return _standoff(rows, cols, methuselahs)
 
 
 def suns_out_gosper_guns_out(rows, cols, seed=None):
@@ -891,18 +872,13 @@ def suns_out_gosper_guns_out(rows, cols, seed=None):
         random.seed(seed)
     # This makes for some deliciously long and tricky paths to victory
     methuselahs = ['gosper_gun']
-    _standoff(rows, cols, methuselahs)
+    return _standoff(rows, cols, methuselahs)
 
 
 def _standoff(rows, cols, methuselahs, opposite_day=False):
     """
     guns in the middle, methuselahs at the corners
     """
-    rows = ROWS
-    cols = COLS
-    if SEED is not None:
-        random.seed(SEED)
-
     centerx = cols//2
     centery = rows//2
 
@@ -975,7 +951,7 @@ def west_baltimore(rows, cols, seed=None):
         random.seed(seed)
     methuselahs = ['timebomb']
     oscillators = ['quadrupleburloaferimeter']
-    _west1(rows, cols, methuselahs, oscillators)
+    return _west1(rows, cols, methuselahs, oscillators)
 
 
 def west_cambridge(rows, cols, seed=None):
@@ -984,7 +960,7 @@ def west_cambridge(rows, cols, seed=None):
         random.seed(seed)
     methuselahs = ['mustardseed', 'multuminparvo', 'twoglidermess']
     oscillators = ['koksgalaxy', 'ring64', 'switchbox']
-    _west1(rows, cols, methuselahs, oscillators)
+    return _west1(rows, cols, methuselahs, oscillators)
 
 
 def west_seattle(rows, cols, seed=None):
@@ -993,7 +969,7 @@ def west_seattle(rows, cols, seed=None):
         random.seed(seed)
     methuselahs = ['timebomb']
     oscillators = ['quadrupleburloaferimeter']
-    _west2(rows, cols, methuselahs, oscillators)
+    return _west2(rows, cols, methuselahs, oscillators)
 
 
 def west_salt_lake(rows, cols, seed=None):
@@ -1002,7 +978,7 @@ def west_salt_lake(rows, cols, seed=None):
         random.seed(seed)
     methuselahs = ['mustardseed', 'multuminparvo', 'twoglidermess']
     oscillators = ['koksgalaxy', 'ring64', 'switchbox']
-    _west2(rows, cols, methuselahs, oscillators)
+    return _west2(rows, cols, methuselahs, oscillators)
 
 
 def west_milwaukee(rows, cols, seed=None):
@@ -1010,7 +986,7 @@ def west_milwaukee(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     oscillators = ['quadrupleburloaferimeter']
-    _west3(rows, cols, oscillators)
+    return _west3(rows, cols, oscillators)
 
 
 def west_detroit(rows, cols, seed=None):
@@ -1018,7 +994,7 @@ def west_detroit(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     oscillators = ['koksgalaxy', 'ring64', 'switchbox', 'dinnertable']
-    _west3(rows, cols, oscillators)
+    return _west3(rows, cols, oscillators)
 
 
 def _west1(rows, cols, methuselahs, oscillators):
@@ -1180,7 +1156,7 @@ def _west2(rows, cols, oscillators, methuselahs):
     return s1, s2
 
 
-def _west3(oscillators):
+def _west3(rows, cols, oscillators):
     """
     o                     o
     o  bisecting puffers  o

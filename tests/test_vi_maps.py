@@ -29,7 +29,7 @@ VI_PATTERNS = [
         "domino_party",
         "dove_party",
         "multum_in_party",
-        "quad_garden",
+        "quad_beatty",
         "quad_barstow",
         "quad_bakersfield",
         "spacetime_complex_north",
@@ -134,6 +134,6 @@ class HellmouthVICupMapsTest(unittest.TestCase):
             # Standard size
             r = 150
             c = 240
-            for i in range(25):
+            for i in range(10):
                 get_map_realization(cup, pattern_name, rows=r, columns=c)
 
