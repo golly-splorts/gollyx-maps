@@ -51,7 +51,7 @@ VI_PATTERNS = [
         "west_milwaukee",
         "west_detroit",
         "spider_cave",
-        "dragon_cave",
+        "crab_cave",
         "hellmath",
         "porchlights",
 ]
