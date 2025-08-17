@@ -835,21 +835,21 @@ def tombstone_standoff(rows, cols, seed=None):
 def red_rock_standoff(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    methuselahs = ['cheptomino', 'rpentomino']
+    methuselahs = ['multuminparvo', 'justyna']
     return _standoff(rows, cols, methuselahs)
 
 
 def cheyenne_showdown(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
+    methuselahs = ['timebomb', 'spaceshipgrower', 'twoglidermess']
     return _standoff(rows, cols, methuselahs)
 
 
 def santa_fe_standoff(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
+    methuselahs = ['timebomb', 'spaceshipgrower', 'twoglidermess']
     return _standoff(rows, cols, methuselahs, opposite_day=True)
 
 
