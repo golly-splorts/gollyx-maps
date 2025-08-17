@@ -13,11 +13,11 @@ def quad_garden():
     m = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
     _quad(m)
 
-def quad_small():
+def quad_barstow():
     m = ['timebomb', 'multuminparvo', 'twoglidermess']
     _quad(m)
 
-def quad_large():
+def quad_bakersfield():
     m = ['fred', 'wilma', 'grandpa_42100', 'grandpa_13629876']
     _quad(m)
 
