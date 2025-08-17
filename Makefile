@@ -1,5 +1,3 @@
-include common.mk
-
 MODULES=gollyx_maps tests
 
 CB := $(shell git branch --show-current)
