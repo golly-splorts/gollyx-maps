@@ -9,35 +9,35 @@ COLS = 240
 SEED = None
 
 
-def garden_standoff():
+def tacoma_standoff():
     methuselahs = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
     _standoff(methuselahs)
 
-def garden_standoff2():
+def tombstone_standoff():
     methuselahs = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
     _standoff(methuselahs, opposite_day=True)
 
-def domino_standoff():
+def red_rock_standoff():
     methuselahs = ['cheptomino', 'rpentomino']
     _standoff(methuselahs)
 
-def small_standoff():
+def cheyenne_showdown():
     methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
     _standoff(methuselahs)
 
-def small_standoff2():
+def santa_fe_standoff():
     methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
     _standoff(methuselahs, opposite_day=True)
 
-def large_standoff():
+def caliente_standoff():
     methuselahs = ['grandpa_42100', 'grandpa_13629876']
     _standoff(methuselahs)
 
-def bisecting_standoff():
+def spaceport_standoff():
     methuselahs = ['bisectingpuffers']
     _standoff(methuselahs)
 
-def oops_all_standoff():
+def suns_out_gosper_guns_out():
     # This makes for some deliciously long and tricky paths to victory
     methuselahs = ['gosper_gun']
     _standoff(methuselahs)
@@ -121,5 +121,5 @@ if __name__=="__main__":
     #large_standoff()
     #garden_standoff2()
     #small_standoff2()
-    bisecting_standoff()
+    #bisecting_standoff()
     #oops_all_standoff()

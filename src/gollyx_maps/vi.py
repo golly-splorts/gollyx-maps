@@ -19,53 +19,53 @@ def get_vi_pattern_function_map():
         "elko_carbomb": elko_carbomb,
 
         # Crashes:
-        "crunchy_crash": crunchy_crash(),
-        "tasty_crash": tasty_crash(), 
-        "butterfly_crash": butterfly_crash(),
-        "elephant_crash": elephant_crash(),
-        "sea_turtles": sea_turtles(),
-        "beach_crash": beach_crash(),
-        "cave_crash": cave_crash(),
-        "flotilla_crash": flotilla_crash(),
+        "crunchy_crash": crunchy_crash,
+        "tasty_crash": tasty_crash, 
+        "butterfly_crash": butterfly_crash,
+        "elephant_crash": elephant_crash,
+        "sea_turtles": sea_turtles,
+        "beach_crash": beach_crash,
+        "cave_crash": cave_crash,
+        "flotilla_crash": flotilla_crash,
 
         # Parties:
-        "bunny_party": bunny_party(),
-        "domino_party": domino_party(),
-        "dove_party": dove_party(),
-        "multum_in_party": multum_in_party(),
+        "bunny_party": bunny_party,
+        "domino_party": domino_party,
+        "dove_party": dove_party,
+        "multum_in_party": multum_in_party,
 
         # Quad:
-        "quad_garden": quad_garden(),
-        "quad_barstow": quad_barstow(),
-        "quad_bakersfield": quad_bakersfield(),
+        "quad_beatty": quad_beatty,
+        "quad_barstow": quad_barstow,
+        "quad_bakersfield": quad_bakersfield,
 
         # Spacetime complex:
-        "spacetime_complex_north": complex_v(),
-        "spacetime_complex_east": complex_h(),
-        "bifurcating_spacetime_north": bifurcating_v(),
-        "bifurcating_spacetime_east": bifurcating_h(),
+        "spacetime_complex_north": complex_v,
+        "spacetime_complex_east": complex_h,
+        "bifurcating_spacetime_north": bifurcating_v,
+        "bifurcating_spacetime_east": bifurcating_h,
 
-        # Standoff:
-        "garden_standoff": garden_standoff(),
-        "domino_standoff": domino_standoff(),
-        "small_standoff": small_standoff(),
-        "large_standoff": large_standoff(),
-        "garden_standoff2": garden_standoff2(),
-        "small_standoff2": small_standoff2(),
-        "bisecting_standoff": bisecting_standoff(),
-        "oops_all_standoff": oops_all_standoff(),
+        # Standoffs:
+        "tacoma_standoff": tacoma_standoff,
+        "tombstone_standoff": tombstone_standoff,
+        "red_rock_standoff": red_rock_standoff,
+        "cheyenne_showdown": cheyenne_showdown,
+        "santa_fe_standoff": santa_fe_standoff,
+        "caliente_standoff": caliente_standoff,
+        "spaceport_standoff": spaceport_standoff,
+        "suns_out_gosper_guns_out": suns_out_gosper_guns_out
 
         # West:
-        "west_baltimore": west_baltimore(),
-        "west_boston": west_boston(),
-        "west_seattle": west_seattle(),
-        "west_salt_lake": west_salt_lake(),
-        "west_milwaukee": west_milwaukee(),
-        "west_detroit": west_detroit(),
+        "west_baltimore": west_baltimore,
+        "west_cambridge": west_cambridge,
+        "west_seattle": west_seattle,
+        "west_salt_lake": west_salt_lake,
+        "west_milwaukee": west_milwaukee,
+        "west_detroit": west_detroit,
 
         # Wicks:
-        "spider_cave": wick1(),
-        "dragon_cave": wick2(),
+        "spider_cave": wick1,
+        "dragon_cave": wick2,
 
         # Toroidal map patterns:
         "hellmath": donutmath_twocolor,
@@ -534,7 +534,7 @@ def _party(methuselahs, spacing_range):
 ############################################################
 
 
-def quad_garden(rows, cols, seed=None):
+def quad_beatty(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     m = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
@@ -833,6 +833,138 @@ def _spacetime_complex_v(messmakers, rotdeg=None):
 
 
 ############################################################
+################### standoffs ##############################
+############################################################
+
+
+def tacoma_standoff(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    methuselahs = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
+    _standoff(rows, cols, methuselahs)
+
+
+def tombstone_standoff(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    methuselahs = ['acorn', 'mustardseed', 'rabbit', 'bunnies']
+    _standoff(rows, cols, methuselahs, opposite_day=True)
+
+
+def red_rock_standoff(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    methuselahs = ['cheptomino', 'rpentomino']
+    _standoff(rows, cols, methuselahs)
+
+
+def cheyenne_showdown(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
+    _standoff(rows, cols, methuselahs)
+
+
+def santa_fe_standoff(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    methuselahs = ['timebomb', 'multuminparvo', 'twoglidermess']
+    _standoff(rows, cols, methuselahs, opposite_day=True)
+
+
+def caliente_standoff(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    methuselahs = ['grandpa_42100', 'grandpa_13629876']
+    _standoff(rows, cols, methuselahs)
+
+
+def spaceport_standoff(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    methuselahs = ['bisectingpuffers']
+    _standoff(rows, cols, methuselahs)
+
+
+def suns_out_gosper_guns_out(rows, cols, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    # This makes for some deliciously long and tricky paths to victory
+    methuselahs = ['gosper_gun']
+    _standoff(rows, cols, methuselahs)
+
+
+def _standoff(rows, cols, methuselahs, opposite_day=False):
+    """
+    guns in the middle, methuselahs at the corners
+    """
+    rows = ROWS
+    cols = COLS
+    if SEED is not None:
+        random.seed(SEED)
+
+    centerx = cols//2
+    centery = rows//2
+
+    # -------------
+    # Guns, pew pew
+    gun = 'gosper_gun'
+
+    yw, xw = get_pattern_size(gun)
+
+    xjitter = lambda: random.randint(xw//2, xw//2 + 8)
+    x1 = centerx - xjitter()
+    x2 = centerx + xjitter()
+
+    yjitter = lambda: random.randint(-8, 8)
+    y1 = centery - yjitter()
+    y2 = centery + yjitter()
+
+    flip = bool(random.randint(0, 1))
+
+    # The flip boolean logic ensures that the guns are always:
+    # - next to each other
+    # - pointing toward the same (NW/SE) corners
+    # - outside of each others' range
+    team1_pattern = get_grid_pattern(gun, rows, cols, xoffset=x1, yoffset=y1, vflip=flip,     hflip=flip)
+    team2_pattern = get_grid_pattern(gun, rows, cols, xoffset=x2, yoffset=y2, vflip=not flip, hflip=not flip)
+
+
+    # -----------
+    # Methuselahs
+
+    methuselah = random.choice(methuselahs)
+
+    nw_x = cols//6
+    nw_y = rows//6
+
+    se_x = 5*cols//6
+    se_y = 5*rows//6
+
+    if opposite_day:
+        # "nw" is actually ne
+        nw_x = 5*cols//6
+        # "se" is actually sw
+        se_x = cols//6
+
+    d = 11
+
+    xjitter = lambda: random.randint(-d, d)
+    yjitter = lambda: random.randint(0, d)
+
+    r = lambda: bool(random.randint(0,1))
+
+    # Put methuselahs in the NW/SE corners
+    team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=nw_x + xjitter(), yoffset=nw_y + yjitter(), vflip=r(), hflip=r())])
+    team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=se_x + xjitter(), yoffset=se_y + yjitter(), vflip=r(), hflip=r())])
+
+    s1 = pattern2url(team1_pattern)
+    s2 = pattern2url(team2_pattern)
+
+    return s1, s2
+
+
+############################################################
 ################### west ###################################
 ############################################################
 
@@ -846,7 +978,7 @@ def west_baltimore(rows, cols, seed=None):
     _west1(rows, cols, methuselahs, oscillators)
 
 
-def west_boston(rows, cols, seed=None):
+def west_cambridge(rows, cols, seed=None):
     """west1 configuration, wider variety of methuselahs and oscillators"""
     if seed is not None:
         random.seed(seed)

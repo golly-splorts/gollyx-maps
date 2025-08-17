@@ -38,7 +38,7 @@ def get_pattern_function_map(cup):
         'star': get_star_pattern_function_map,
         'klein': get_klein_pattern_function_map,
         'ii': get_ii_pattern_function_map,
-        'starii': get_starii_pattern_function_map
+        'starii': get_starii_pattern_function_map,
         'vi': get_vi_pattern_function_map,
     }
     return m[cup]
