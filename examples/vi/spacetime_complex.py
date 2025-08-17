@@ -52,11 +52,12 @@ def _spacetime_complex_h(messmakers, rotdeg=None):
     # messmaker positions
     mm1y = rows // 4
     mm2y = rows // 2 + rows // 4
+    mmx = rows - 1 - xdim
 
     # messmaker xwiggle
     xwiggle = 20
     xjitter = lambda: random.randint(-xwiggle//2, xwiggle//2)
-    mmx = rows - 1 - xdim + xjitter()
+    mmx += xjitter()
 
     # messmaker ywiggle
     ywiggle = 8
@@ -64,19 +65,19 @@ def _spacetime_complex_h(messmakers, rotdeg=None):
     mm1y += yjitter()
     mm2y += yjitter()
 
-    r = random.randint(1,2)
-    if True: # r == 1:
+    r = random.randint(1,4)
+    if r in [1,2,3]:
         # Orientation 1: both spaceship generators moving same direction
         generator1 = get_grid_pattern(
-            messmaker, rows, cols, xoffset=mmx, yoffset=mm1y, rotdeg=rotdeg, hflip=True
+            messmaker, rows, cols, xoffset=mmx, yoffset=mm1y, rotdeg=rotdeg, hflip=bool(random.randint(0,1))
         )
         generator2 = get_grid_pattern(
             messmaker, rows, cols, xoffset=mmx, yoffset=mm2y, rotdeg=rotdeg
         )
-    else: # elif r==2:
+    elif r in [4]:
         # Orientation 2: spaceship generators moving opposite direction
         generator1 = get_grid_pattern(
-            messmaker, rows, cols, xoffset=mmx, yoffset=mm1y, rotdeg=rotdeg, vflip=True, hflip=True
+            messmaker, rows, cols, xoffset=mmx, yoffset=mm1y, rotdeg=rotdeg, vflip=True, hflip=bool(random.randint(0,1)) 
         )
         generator2 = get_grid_pattern(
             messmaker, rows, cols, xoffset=mmx, yoffset=mm2y, rotdeg=rotdeg
@@ -109,8 +110,15 @@ def _spacetime_complex_h(messmakers, rotdeg=None):
     c1 = pattern_union([generator1] + box_patterns1)
     c2 = pattern_union([generator2] + box_patterns2)
 
-    s1 = pattern2url(c1)
-    s2 = pattern2url(c2)
+    # s1 = pattern2url(c1)
+    # s2 = pattern2url(c2)
+
+    if bool(random.randint(0,1)):
+        s1 = pattern2url(c1)
+        s2 = pattern2url(c2)
+    else:
+        s1 = pattern2url(c2)
+        s2 = pattern2url(c1)
 
     url = f"http://localhost:8000/simulator/index.html?s1={s1}&s2={s2}"
     print(url)
@@ -133,43 +141,46 @@ def _spacetime_complex_v(messmakers, rotdeg=None):
     # This is the messmaker pattern
     messmaker = random.choice(messmakers)
 
-    (xdim, ydim) = get_pattern_size(messmaker)
+    if rotdeg is None:
+        rotdeg = 0
+    (xdim, ydim) = get_pattern_size(messmaker, rotdeg=rotdeg)
 
     # messmaker positions
     mm1x = cols // 4
     mm2x = cols // 2 + cols // 4
     mmy = rows - 1 - ydim
 
+    # messmaker xwiggle
     xwiggle = 12
     xjitter = lambda: random.randint(-xwiggle//2, xwiggle//2)
-
     mm1x += xjitter()
     mm2x += xjitter()
 
+    # messmaker ywiggle
+    ywiggle = 4
+    yjitter = lambda: random.randint(-ywiggle//2, ywiggle//2)
+    mmy += yjitter()
+
     r = random.randint(1,4)
-    if True: #r in [1,2,3]:
+    if r in [1,2,3]:
         # Orientation 1: both spaceship generators moving same direction
         generator1 = get_grid_pattern(
-            messmaker, rows, cols, xoffset=mm1x, yoffset=mmy, hflip=True
+            messmaker, rows, cols, rotdeg=rotdeg, xoffset=mm1x, yoffset=mmy, hflip=True # bool(random.randint(0,1))
         )
         generator2 = get_grid_pattern(
-            messmaker, rows, cols, xoffset=mm2x, yoffset=mmy
+            messmaker, rows, cols, rotdeg=rotdeg, xoffset=mm2x, yoffset=mmy
         )
-    else: #elif r==4:
+    elif r in [4]:
         # Orientation 2: spaceship generators moving opposite direction
         generator1 = get_grid_pattern(
-            messmaker, rows, cols, xoffset=mm1x, yoffset=mmy, rotdeg=rotdeg, vflip=True, hflip=True
+            messmaker, rows, cols, rotdeg=rotdeg, xoffset=mm1x, yoffset=mmy, hflip=True, vflip=bool(random.randint(0,1))
         )
         generator2 = get_grid_pattern(
-            messmaker, rows, cols, xoffset=mm2x, yoffset=mmy, rotdeg=rotdeg
+            messmaker, rows, cols, rotdeg=rotdeg, xoffset=mm2x, yoffset=mmy
         )
 
     stilllifes = ['block', 'donut', 'beehive']
     stilllife = random.choice(stilllifes)
-
-    ywiggle = 4
-    yjitter = lambda: random.randint(-ywiggle//2, ywiggle//2)
-    mmy += yjitter()
 
     nboxes = random.randint(10, 20)
     box_patterns1 = []
@@ -193,8 +204,12 @@ def _spacetime_complex_v(messmakers, rotdeg=None):
     c1 = pattern_union([generator1] + box_patterns1)
     c2 = pattern_union([generator2] + box_patterns2)
 
-    s1 = pattern2url(c1)
-    s2 = pattern2url(c2)
+    if bool(random.randint(0,1)):
+        s1 = pattern2url(c1)
+        s2 = pattern2url(c2)
+    else:
+        s1 = pattern2url(c2)
+        s2 = pattern2url(c1)
 
     url = f"http://localhost:8000/simulator/index.html?s1={s1}&s2={s2}"
     print(url)
@@ -203,6 +218,7 @@ def _spacetime_complex_v(messmakers, rotdeg=None):
 if __name__=="__main__":
     #st_v()
     #st_h()
+
     #b_v()
     b_h()
 
