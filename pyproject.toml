@@ -1,0 +1,60 @@
+[build-system]
+# Specifies the tools needed to build your package.
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gollyx-maps"
+# The version is now read dynamically from your package's __init__.py.
+dynamic = ["version"]
+description = "gollyx-maps is a package for turning cellular autonoma patterns into GollyX maps"
+readme = "Readme.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Ch4zm of Hellmouth", email = "ch4zm.of.hellmouth@gmail.com" }
+]
+# You can add relevant keywords here to improve discoverability on PyPI.
+keywords = ["cellular-automata", "golly", "gollyx"]
+
+# Core dependencies for your project to run.
+dependencies = [
+    "roman"
+]
+
+[project.urls]
+Homepage = "https://golly.life"
+
+[project.optional-dependencies]
+# Dependencies for development, testing, and linting.
+dev = [
+    "pytest",
+    "flake8",
+    "mypy",
+    # It's good practice to include modern build tools here.
+    "build",
+    "twine",
+]
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+# This automatically finds packages inside the 'src' directory.
+where = ["src"]
+
+[tool.setuptools.dynamic]
+# Get __version__ variable from package's __init__.py
+version = { attr = "gollyx_maps.__init__.__version__" }
+
+[tool.setuptools.packages]
+list = ["gollyx_maps"]
+
+[tool.setuptools.package-data]
+# This includes all your non-Python data files inside the package.
+# It replaces both `package_data` in setup.py and the `MANIFEST.in` file.
+gollyx_maps = [
+    "data/*.json",
+    "b3s23_patterns/*.txt",
+    "b357s238_patterns/*.txt",
+    "b2s345c4_patterns/*.txt",
+]
