@@ -1,9 +1,13 @@
-from gollyx_maps.patterns import get_pattern_size, get_grid_pattern, pattern_union
-from gollyx_maps.geom import hflip_pattern, vflip_pattern
-from gollyx_maps.utils import pattern2url
 import json
 import os
 import random
+from gollyx_maps.patterns import get_pattern_size, get_grid_pattern, pattern_union
+from gollyx_maps.geom import hflip_pattern, vflip_pattern
+from gollyx_maps.utils import pattern2url
+from .toroidal import (
+    donutmath_twocolor,
+    porchlights_twocolor,
+)
 
 
 def get_vi_pattern_function_map():
@@ -63,9 +67,9 @@ def get_vi_pattern_function_map():
         "spider_cave": wick1(),
         "dragon_cave": wick2(),
 
-        # Old map patterns:
-        "hellmath": hellmath,
-        "porchlights": porchlights,
+        # Toroidal map patterns:
+        "hellmath": donutmath_twocolor,
+        "porchlights": porchlights_twocolor,
     }
 
 
