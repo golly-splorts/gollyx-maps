@@ -119,10 +119,7 @@ if __name__=="__main__":
     #domino_standoff()
     #small_standoff()
     #large_standoff()
-
     #garden_standoff2()
     #small_standoff2()
-
     bisecting_standoff()
-
     #oops_all_standoff()
