@@ -96,8 +96,8 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "quad_garden",
-        "mapName": "Quad Garden",
+        "patternName": "quad_beatty",
+        "mapName": "Quad Garden Beatty",
         "mapDescription": "",
         "mapStartSeason": 0
     },
@@ -244,5 +244,5 @@
         "mapName": "Porch Lights",
         "mapDescription": "",
         "mapStartSeason": 0
-    },
+    }
 ]
