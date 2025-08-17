@@ -16,21 +16,21 @@ def crunchy_crash():
     o = ['ring64']
     _crash(s, o, are_spaceships_large=False, vspace=random.randint(20, 35))
 
-def spaceship_crash():
+def tasty_crash():
 
     # Large methuselahs and large spaceships
     s = ['x66']
     o = ['fred', 'wilma', 'grandpa_305230', 'grandpa_42100', 'ring64']
     _crash(s, o, are_spaceships_large=True, vspace=random.randint(35, 50))
 
-def spaceship_crash2():
+def butterfly_crash():
 
     # Big spaceships, tiny methuselahs
     s = ['tagalong']
     o = ['bunnies', 'timebomb', 'multuminparvo', 'mustardseed']
     _crash(s, o, are_spaceships_large=True, vspace=random.randint(25, 35))
 
-def big_crash():
+def elephant_crash():
 
     # Big spaceships, big oscillators and methuselahs
     s = ['tagalong']
@@ -51,7 +51,7 @@ def beach_crash():
     o = ['rpentomino', 'bunnies', 'timebomb', 'multuminparvo']
     _crash(s, o, are_spaceships_large=False, vspace=random.randint(25, 35))
 
-def mountain_crash():
+def cave_crash():
 
     # Spaceships vs simple methuselahs, with plenty of room for the methuselahs to grow
     s = ['heavyweightspaceship', 'middleweightspaceship', 'lightweightspaceship', 'x66']

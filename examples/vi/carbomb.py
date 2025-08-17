@@ -21,10 +21,9 @@ def jersey_carbomb():
 
 def northdakota_carbomb():
     p = [
-        #('x66', 90),
-        #('flotilla_14wss', 0),
-        ('heavyweightspaceship', 90),
-        #('bisectingpuffers', 270),
+        ('x66', 90),
+        ('flotilla_14wss', 0),
+        ('bisectingpuffers', 270),
     ]
     methuselah, rotdeg = random.choice(p)
     carbomb([methuselah], True, rotdeg=rotdeg)
@@ -50,7 +49,7 @@ def carbomb(methuselahs, are_methuselahs_large, rotdeg=None):
     team2_points = []
 
     # Main input parameter:
-    spacing = random.randint(10,20)
+    spacing = random.randint(8,18)
 
     # Additional random parameters
     start_y = random.randint(1, spacing)
@@ -183,7 +182,7 @@ def carbomb(methuselahs, are_methuselahs_large, rotdeg=None):
 if __name__=="__main__":
     #detroit_carbomb()
     #jersey_carbomb()
-    #northdakota_carbomb()
-    elko_carbomb()
+    northdakota_carbomb()
+    #elko_carbomb()
 
 
