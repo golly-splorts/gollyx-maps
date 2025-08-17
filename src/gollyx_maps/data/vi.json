@@ -1,0 +1,248 @@
+[
+    {
+        "patternName": "detroit_carbomb",
+        "mapName": "Detroit Carbomb",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "jersey_carbomb",
+        "mapName": "Jersey Carbomb",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "northdakota_carbomb",
+        "mapName": "North Dakota Carbomb",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "elko_carbomb",
+        "mapName": "Elko Carbomb",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "crunchy_crash",
+        "mapName": "Crunchy Crash",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "tasty_crash",
+        "mapName": "Tasty Crash",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "butterfly_crash",
+        "mapName": "Butterfly Crash",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "elephant_crash",
+        "mapName": "Elephant Crash",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "sea_turtles",
+        "mapName": "Sea Turtles",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "beach_crash",
+        "mapName": "Beach Crash",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "cave_crash",
+        "mapName": "Cave Crash",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "flotilla_crash",
+        "mapName": "Flotilla Crash",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bunny_party",
+        "mapName": "Bunny Party",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "domino_party",
+        "mapName": "Domino Party",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dove_party",
+        "mapName": "Dove Party",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "multum_in_party",
+        "mapName": "Multum in Party",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "quad_garden",
+        "mapName": "Quad Garden",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "quad_barstow",
+        "mapName": "Quad Garden Barstow",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "quad_bakersfield",
+        "mapName": "Quad Garden Bakersfield",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spacetime_complex_north",
+        "mapName": "Spacetime Complex North",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spacetime_complex_east",
+        "mapName": "Spacetime Complex East",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bifurcating_spacetime_north",
+        "mapName": "Bifurcating Spacetime North",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bifurcating_spacetime_east",
+        "mapName": "Bifurcating Spacetime East",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "tacoma_standoff",
+        "mapName": "Tacoma Standoff",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "tombstone_standoff",
+        "mapName": "Tombstone Standoff",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "red_rock_standoff",
+        "mapName": "Red Rock Standoff",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "cheyenne_showdown",
+        "mapName": "Cheyenne Showdown",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "santa_fe_standoff",
+        "mapName": "Santa Fe Standoff",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "caliente_standoff",
+        "mapName": "Caliente Standoff",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spaceport_standoff",
+        "mapName": "Spaceport Standoff",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "suns_out_gosper_guns_out",
+        "mapName": "Sun's Out Gosper Guns Out",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_baltimore",
+        "mapName": "West Baltimore",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_cambridge",
+        "mapName": "West Cambridge",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_seattle",
+        "mapName": "West Seattle",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_salt_lake",
+        "mapName": "West Salt Lake",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_milwaukee",
+        "mapName": "West Milwaukee",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_detroit",
+        "mapName": "West Detroit",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spider_cave",
+        "mapName": "Spider Cave",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dragon_cave",
+        "mapName": "Dragon Cave",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "hellmath",
+        "mapName": "Hellmath",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "porchlights",
+        "mapName": "Porch Lights",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+]
