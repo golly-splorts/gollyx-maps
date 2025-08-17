@@ -53,7 +53,7 @@ def get_vi_pattern_function_map():
         "santa_fe_standoff": santa_fe_standoff,
         "caliente_standoff": caliente_standoff,
         "spaceport_standoff": spaceport_standoff,
-        "suns_out_gosper_guns_out": suns_out_gosper_guns_out
+        "suns_out_gosper_guns_out": suns_out_gosper_guns_out,
 
         # West:
         "west_baltimore": west_baltimore,
@@ -64,8 +64,8 @@ def get_vi_pattern_function_map():
         "west_detroit": west_detroit,
 
         # Wicks:
-        "spider_cave": wick1,
-        "dragon_cave": wick2,
+        "spider_cave": spider_cave,
+        "crab_cave": crab_cave,
 
         # Toroidal map patterns:
         "hellmath": donutmath_twocolor,
@@ -1303,7 +1303,7 @@ def spider_cave(rows, cols, seed=None):
     return s1, s2
 
 
-def wick2(rows, cols, seed=None):
+def crab_cave(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
