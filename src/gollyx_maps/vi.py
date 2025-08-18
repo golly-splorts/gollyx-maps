@@ -97,7 +97,6 @@ def northdakota_carbomb(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     p = [
-        ('x66', 90),
         ('flotilla_14wss', 0),
         ('bisectingpuffers', 270),
     ]
