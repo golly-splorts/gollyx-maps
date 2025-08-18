@@ -292,7 +292,7 @@ def sea_turtles(rows, cols, seed=None):
         random.seed(seed)
     # Sea turtles vs simple methuselahs
     s = ['x66']
-    o = ['rpentomino', 'piheptomino']
+    o = ['multuminparvo', 'justyna', 'mustardseed', 'spaceshipgrower']
     return _crash(rows, cols, s, o, are_spaceships_large=True, vspace=random.randint(30, 35))
 
 def beach_crash(rows, cols, seed=None):
