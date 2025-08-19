@@ -245,5 +245,17 @@
         "mapName": "Crab Cave",
         "mapDescription": "Wickstretchers vs crabs.",
         "mapStartSeason": 0
+    },
+    {
+        "patternName": "random",
+        "mapName": "East Hellmouth",
+        "mapDescription": "A completely random map layout, territory split 50/50.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "gaussian",
+        "mapName": "Double Gaussian",
+        "mapDescription": "Double serving of random points in a Gaussian distribution.",
+        "mapStartSeason": 0
     }
 ]
