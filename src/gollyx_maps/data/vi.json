@@ -1,5 +1,66 @@
 [
     {
+        "patternName": "spacetime_complex_north",
+        "mapName": "Spacetime Complex North",
+        "mapDescription": "Two glider-generating spaceships creating crashes with still lifes. Vertical orientation.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spacetime_complex_east",
+        "mapName": "Spacetime Complex East",
+        "mapDescription": "Two glider-generating spaceships creating crashes with still lifes. Horizontal orientation.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bifurcating_spacetime_north",
+        "mapName": "Bifurcating Spacetime North",
+        "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Vertical orientation.",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bifurcating_spacetime_east",
+        "mapName": "Bifurcating Spacetime East",
+        "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Horizontal orientation.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_baltimore",
+        "mapName": "West Baltimore",
+        "mapDescription": "Timebomb methuselahs vs burloaferimeter oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_cambridge",
+        "mapName": "West Cambridge",
+        "mapDescription": "Small methuselahs vs large oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_seattle",
+        "mapName": "West Seattle",
+        "mapDescription": "Timebomb methuselahs vs burloaferimeter oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_salt_lake",
+        "mapName": "West Salt Lake",
+        "mapDescription": "Small methuselahs vs large oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_milwaukee",
+        "mapName": "West Milwaukee",
+        "mapDescription": "Mess-making puffers vs burloaferimeter oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_detroit",
+        "mapName": "West Detroit",
+        "mapDescription": "Mess-making puffers vs large oscillators.",
+        "mapStartSeason": 0
+    },
+    {
         "patternName": "hellmath",
         "mapName": "Hellmath",
         "mapDescription": "Bitfield patterns.",
@@ -9,6 +70,18 @@
         "patternName": "porchlights",
         "mapName": "Porch Lights",
         "mapDescription": "A string of porch lights stretching across the map.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "suns_out_gosper_guns_out",
+        "mapName": "Sun's Out Gosper Guns Out",
+        "mapDescription": "Gosper guns in the center, sending gliders toward more Gosper guns in the corners.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "sea_turtles",
+        "mapName": "Sea Turtles",
+        "mapDescription": "Sea turtle spaceships crashing into tiny methuselahs",
         "mapStartSeason": 0
     },
     {
@@ -60,30 +133,6 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "sea_turtles",
-        "mapName": "Sea Turtles",
-        "mapDescription": "Sea turtle spaceships crashing into tiny methuselahs",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "beach_crash",
-        "mapName": "Beach Crash",
-        "mapDescription": "Flapper spaceships crashing into tiny methuselahs",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "cave_crash",
-        "mapName": "Cave Crash",
-        "mapDescription": "More flapper spaceships crashing into tiny methuselahs",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "flotilla_crash",
-        "mapName": "Flotilla Crash",
-        "mapDescription": "Flotilla spaceships crashing into tiny methuselahs",
-        "mapStartSeason": 0
-    },
-    {
         "patternName": "bunny_party",
         "mapName": "Bunny Party",
         "mapDescription": "Conga line of bunnies methuselahs.",
@@ -105,49 +154,6 @@
         "patternName": "multum_in_party",
         "mapName": "Multum in Party",
         "mapDescription": "Conga line of multum in parvo methuselahs.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "quad_beatty",
-        "mapName": "Quad Garden Beatty",
-        "mapDescription": "Plant-based methuselahs in each of the four corners.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "quad_barstow",
-        "mapName": "Quad Garden Barstow",
-        "mapDescription": "Non-plant-based methuselahs in each of the four corners.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "quad_bakersfield",
-        "mapName": "Quad Garden Bakersfield",
-        "mapDescription": "Large methuselahs in each of the four corners.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "spacetime_complex_north",
-        "mapName": "Spacetime Complex North",
-        "mapDescription": "Two glider-generating spaceships creating crashes with still lifes. Vertical orientation.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "spacetime_complex_east",
-        "mapName": "Spacetime Complex East",
-        "mapDescription": "Two glider-generating spaceships creating crashes with still lifes. Horizontal orientation.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "bifurcating_spacetime_north",
-        "mapName": "Bifurcating Spacetime North",
-        "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Vertical orientation.",
-        "mapDescription": "",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "bifurcating_spacetime_east",
-        "mapName": "Bifurcating Spacetime East",
-        "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Horizontal orientation.",
         "mapStartSeason": 0
     },
     {
@@ -175,6 +181,24 @@
         "mapStartSeason": 0
     },
     {
+        "patternName": "beach_crash",
+        "mapName": "Beach Crash",
+        "mapDescription": "Flapper spaceships crashing into tiny methuselahs",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "cave_crash",
+        "mapName": "Cave Crash",
+        "mapDescription": "More flapper spaceships crashing into tiny methuselahs",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "flotilla_crash",
+        "mapName": "Flotilla Crash",
+        "mapDescription": "Flotilla spaceships crashing into tiny methuselahs",
+        "mapStartSeason": 0
+    },
+    {
         "patternName": "santa_fe_standoff",
         "mapName": "Santa Fe Standoff",
         "mapDescription": "Gosper guns in the center, sending gliders toward small methuselahs.",
@@ -193,45 +217,21 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "suns_out_gosper_guns_out",
-        "mapName": "Sun's Out Gosper Guns Out",
-        "mapDescription": "Gosper guns in the center, sending gliders toward more Gosper guns in the corners.",
+        "patternName": "quad_beatty",
+        "mapName": "Quad Garden Beatty",
+        "mapDescription": "Plant-based methuselahs in each of the four corners.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "west_baltimore",
-        "mapName": "West Baltimore",
-        "mapDescription": "Timebomb methuselahs vs burloaferimeter oscillators.",
+        "patternName": "quad_barstow",
+        "mapName": "Quad Garden Barstow",
+        "mapDescription": "Non-plant-based methuselahs in each of the four corners.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "west_cambridge",
-        "mapName": "West Cambridge",
-        "mapDescription": "Small methuselahs vs large oscillators.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "west_seattle",
-        "mapName": "West Seattle",
-        "mapDescription": "Timebomb methuselahs vs burloaferimeter oscillators.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "west_salt_lake",
-        "mapName": "West Salt Lake",
-        "mapDescription": "Small methuselahs vs large oscillators.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "west_milwaukee",
-        "mapName": "West Milwaukee",
-        "mapDescription": "Mess-making puffers vs burloaferimeter oscillators.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "west_detroit",
-        "mapName": "West Detroit",
-        "mapDescription": "Mess-making puffers vs large oscillators.",
+        "patternName": "quad_bakersfield",
+        "mapName": "Quad Garden Bakersfield",
+        "mapDescription": "Large methuselahs in each of the four corners.",
         "mapStartSeason": 0
     },
     {
@@ -245,5 +245,5 @@
         "mapName": "Crab Cave",
         "mapDescription": "Wickstretchers vs crabs.",
         "mapStartSeason": 0
-    }
+    },
 ]
