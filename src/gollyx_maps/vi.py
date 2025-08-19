@@ -8,6 +8,8 @@ from gollyx_maps.utils import pattern2url
 from .toroidal import (
     donutmath_twocolor,
     porchlights_twocolor,
+    doublegaussian_twocolor,
+    donutrandom_twocolor,
 )
 
 
@@ -71,6 +73,8 @@ def get_vi_pattern_function_map():
         # Toroidal map patterns:
         "hellmath": donutmath_twocolor,
         "porchlights": porchlights_twocolor,
+        "random": donutrandom_twocolor,
+        "gaussian": doublegaussian_twocolor,
     }
 
 
