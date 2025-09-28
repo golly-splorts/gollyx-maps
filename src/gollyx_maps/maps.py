@@ -148,6 +148,9 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     # Include geometry info
     maxdim = max(rows, columns)
 
+    ###########################
+    # TODO: clean this up
+
     # These feel a bit too big
     if cell_size is not None:
         cellSize = cell_size
@@ -187,6 +190,8 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         cellSize = 3
     if cup=="vi":
         cellSize = 3
+
+    ###########################
 
     mapdat["rows"] = rows
     mapdat["columns"] = columns
