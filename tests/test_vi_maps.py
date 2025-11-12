@@ -54,6 +54,8 @@ VI_PATTERNS = [
         "crab_cave",
         "hellmath",
         "porchlights",
+        "random",
+        "gaussian",
 ]
 
 
