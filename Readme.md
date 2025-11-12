@@ -80,5 +80,7 @@ See the patterns directories in the `src/` directory
 for patterns for different rules:
 
 [b3s23_patterns](src/b3s23_patterns)
+
 [b357s238_patterns](src/b357s238_patterns)
+
 [b2s345c4_patterns](src/b2s345c4_patterns)
