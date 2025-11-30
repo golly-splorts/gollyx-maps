@@ -4,6 +4,18 @@ from .error import GollyXMapsError, GollyXPatternsError
 
 
 def pattern2url(pattern, xoffset=0, yoffset=0):
+    """
+    Takes a pattern (list of lists, outer list is rows, inner list is characters)
+    and returns a URL representation of it.
+
+    Example input:
+        [ [ '.', '.', 'o', '.'],
+          [ '.', '.', '.', 'o'],
+          [ '.', 'o', 'o', 'o'] ]
+
+    Example output:
+        [{"0":[2],"1":[3],"2":[1,2,3]}]
+    """
     rows = len(pattern)
     cols = len(pattern[0])
     listLife = []
@@ -20,6 +32,9 @@ def pattern2url(pattern, xoffset=0, yoffset=0):
         if len(listLifeRow.keys()) > 0:
             listLife.append(listLifeRow)
 
+    # This is a list of dictionaries.
+    # Use the built-in Python representation to convert to string.
+    # Trim spaces and fix quotes.
     s = str(listLife)
     s = s.split(" ")
     listLife = "".join(s)
