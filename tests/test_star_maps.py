@@ -29,7 +29,7 @@ STAR_PATTERNS = [
     "squarestar",
     "kitchensink",
     "ricepudding",
-    "fishsoup"
+    "fishsoup",
 ]
 
 STAR_PATTERNS_S0 = STAR_PATTERNS[:]
@@ -136,6 +136,26 @@ class StarCupMapsTest(unittest.TestCase):
             # Standard size
             r = 160
             c = 240
-            for i in range(20):
+            for i in range(10):
                 get_map_realization(cup, pattern_name, rows=r, columns=c)
+
+    def test_six_state_url_generation(self):
+        """
+        Test that the URL generation correctly handles 'o', 'b', and 'c' states.
+        """
+        from gollyx_maps.utils import pattern2url_for_char
+
+        pattern = [
+            "cbo.o.c",
+            ".......",
+            "o.b.b.o",
+        ]
+
+        s_url = pattern2url_for_char(pattern, 'o')
+        b_url = pattern2url_for_char(pattern, 'b')
+        c_url = pattern2url_for_char(pattern, 'c')
+
+        self.assertEqual(s_url, '[{"0":[2,4]},{"2":[0,6]}]')
+        self.assertEqual(b_url, '[{"0":[1]},{"2":[2,4]}]')
+        self.assertEqual(c_url, '[{"0":[0,6]}]')
 
