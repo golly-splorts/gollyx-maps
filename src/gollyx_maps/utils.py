@@ -16,13 +16,34 @@ def pattern2url(pattern, xoffset=0, yoffset=0):
     Example output:
         [{"0":[2],"1":[3],"2":[1,2,3]}]
     """
+    return pattern2url_char(pattern, "o", xoffset=xoffset, yoffset=yoffset)
+
+
+def pattern2url_chars(pattern, xoffset=0, yoffset=0):
+    """
+    Takes a pattern (list of lists, outer list is rows, inner list is characters)
+    and returns a URL representation of it for a given character.
+    """
+    s_url = pattern2url_char(pattern, "o", xoffset=xoffset, yoffset=yoffset)
+    b_url = pattern2url_char(pattern, "b", xoffset=xoffset, yoffset=yoffset)
+    c_url = pattern2url_char(pattern, "c", xoffset=xoffset, yoffset=yoffset)
+    return (s_url, b_url, c_url)
+
+
+def pattern2url_char(pattern, char, xoffset=0, yoffset=0):
+    """
+    Takes a pattern (list of lists, outer list is rows, inner list is characters)
+    and returns a URL representation of it for a given character.
+    """
     rows = len(pattern)
+    if rows == 0:
+        return "[]"
     cols = len(pattern[0])
     listLife = []
     for i in range(rows):
         listLifeRow = {}
         for j in range(cols):
-            if pattern[i][j] == "o":
+            if pattern[i][j] == char:
                 y = str(i + yoffset)
                 x = j + xoffset
                 if y in listLifeRow.keys():
