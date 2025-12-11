@@ -107,6 +107,10 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     if cup == "rainbow":
         return get_rainbow_realization(patternname, rows, columns, cell_size)
 
+    # Handle Star-like cups
+    if cup in ["star", "starii"]:
+        return get_star_realization(cup, patternname, rows, columns, cell_size)
+
     # Set default sizes if none specified
     if rows is None and columns is None:
         if cup=="hellmouth" or cup=="pseudo":
@@ -192,6 +196,62 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         cellSize = 3
 
     ###########################
+
+    mapdat["rows"] = rows
+    mapdat["columns"] = columns
+    mapdat["cellSize"] = cellSize
+
+    return remove_extra_map_keys(mapdat)
+
+
+def get_star_realization(cup, patternname, rows=None, columns=None, cell_size=None):
+    """
+    Assemble Star Map
+    """
+    # Set default sizes if none specified
+    if rows is None and columns is None:
+        if cup=="star":
+            rows = 160
+            columns = 240
+        elif cup=="starii":
+            rows = 150
+            columns = 230
+
+    # Get map data (pattern, name, zone names)
+    mapdat = get_map_metadata(cup, patternname, zone_labels=False)
+
+    # Get the initial condition strings
+    s1, b1, c1, s2, b2, c2 = render_map(cup, patternname, rows, columns)
+
+    # Always include s1 and s2
+    mapdat['initialConditions1'] = s1
+    mapdat['initialConditions2'] = s2
+    url_params = [f"s1={s1}", f"s2={s2}"]
+
+    # Conditionally add b1, b2, c1, c2
+    if b1 != "[]":
+        mapdat['initialConditionsb1'] = b1
+        url_params.append(f"b1={b1}")
+    if b2 != "[]":
+        mapdat['initialConditionsb2'] = b2
+        url_params.append(f"b2={b2}")
+    if c1 != "[]":
+        mapdat['initialConditionsc1'] = c1
+        url_params.append(f"c1={c1}")
+    if c2 != "[]":
+        mapdat['initialConditionsc2'] = c2
+        url_params.append(f"c2={c2}")
+
+    mapdat['url'] = "?" + "&".join(url_params)
+
+    if cell_size is not None:
+        cellSize = cell_size
+    elif cup=="star":
+        cellSize = 3
+    elif cup=="starii":
+        cellSize = 3
+    else:
+        cellSize = 3 # Default for star-like
 
     mapdat["rows"] = rows
     mapdat["columns"] = columns
