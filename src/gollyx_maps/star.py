@@ -4,7 +4,7 @@ import random
 from .geom import hflip_pattern, vflip_pattern
 from .utils import pattern2url
 from .patterns import get_grid_empty, pattern_union, get_pattern, get_grid_pattern
-from .utils import pattern2url, retry_on_failure
+from .utils import pattern2url, retry_on_failure, pattern2url_char, pattern2url_chars
 
 
 def get_star_pattern_function_map():
@@ -81,10 +81,10 @@ def random_2color(rows, cols, seed=None):
         row2str = "".join(row2)
         pattern2.append(row2str)
 
-    pattern1_url = pattern2url(pattern1)
-    pattern2_url = pattern2url(pattern2)
+    s1, b1, c1 = pattern2url_chars(pattern1)
+    s2, b2, c2 = pattern2url_chars(pattern2)
 
-    return pattern1_url, pattern2_url
+    return s1, b1, c1, s2, b2, c2
 
 
 def flyingv1(rows, cols, seed=None):
@@ -447,10 +447,10 @@ def _flyingv(
 
     team2_pattern = hflip_pattern(team2_pattern)
 
-    s1 = pattern2url(team1_pattern)
-    s2 = pattern2url(team2_pattern)
+    s1, b1, c1 = pattern2url_chars(team1_pattern)
+    s2, b2, c2 = pattern2url_chars(team2_pattern)
 
-    return s1, s2
+    return s1, b1, c1, s2, b2, c2
 
 
 def _bars(
@@ -582,10 +582,10 @@ def _bars(
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
     team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
 
-    s1 = pattern2url(team1_pattern)
-    s2 = pattern2url(team2_pattern)
+    s1, b1, c1 = pattern2url_chars(team1_pattern)
+    s2, b2, c2 = pattern2url_chars(team2_pattern)
 
-    return s1, s2
+    return s1, b1, c1, s2, b2, c2
 
 
 def combs(rows, cols, seed=None):
@@ -669,10 +669,10 @@ def combs(rows, cols, seed=None):
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
     team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
 
-    s1 = pattern2url(team1_pattern)
-    s2 = pattern2url(team2_pattern)
+    s1, b1, c1 = pattern2url_chars(team1_pattern)
+    s2, b2, c2 = pattern2url_chars(team2_pattern)
 
-    return s1, s2
+    return s1, b1, c1, s2, b2, c2
 
 
 def get_gridstamp(pattern, rows, cols, yoffset, xoffset, flatten=True):
@@ -866,10 +866,10 @@ def _containment_lines(
     team1_pattern = pattern_union(team1_patterns)
     team2_pattern = pattern_union(team2_patterns)
 
-    s1 = pattern2url(team1_pattern)
-    s2 = pattern2url(team2_pattern)
+    s1, b1, c1 = pattern2url_chars(team1_pattern)
+    s2, b2, c2 = pattern2url_chars(team2_pattern)
 
-    return s1, s2
+    return s1, b1, c1, s2, b2, c2
 
 
 def _containment_rectangle(
@@ -1107,10 +1107,10 @@ def _containment_rectangle(
     team1_pattern = pattern_union(team1_patterns)
     team2_pattern = pattern_union(team2_patterns)
 
-    s1 = pattern2url(team1_pattern)
-    s2 = pattern2url(team2_pattern)
+    s1, b1, c1 = pattern2url_chars(team1_pattern)
+    s2, b2, c2 = pattern2url_chars(team2_pattern)
 
-    return s1, s2
+    return s1, b1, c1, s2, b2, c2
 
 
 def _stamps(
@@ -1290,10 +1290,10 @@ def _stamps(
     team1_pattern = pattern_union(team1_patterns)
     team2_pattern = pattern_union(team2_patterns)
 
-    s1 = pattern2url(team1_pattern)
-    s2 = pattern2url(team2_pattern)
+    s1, b1, c1 = pattern2url_chars(team1_pattern)
+    s2, b2, c2 = pattern2url_chars(team2_pattern)
 
-    return s1, s2
+    return s1, b1, c1, s2, b2, c2
 
 
 def get_random_unoccupied_point(team1_pattern, team2_pattern, rows, cols):
