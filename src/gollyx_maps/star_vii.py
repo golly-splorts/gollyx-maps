@@ -60,103 +60,107 @@ def get_star_vii_pattern_function_map():
 
 def choochoo(rows, cols, seed=None, turns=9):
     """
-    Generates a "railroad track" of stars on one half of the grid,
-    ensuring stars are touching arm-to-arm with no overlaps.
-    The number of turns/bends in the track is configurable.
+    Generates an expansive, non-looping "railroad track" of stars by
+    adding directional momentum to a scaled, segment-based, self-avoiding
+    path generation algorithm on a conceptual tile grid.
     """
     if seed is not None:
         random.seed(seed)
 
+    tile_width = 3
+    tile_height = 3
+
+    # 1. Define the tile grid dimensions
+    grid_tile_rows = rows // tile_height
+    grid_tile_cols = cols // tile_width
+
+    # 2. Choose half and define tile boundaries
+    use_left_half = random.choice([True, False])
+    half_tile_cols = grid_tile_cols // 2
+    if use_left_half:
+        x_tile_min, x_tile_max = 0, half_tile_cols
+    else:
+        x_tile_min, x_tile_max = half_tile_cols, grid_tile_cols
+
+    y_tile_min, y_tile_max = 0, grid_tile_rows
+
+    # 3. Path Generation
+    path_of_tiles = set()
+
+    # Start point
+    if x_tile_min >= x_tile_max or y_tile_min >= y_tile_max:
+        return "23", "3", "{}", "[]", "[]", "[]"
+
+    current_tile_x = random.randint(x_tile_min, x_tile_max - 1)
+    current_tile_y = random.randint(y_tile_min, y_tile_max - 1)
+    path_of_tiles.add((current_tile_x, current_tile_y))
+
+    # Calculate average segment length
+    num_h_segments = (turns + 1) // 2
+    num_v_segments = (turns + 1) - num_h_segments
+    avg_len_x = (x_tile_max - x_tile_min) / (num_h_segments + 1) if num_h_segments > 0 else 0
+    avg_len_y = (y_tile_max - y_tile_min) / (num_v_segments + 1) if num_v_segments > 0 else 0
+
+    # Initialize path generation state
+    last_move_was_horizontal = random.choice([True, False])
+    last_h_dir = random.choice([-1, 1])
+    last_v_dir = random.choice([-1, 1])
+
+    for _ in range(turns + 1):
+        if last_move_was_horizontal:  # Make a vertical segment
+            last_move_was_horizontal = False
+            length = max(1, int(random.uniform(0.5, 1.5) * avg_len_y))
+            
+            # Use momentum for direction
+            direction = last_v_dir
+            if random.random() < 0.2: # Chance to reverse general direction
+                last_v_dir *= -1
+
+            actual_length = 0
+            for step in range(1, length + 1):
+                next_y = current_tile_y + direction * step
+                if not (y_tile_min <= next_y < y_tile_max and (current_tile_x, next_y) not in path_of_tiles):
+                    break
+                actual_length = step
+            
+            for step in range(1, actual_length + 1):
+                path_of_tiles.add((current_tile_x, current_tile_y + direction * step))
+            current_tile_y += direction * actual_length
+
+        else:  # Make a horizontal segment
+            last_move_was_horizontal = True
+            length = max(1, int(random.uniform(0.5, 1.5) * avg_len_x))
+
+            # Use momentum for direction
+            direction = last_h_dir
+            if random.random() < 0.2: # Chance to reverse general direction
+                last_h_dir *= -1
+
+            actual_length = 0
+            for step in range(1, length + 1):
+                next_x = current_tile_x + direction * step
+                if not (x_tile_min <= next_x < x_tile_max and (next_x, current_tile_y) not in path_of_tiles):
+                    break
+                actual_length = step
+
+            for step in range(1, actual_length + 1):
+                path_of_tiles.add((current_tile_x + direction * step, current_tile_y))
+            current_tile_x += direction * actual_length
+    
+    # 4. Translate tile path to cell coordinates and stamp stars
     points = set()
     star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}
-    margin = 2
-    star_step = 3
 
-    # 1. Choose half and define boundaries
-    use_left_half = random.choice([True, False])
-    half_width = cols // 2
-    if use_left_half:
-        x_min_boundary, x_max_boundary = 0, half_width
-    else:
-        x_min_boundary, x_max_boundary = half_width, cols
-    y_min_boundary, y_max_boundary = 0, rows
-
-    if (x_max_boundary - x_min_boundary) < margin * 2 or (
-        y_max_boundary - y_min_boundary
-    ) < margin * 2:
-        return "23", "3", "{}", "[]", "[]", "[]"
-
-    def can_stamp(x, y):
+    def stamp_star(center_x, center_y):
         for dx, dy in star_shape:
-            if not (
-                x_min_boundary <= x + dx < x_max_boundary
-                and y_min_boundary <= y + dy < y_max_boundary
-            ):
-                return False
-            if (x + dx, y + dy) in points:
-                return False
-        return True
+            points.add((center_x + dx, center_y + dy))
 
-    def stamp_star(x, y):
-        for dx, dy in star_shape:
-            points.add((x + dx, y + dy))
+    for tile_x, tile_y in path_of_tiles:
+        center_x = tile_x * tile_width + (tile_width // 2)
+        center_y = tile_y * tile_height + (tile_height // 2)
+        stamp_star(center_x, center_y)
 
-    # 2. Find start point
-    x, y = -1, -1
-    for _ in range(10):
-        start_x = random.randint(x_min_boundary + margin, x_max_boundary - margin - 1)
-        start_y = random.randint(y_min_boundary + margin, y_max_boundary - margin - 1)
-        if can_stamp(start_x, start_y):
-            x, y = start_x, start_y
-            stamp_star(x, y)
-            break
-
-    if x == -1:
-        return "23", "3", "{}", "[]", "[]", "[]"
-
-    # 3. Generate path
-    min_len, max_len = 5, 15
-    last_move_was_horizontal = random.choice([True, False])
-    center_x_of_half = (x_min_boundary + x_max_boundary) / 2
-    center_y = (y_min_boundary + y_max_boundary) / 2
-
-    for _ in range(turns + 1):  # +1 to generate 'turns' number of bends
-        length = random.randint(min_len, max_len)
-
-        if last_move_was_horizontal:
-            last_move_was_horizontal = False
-            # Smart direction for vertical movement
-            direction = 1 if y < center_y else -1
-            if random.random() < 0.2:  # 20% chance to move toward center
-                direction *= -1
-
-            last_successful_i = 0
-            for i in range(1, length):
-                ny = y + direction * i * star_step
-                if can_stamp(x, ny):
-                    stamp_star(x, ny)
-                    last_successful_i = i
-                else:
-                    break
-            y += direction * last_successful_i * star_step
-        else:
-            last_move_was_horizontal = True
-            # Smart direction for horizontal movement
-            direction = 1 if x < center_x_of_half else -1
-            if random.random() < 0.2:  # 20% chance to move toward center
-                direction *= -1
-
-            last_successful_i = 0
-            for i in range(1, length):
-                nx = x + direction * i * star_step
-                if can_stamp(nx, y):
-                    stamp_star(nx, y)
-                    last_successful_i = i
-                else:
-                    break
-            x += direction * last_successful_i * star_step
-
-    # --- String Serialization ---
+    # 5. Serialize to URL format
     pattern_rows = []
     for y_coord in range(rows):
         row = []
@@ -171,4 +175,3 @@ def choochoo(rows, cols, seed=None, turns=9):
     s2, b2, c2 = "[]", "[]", "[]"
 
     return s1, b1, c1, s2, b2, c2
-
