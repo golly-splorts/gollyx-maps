@@ -143,7 +143,7 @@ class StarCupMapsTest(unittest.TestCase):
         """
         Test that the URL generation correctly handles 'o', 'b', and 'c' states.
         """
-        from gollyx_maps.utils import pattern2url_for_char
+        from gollyx_maps.utils import pattern2url_char
 
         pattern = [
             "cbo.o.c",
@@ -151,9 +151,9 @@ class StarCupMapsTest(unittest.TestCase):
             "o.b.b.o",
         ]
 
-        s_url = pattern2url_for_char(pattern, 'o')
-        b_url = pattern2url_for_char(pattern, 'b')
-        c_url = pattern2url_for_char(pattern, 'c')
+        s_url = pattern2url_char(pattern, 'o')
+        b_url = pattern2url_char(pattern, 'b')
+        c_url = pattern2url_char(pattern, 'c')
 
         self.assertEqual(s_url, '[{"0":[2,4]},{"2":[0,6]}]')
         self.assertEqual(b_url, '[{"0":[1]},{"2":[2,4]}]')
