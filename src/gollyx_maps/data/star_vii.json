@@ -110,7 +110,13 @@
     {
         "patternName": "choochoo",
         "mapName": "Choo Choo",
-        "mapDescription": "Two railroads made of crosses",
+        "mapDescription": "Two railroads forming space filling curves",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "midnightexpress",
+        "mapName": "MidnightExpress",
+        "mapDescription": "Two straight tracks containing methuselahs",
         "mapStartSeason": 0
     }
 ]
