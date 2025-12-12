@@ -24,8 +24,8 @@ from .rainbow import get_rainbow_pattern_function_map
 from .star import get_star_pattern_function_map
 from .klein import get_klein_pattern_function_map
 from .ii import get_ii_pattern_function_map
-from .star import get_star_pattern_function_map as get_starii_pattern_function_map
 from .vi import get_vi_pattern_function_map
+from .star_vii import get_star_vii_pattern_function_map
 
 
 def get_pattern_function_map(cup):
@@ -38,8 +38,8 @@ def get_pattern_function_map(cup):
         'star': get_star_pattern_function_map,
         'klein': get_klein_pattern_function_map,
         'ii': get_ii_pattern_function_map,
-        'starii': get_starii_pattern_function_map,
         'vi': get_vi_pattern_function_map,
+        'star_vii': get_star_vii_pattern_function_map,
     }
     return m[cup]
 
@@ -72,10 +72,6 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     {
         "patternName": y,
         "mapName": z,
-        "mapZone1Name": a,
-        "mapZone2Name": b,
-        "mapZone3Name": c,
-        "mapZone4Name": d,
         "url": e,
         "initialConditions1": f,
         "initialConditions2": g,
@@ -84,7 +80,7 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         "cellSize:" k
     }
 
-    (Star Cup and Klein Cup leave out zone names)
+    (some earlier cups had 4 zone names)
 
     Dragon Cup returns:
     {
@@ -107,8 +103,12 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     if cup == "rainbow":
         return get_rainbow_realization(patternname, rows, columns, cell_size)
 
-    # Handle Star-like cups
-    if cup in ["star", "starii"]:
+    # Handle Star Cup
+    if cup == "star":
+        return get_star_realization(cup, patternname, rows, columns, cell_size)
+    
+    # Handle Star VII Cup
+    if cup == "star_vii":
         return get_star_realization(cup, patternname, rows, columns, cell_size)
 
     # Set default sizes if none specified
@@ -128,12 +128,12 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         elif cup=="ii":
             rows = 100
             columns = 200
-        elif cup=="starii":
-            rows = 150
-            columns = 230
         elif cup=="vi":
             rows = 150
             columns = 240
+        elif cup=="star_vii":
+            rows = 180
+            columns = 280
 
     # Get map data (pattern, name, zone names)
     zone_labels = False
@@ -216,6 +216,9 @@ def get_star_realization(cup, patternname, rows=None, columns=None, cell_size=No
         elif cup=="starii":
             rows = 150
             columns = 230
+        elif cup=="star_vii":
+            rows = 180
+            columns = 280
 
     # Get map data (pattern, name, zone names)
     mapdat = get_map_metadata(cup, patternname, zone_labels=False)
@@ -249,6 +252,8 @@ def get_star_realization(cup, patternname, rows=None, columns=None, cell_size=No
     elif cup=="star":
         cellSize = 3
     elif cup=="starii":
+        cellSize = 3
+    elif cup=="star_vii":
         cellSize = 3
     else:
         cellSize = 3 # Default for star-like
