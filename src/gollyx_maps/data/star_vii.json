@@ -115,8 +115,14 @@
     },
     {
         "patternName": "midnightexpress",
-        "mapName": "MidnightExpress",
+        "mapName": "Midnight Express",
         "mapDescription": "Two straight tracks containing methuselahs",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spaceelevator",
+        "mapName": "Space Elevator",
+        "mapDescription": "Two straight tracks",
         "mapStartSeason": 0
     }
 ]
