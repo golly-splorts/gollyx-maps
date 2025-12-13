@@ -65,6 +65,10 @@ def get_star_vii_pattern_function_map():
     }
 
 
+##############################################################################################
+########################## utility functions #################################################
+
+
 def _points_to_url(points, rows, cols, char='o'):
     """Converts a set of points to a URL-encoded character string."""
     grid = get_grid_empty(rows, cols, flat=False)
@@ -234,7 +238,7 @@ def _is_valid_tile_step(tx, ty, is_horizontal_step, current_path_tiles, x_tile_m
     return True
 
 
-def get_segment_props(
+def _get_segment_props(
     max_len, is_horizontal, current_tile_x, current_tile_y, path_of_tiles,
     last_direction_x, last_direction_y, grid_tile_rows, grid_tile_cols,
     x_tile_min, x_tile_max, y_tile_min, y_tile_max
@@ -299,6 +303,10 @@ def get_segment_props(
     return selected_option[0], selected_option[2], selected_option[3]
 
 
+##############################################################################################
+########################## map functions #####################################################
+
+
 def choochoo(rows, cols, seed=None, turns=9):
     """
     Generates a final, correct, expansive, and resilient "railroad track"
@@ -359,7 +367,7 @@ def choochoo(rows, cols, seed=None, turns=9):
 
         for attempt in [primary_attempt, secondary_attempt]:
             max_len = max(1, int(random.uniform(0.7, 1.3) * attempt['avg_len']))
-            actual_length, direction, segment_tiles = get_segment_props(
+            actual_length, direction, segment_tiles = _get_segment_props(
                 max_len, attempt['is_horizontal'], current_tile_x, current_tile_y, path_of_tiles,
                 last_direction_x, last_direction_y, grid_tile_rows, grid_tile_cols,
                 x_tile_min, x_tile_max, y_tile_min, y_tile_max
@@ -418,11 +426,13 @@ def midnightexpress(rows, cols, seed=None):
     # 1. Load ONE methuselah pattern to be used for all placements
 
     methuselah_names_numbers = [
-        #("escapingsatellites",  (2, 4)),
-        ("solarsail",  (1, 2)),
-        #("scaffoldunfusing",    (1, 2)),
-        #("backedupsink",        (1, 4)),
-        #("spaceship2platform",  (1, 2)),
+        ("escapingsatellites",  (2, 4)),
+        ("solarsail",           (1, 3)),
+        ("squarepair",           (1, 1)),
+        ("ylingrow96",           (1, 3)),
+        ("scaffoldunfusing",    (1, 2)),
+        ("backedupsink",        (1, 4)),
+        ("spaceship2platform",  (1, 2)),
     ]
 
     chosen_meth = random.choice(methuselah_names_numbers)
