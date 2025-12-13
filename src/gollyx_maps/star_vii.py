@@ -57,12 +57,33 @@ def get_star_vii_pattern_function_map():
         "choochoo": choochoo,
         "midnightexpress": midnightexpress,
         "spaceelevator": spaceelevator,
+        "faradaycage": faradaycage,
         #"ironhorse": ironhorse,
-        #"faradaycage": faradaycage,
         #"deadendterminal": deadendterminal,
         #"bando": bando,
         #"ghosttrain": ghosttrain,
     }
+
+
+# Define the 3x3 star pattern as a module-level constant
+STAR_3X3_PATTERN_STR = [
+    ".o.",
+    "ooo",
+    ".o."
+]
+STAR_3X3_RELATIVE_POINTS = set()
+for y_idx, row in enumerate(STAR_3X3_PATTERN_STR):
+    for x_idx, char in enumerate(row):
+        if char == 'o':
+            STAR_3X3_RELATIVE_POINTS.add((x_idx, y_idx))
+
+# Calculate width and height of the STAR_3X3 stamp
+min_x_star = min(p[0] for p in STAR_3X3_RELATIVE_POINTS)
+max_x_star = max(p[0] for p in STAR_3X3_RELATIVE_POINTS)
+min_y_star = min(p[1] for p in STAR_3X3_RELATIVE_POINTS)
+max_y_star = max(p[1] for p in STAR_3X3_RELATIVE_POINTS)
+STAR_STAMP_WIDTH = max_x_star - min_x_star + 1
+STAR_STAMP_HEIGHT = max_y_star - min_y_star + 1
 
 
 ##############################################################################################
@@ -303,7 +324,87 @@ def _get_segment_props(
     return selected_option[0], selected_option[2], selected_option[3]
 
 
-##############################################################################################
+def _place_oo_methuselah(region, occupied_points, rows, cols):
+    x_start, y_start, x_end, y_end = region
+    # Check if empty region
+    if x_start >= x_end or y_start >= y_end:
+        return set()
+    for _ in range(100): # max attempts to place
+        px = random.randint(x_start, x_end - 1)
+        py = random.randint(y_start, y_end - 1)
+        potential_neighbors = []
+        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            nx, ny = px + dx, py + dy
+            if 0 <= nx < cols and 0 <= ny < rows:
+                potential_neighbors.append((nx, ny))
+        if not potential_neighbors:
+            continue
+        neighbor = random.choice(potential_neighbors)
+        cell1 = (px, py)
+        cell2 = neighbor
+        if cell1 not in occupied_points and cell2 not in occupied_points:
+            return {cell1, cell2}
+    return set() # Could not place
+
+
+def _fill_region_with_stamps(target_points_set, region, stamp_size, rows, cols):
+    rx_start, ry_start, rx_end, ry_end = region
+    
+    # Iterate through the region, placing stamp_size x stamp_size blocks
+    # The loop range ensures that the entire stamp fits within the region bounds
+    for y in range(ry_start, ry_end - stamp_size + 1, stamp_size):
+        for x in range(rx_start, rx_end - stamp_size + 1, stamp_size):
+            for dx, dy in STAR_3X3_RELATIVE_POINTS:
+                # Ensure points are within the overall grid boundaries (rows, cols)
+                if 0 <= (x + dx) < cols and 0 <= (y + dy) < rows:
+                    target_points_set.add((x + dx, y + dy))
+
+
+def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols):
+    """
+    Returns a list of (x, y) coordinates for the top-left corner of a stamp
+    of size stamp_width x stamp_height such that it is adjacent to the region
+    (touches but does not overlap) and is within the grid boundaries.
+    """
+    rx_start, ry_start, rx_end, ry_end = region
+    potential_coords = set()
+
+    # Iterate along the top side (stamp directly above the region)
+    sy = ry_start - stamp_height
+    if 0 <= sy < rows:
+        for sx in range(max(0, rx_start - stamp_width + 1), min(cols - stamp_width + 1, rx_end)):
+            if 0 <= sx < cols and 0 <= sx + stamp_width - 1 < cols:
+                potential_coords.add((sx, sy))
+
+    # Iterate along the bottom side (stamp directly below the region)
+    sy = ry_end
+    if 0 <= sy < rows:
+        for sx in range(max(0, rx_start - stamp_width + 1), min(cols - stamp_width + 1, rx_end)):
+            if 0 <= sx < cols and 0 <= sx + stamp_width - 1 < cols:
+                potential_coords.add((sx, sy))
+
+    # Iterate along the left side (stamp directly to the left of the region)
+    sx = rx_start - stamp_width
+    if 0 <= sx < cols:
+        for sy in range(max(0, ry_start - stamp_height + 1), min(rows - stamp_height + 1, ry_end)):
+            if 0 <= sy < rows and 0 <= sy + stamp_height - 1 < rows:
+                potential_coords.add((sx, sy))
+
+    # Iterate along the right side (stamp directly to the right of the region)
+    sx = rx_end
+    if 0 <= sx < cols:
+        for sy in range(max(0, ry_start - stamp_height + 1), min(rows - stamp_height + 1, ry_end)):
+            if 0 <= sy < rows and 0 <= sy + stamp_height - 1 < rows:
+                potential_coords.add((sx, sy))
+
+            
+    
+            
+    
+            
+    ##############################################################################################
+            
+    
 ########################## map functions #####################################################
 
 
@@ -676,11 +777,183 @@ def spaceelevator(rows, cols, seed=None):
     return s1_output, "[]", "[]", s2_output, "[]", "[]"
 
 
-def ironhorse(rows, cols, seed=None):
-    pass
-
-
 def faradaycage(rows, cols, seed=None):
+    """
+    Generates a map with two randomly selected segment of the grid
+    filled with tiled 3x3 solid stamps, one for each team.
+    Also adds a 2-cell methuselah for each team in two other random segments.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    team1_points = set()
+    team2_points = set()
+
+    stamp_size = STAR_STAMP_WIDTH 
+
+    # Define the N x N pieces of the grid
+    info = []
+
+    # Calculate division points
+    N = random.choice(list(range(7,11)))
+    x_divs = [i * (cols // N) for i in range(N+1)]
+    y_divs = [i * (rows // N) for i in range(N+1)]
+
+    for j in range(N):
+        for i in range(N):
+            x_start = x_divs[i]
+            y_start = y_divs[j]
+            x_end = x_divs[i+1] if i < N-1 else cols
+            y_end = y_divs[j+1] if j < N-1 else rows
+            
+            region = (x_start, y_start, x_end, y_end)
+            info.append({'id': f'{j}-{i}', 'region': region})
+
+    valid = []
+    for piece in info:
+        x_start, y_start, x_end, y_end = piece['region']
+        # Check if the region is large enough to fit at least one stamp
+        if (x_end - x_start >= stamp_size) and (y_end - y_start >= stamp_size):
+            valid.append(piece)
+
+    # -------------------
+    # Faraday region:
+
+    # Select four regions to fill with stamps and ...something else
+    chosen = random.sample(valid, 4)
+    team1_faraday_info = chosen[0]
+    team2_faraday_info = chosen[1]
+
+    # Fill Faraday cage regions with stamps
+    _fill_region_with_stamps(team1_points, team1_faraday_info['region'], stamp_size, rows, cols)
+    _fill_region_with_stamps(team2_points, team2_faraday_info['region'], stamp_size, rows, cols)
+
+    # -------------------------------------
+    # Chef's choice:
+    # - Type 1: 1 oo methuselah somewhere on the grid
+    # - Type 2: add one extra star stamp of opp color, somewhere on the perimeter
+    # - Type 3: add N alive cells somewhere on the perimeter, N random locations
+
+    #chefs_choice = random.choice([1, 2, 3])
+    #chefs_choice = 1
+    #chefs_choice = 2
+    chefs_choice = 3
+
+    # Initial occupied points after filling Faraday cages
+    all_occupied_points = team1_points.union(team2_points)
+
+    if chefs_choice==1:
+        team1_methuselah_info = chosen[2]
+        team2_methuselah_info = chosen[3]
+
+        # Place methuselah for team 1
+        methuselah1_points = _place_oo_methuselah(team1_methuselah_info['region'], all_occupied_points, rows, cols)
+        if methuselah1_points:
+            team1_points.update(methuselah1_points)
+            all_occupied_points.update(methuselah1_points) # Update occupied points for next placement
+
+        # Place methuselah for team 2
+        methuselah2_points = _place_oo_methuselah(team2_methuselah_info['region'], all_occupied_points, rows, cols)
+        if methuselah2_points:
+            team2_points.update(methuselah2_points) 
+
+    elif chefs_choice==2:
+        # TODO:
+        # - determine the perimeter of the faraday cage, the tiled 3x3 star stamp
+        # - add one 3x3 star stamp that is a DIRECT neighbor of the faraday cage, at a random location on the perimeter.
+        pass
+
+    elif chefs_choice==3:
+        # This choice is made AFTER team1_points and team2_points have been filled
+        # with their respective Faraday cage stamps.
+
+        # Ensure an equal number of cells are added to the perimeter of each team's cage.
+        num_cells_to_add_per_team = random.randint(1, 5)
+
+        # --- Process Team 1's perimeter ---
+        final_perimeter_points_team1 = set()
+        if team1_points:
+            min_x_t1 = min(p[0] for p in team1_points)
+            max_x_t1 = max(p[0] for p in team1_points)
+            min_y_t1 = min(p[1] for p in team1_points)
+            max_y_t1 = max(p[1] for p in team1_points)
+
+            perimeter_candidates_t1 = set()
+            # Top perimeter
+            y = min_y_t1 - 1
+            if 0 <= y < rows:
+                for x in range(min_x_t1, max_x_t1 + 1):
+                    if 0 <= x < cols: perimeter_candidates_t1.add((x, y))
+            # Bottom perimeter
+            y = max_y_t1 + 1
+            if 0 <= y < rows:
+                for x in range(min_x_t1, max_x_t1 + 1):
+                     if 0 <= x < cols: perimeter_candidates_t1.add((x, y))
+            # Left perimeter
+            x = min_x_t1 - 1
+            if 0 <= x < cols:
+                for y in range(min_y_t1, max_y_t1 + 1):
+                    if 0 <= y < rows: perimeter_candidates_t1.add((x, y))
+            # Right perimeter
+            x = max_x_t1 + 1
+            if 0 <= x < cols:
+                for y in range(min_y_t1, max_y_t1 + 1):
+                    if 0 <= y < rows: perimeter_candidates_t1.add((x, y))
+            
+            final_perimeter_points_team1 = {p for p in perimeter_candidates_t1 if p not in all_occupied_points}
+        
+        # Add cells to team 1
+        if final_perimeter_points_team1:
+            num_to_place_t1 = min(num_cells_to_add_per_team, len(final_perimeter_points_team1))
+            cells_to_add_t1 = random.sample(list(final_perimeter_points_team1), num_to_place_t1)
+            team1_points.update(cells_to_add_t1)
+        
+        # --- Process Team 2's perimeter ---
+        current_all_occupied_points = team1_points.union(team2_points)
+        final_perimeter_points_team2 = set()
+        if team2_points:
+            min_x_t2 = min(p[0] for p in team2_points)
+            max_x_t2 = max(p[0] for p in team2_points)
+            min_y_t2 = min(p[1] for p in team2_points)
+            max_y_t2 = max(p[1] for p in team2_points)
+
+            perimeter_candidates_t2 = set()
+            # Top perimeter
+            y = min_y_t2 - 1
+            if 0 <= y < rows:
+                for x in range(min_x_t2, max_x_t2 + 1):
+                    if 0 <= x < cols: perimeter_candidates_t2.add((x, y))
+            # Bottom perimeter
+            y = max_y_t2 + 1
+            if 0 <= y < rows:
+                for x in range(min_x_t2, max_x_t2 + 1):
+                     if 0 <= x < cols: perimeter_candidates_t2.add((x, y))
+            # Left perimeter
+            x = min_x_t2 - 1
+            if 0 <= x < cols:
+                for y in range(min_y_t2, max_y_t2 + 1):
+                    if 0 <= y < rows: perimeter_candidates_t2.add((x, y))
+            # Right perimeter
+            x = max_x_t2 + 1
+            if 0 <= x < cols:
+                for y in range(min_y_t2, max_y_t2 + 1):
+                    if 0 <= y < rows: perimeter_candidates_t2.add((x, y))
+
+            final_perimeter_points_team2 = {p for p in perimeter_candidates_t2 if p not in current_all_occupied_points}
+
+        # Add cells to team 2
+        if final_perimeter_points_team2:
+            num_to_place_t2 = min(num_cells_to_add_per_team, len(final_perimeter_points_team2))
+            cells_to_add_t2 = random.sample(list(final_perimeter_points_team2), num_to_place_t2)
+            team2_points.update(cells_to_add_t2)
+    
+    s1 = _points_to_url(team1_points, rows, cols)
+    s2 = _points_to_url(team2_points, rows, cols)
+
+    return s1, "[]", "[]", s2, "[]", "[]"
+
+
+def ironhorse(rows, cols, seed=None):
     pass
 
 
