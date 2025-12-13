@@ -488,46 +488,83 @@ def spaceelevator(rows, cols, seed=None):
     team1_points = set()
     team2_points = set()
 
-    star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}
-    spacing = 3
-    is_horizontal = random.choice([True, False])
+    star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)} # 5-cell star stamp
+    spacing = 3 # Spacing between star centers along the track, ensuring no overlap
 
-    track_coord = 0
-    if is_horizontal:
-        # Horizontal track
-        track_coord = random.randint(1, rows - 2)
-        for x_base in range(1, cols - 1, spacing):
+    # 1. Determine track orientation and split the grid
+    is_horizontal_split = False # Tracks are always vertical
+
+    # Calculate jitter once, applied symmetrically to both tracks
+    jitter_amount_rows = int(0.1 * rows * (random.random() * 2 - 1))
+    jitter_amount_cols = int(0.1 * cols * (random.random() * 2 - 1))
+
+    # Generate Track 1 (for team1_points)
+    if is_horizontal_split:
+        # Top half of the grid
+        half_rows = rows // 2
+        mid_row_half = half_rows // 2
+        track1_row_center = max(1, min(rows - 2, mid_row_half + jitter_amount_rows)) # Ensure star fits
+        for x_center in range(1, cols - 1, spacing):
             for dx, dy in star_shape:
-                team1_points.add((x_base + dx, track_coord + dy))
-    else:
-        # Vertical track
-        track_coord = random.randint(1, cols - 2)
-        for y_base in range(1, rows - 1, spacing):
+                team1_points.add((x_center + dx, track1_row_center + dy))
+    else: # Vertical split, left half of the grid
+        half_cols = cols // 2
+        mid_col_half = half_cols // 2
+        track1_col_center = max(1, min(cols - 2, mid_col_half + jitter_amount_cols)) # Ensure star fits
+        for y_center in range(1, rows - 1, spacing):
             for dx, dy in star_shape:
-                team1_points.add((track_coord + dx, y_base + dy))
+                team1_points.add((track1_col_center + dx, y_center + dy))
 
-    # Place the two adjacent Methuselah cells
-    placed = False
-    while not placed:
-        # Choose a random starting point for the first cell
-        m_x = random.randint(0, cols - 2)  # -2 to leave space for the adjacent cell
-        m_y = random.randint(0, rows - 1)
+    # Generate Track 2 (for team2_points)
+    if is_horizontal_split:
+        # Bottom half of the grid
+        half_rows = rows // 2
+        mid_row_half = rows // 2 + half_rows // 2
+        track2_row_center = max(1, min(rows - 2, mid_row_half + jitter_amount_rows)) # Ensure star fits
+        for x_center in range(1, cols - 1, spacing):
+            for dx, dy in star_shape:
+                team2_points.add((x_center + dx, track2_row_center + dy))
+    else: # Vertical split, right half of the grid
+        half_cols = cols // 2
+        mid_col_half = cols // 2 + half_cols // 2
+        track2_col_center = max(1, min(cols - 2, mid_col_half + jitter_amount_cols)) # Ensure star fits
+        for y_center in range(1, rows - 1, spacing):
+            for dx, dy in star_shape:
+                team2_points.add((track2_col_center + dx, y_center + dy))
 
-        # Check distance from track
-        if is_horizontal:
-            if abs(m_y - track_coord) < 4:
-                continue
-        else: # Vertical
-            if abs(m_x - track_coord) < 4 and abs((m_x + 1) - track_coord) < 4:
-                continue
+    # Helper function to place a two-cell shape
+    def place_two_cell_shape(all_occupied_points_so_far):
+        while True:
+            start_x = random.randint(0, cols - 1)
+            start_y = random.randint(0, rows - 1)
+            
+            is_horizontal_shape = random.choice([True, False])
 
-        # Check for overlap with the track
-        point1 = (m_x, m_y)
-        point2 = (m_x + 1, m_y)
-        if point1 not in team1_points and point2 not in team1_points:
-            team1_points.add(point1)
-            team2_points.add(point2)
-            placed = True
+            if is_horizontal_shape:
+                if start_x + 1 >= cols:
+                    continue
+                cell1 = (start_x, start_y)
+                cell2 = (start_x + 1, start_y)
+            else: # Vertical shape
+                if start_y + 1 >= rows:
+                    continue
+                cell1 = (start_x, start_y)
+                cell2 = (start_x, start_y + 1)
+            
+            if cell1 not in all_occupied_points_so_far and cell2 not in all_occupied_points_so_far:
+                return {cell1, cell2}
+
+    # Gather all points already occupied by tracks for overlap checking
+    all_occupied_initial = team1_points.union(team2_points)
+
+    # 2. Put one two-cell "oo" shape for color 1 (add to team1_points)
+    shape1_cells = place_two_cell_shape(all_occupied_initial)
+    team1_points.update(shape1_cells)
+    all_occupied_initial.update(shape1_cells) # Update occupied points for next check
+
+    # 3. Put one two-cell "oo" shape for color 2 (add to team2_points)
+    shape2_cells = place_two_cell_shape(all_occupied_initial) 
+    team2_points.update(shape2_cells)
 
     # Convert to URL format
     s1_output = _points_to_url(team1_points, rows, cols)
