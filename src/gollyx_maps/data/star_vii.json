@@ -124,5 +124,11 @@
         "mapName": "Space Elevator",
         "mapDescription": "Two straight tracks",
         "mapStartSeason": 0
+    },
+    {
+        "patternName": "faradaycage",
+        "mapName": "Faraday Cage",
+        "mapDescription": "Faraday cage of a grid",
+        "mapStartSeason": 0
     }
 ]
