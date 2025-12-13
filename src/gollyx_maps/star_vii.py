@@ -1,9 +1,10 @@
 import json
 import os
 import random
-from .geom import hflip_pattern, vflip_pattern
+from .geom import hflip_pattern, vflip_pattern, rot_pattern
 from .utils import pattern2url, retry_on_failure, pattern2url_char, pattern2url_chars
 from .patterns import get_grid_empty, pattern_union, get_pattern, get_grid_pattern
+from .error import GollyXGeomError
 from .star import (
     random_2color,
     flyingv1,
@@ -73,6 +74,61 @@ def _points_to_url(points, rows, cols, char='o'):
     grid_flat = ["".join(row) for row in grid]
     return pattern2url_char(grid_flat, char)
 
+def _apply_random_transformation(points_set):
+    """
+    Applies a random transformation (hflip, vflip, or rotation) to a set of (x,y) points.
+    Returns the new set of points.
+    """
+    if not points_set:
+        return set()
+
+    # Determine bounding box of the pattern
+    min_x = min(p[0] for p in points_set)
+    max_x = max(p[0] for p in points_set)
+    min_y = min(p[1] for p in points_set)
+    max_y = max(p[1] for p in points_set)
+
+    width = max_x - min_x + 1
+    height = max_y - min_y + 1
+
+    # Convert points to a grid (list of strings)
+    pattern_grid = [['.' for _ in range(width)] for _ in range(height)]
+    for x, y in points_set:
+        pattern_grid[y - min_y][x - min_x] = 'o'
+
+    pattern_list_str = ["".join(row) for row in pattern_grid]
+
+    # Choose a random transformation
+    transformation_choice = random.choice(['none', 'hflip', 'vflip', 'rot90', 'rot180', 'rot270'])
+
+    transformed_pattern_list_str = pattern_list_str
+    
+    if transformation_choice == 'hflip':
+        transformed_pattern_list_str = hflip_pattern(transformed_pattern_list_str)
+    elif transformation_choice == 'vflip':
+        transformed_pattern_list_str = vflip_pattern(transformed_pattern_list_str)
+    elif transformation_choice == 'rot90':
+        transformed_pattern_list_str = rot_pattern(transformed_pattern_list_str, 90)
+    elif transformation_choice == 'rot180':
+        transformed_pattern_list_str = rot_pattern(transformed_pattern_list_str, 180)
+    elif transformation_choice == 'rot270':
+        transformed_pattern_list_str = rot_pattern(transformed_pattern_list_str, 270)
+    elif transformation_choice == 'none':
+        pass # No transformation applied
+    
+    # Convert back to points, adjusting for new dimensions if rotated
+    new_points_set = set()
+    new_height = len(transformed_pattern_list_str)
+    new_width = len(transformed_pattern_list_str[0]) if new_height > 0 else 0
+
+    for r_idx, row_str in enumerate(transformed_pattern_list_str):
+        for c_idx, char in enumerate(row_str):
+            if char == 'o':
+                # The new points are relative to their own new bounding box,
+                # which effectively starts at (0,0).
+                new_points_set.add((c_idx, r_idx))
+    
+    return new_points_set
 
 def _flood_fill_check(current_path_tiles, rows_grid, cols_grid, x_min, x_max, y_min, y_max):
     """
@@ -360,9 +416,28 @@ def midnightexpress(rows, cols, seed=None):
         random.seed(seed)
 
     # 1. Load ONE methuselah pattern to be used for all placements
-    methuselah_names = ["scaffoldunfusing", "backedupsink", "spaceship2platform"]
-    chosen_meth_name = random.choice(methuselah_names)
+
+    methuselah_names_numbers = [
+        #("escapingsatellites",  (2, 4)),
+        ("solarsail",  (1, 2)),
+        #("scaffoldunfusing",    (1, 2)),
+        #("backedupsink",        (1, 4)),
+        #("spaceship2platform",  (1, 2)),
+    ]
+
+    chosen_meth = random.choice(methuselah_names_numbers)
+    chosen_meth_name = chosen_meth[0]
+    chosen_meth_number = chosen_meth[1]
     meth_pattern_str = get_pattern(chosen_meth_name)
+
+
+    meth_height = 0
+    meth_width = 0
+
+    if meth_pattern_str:
+        meth_height = len(meth_pattern_str)
+        if meth_height > 0:
+            meth_width = len(meth_pattern_str[0])
 
     # Initialize sets for points for Team 1 ('o') and Team 2 ('o')
     team1_points = set()
@@ -402,13 +477,13 @@ def midnightexpress(rows, cols, seed=None):
 
     # Define the bounding box for Methuselah placement
     if is_horizontal_tracks:
-        methuselah_bbox_min_y = min(track1_coord, track2_coord) + 2
-        methuselah_bbox_max_y = max(track1_coord, track2_coord) - 2
+        methuselah_bbox_min_y = min(track1_coord, track2_coord) + 6
+        methuselah_bbox_max_y = max(track1_coord, track2_coord) - 6
         methuselah_bbox_min_x = start_pos
         methuselah_bbox_max_x = end_pos - 1
     else:  # Vertical tracks
-        methuselah_bbox_min_x = min(track1_coord, track2_coord) + 2
-        methuselah_bbox_max_x = max(track1_coord, track2_coord) - 2
+        methuselah_bbox_min_x = min(track1_coord, track2_coord) + 6
+        methuselah_bbox_max_x = max(track1_coord, track2_coord) - 6
         methuselah_bbox_min_y = start_pos
         methuselah_bbox_max_y = end_pos - 1
 
@@ -416,65 +491,83 @@ def midnightexpress(rows, cols, seed=None):
     if meth_pattern_str and methuselah_bbox_min_x <= methuselah_bbox_max_x and \
        methuselah_bbox_min_y <= methuselah_bbox_max_y:
 
-        meth_points_relative = set()
-        meth_height = len(meth_pattern_str)
-        meth_width = len(meth_pattern_str[0]) if meth_height > 0 else 0
-
+        meth_initial_relative_points = set()
         if meth_height > 0 and meth_width > 0:
             for r_idx, row_str in enumerate(meth_pattern_str):
                 for c_idx, char in enumerate(row_str):
                     if char == 'o':
-                        meth_points_relative.add((c_idx, r_idx))
+                        meth_initial_relative_points.add((c_idx, r_idx))
 
-            # Define placement area
-            placement_min_x = methuselah_bbox_min_x
-            placement_max_x = methuselah_bbox_max_x - meth_width + 1
-            placement_min_y = methuselah_bbox_min_y
-            placement_max_y = methuselah_bbox_max_y - meth_height + 1
+        if meth_initial_relative_points and \
+           methuselah_bbox_min_x <= methuselah_bbox_max_x and \
+           methuselah_bbox_min_y <= methuselah_bbox_max_y:
 
-            if placement_max_x >= placement_min_x and placement_max_y >= placement_min_y:
-                num_methuselahs_per_team = random.randint(1, 3)
-                meth_to_place = [{'team': 1} for _ in range(num_methuselahs_per_team)] + \
-                                  [{'team': 2} for _ in range(num_methuselahs_per_team)]
-                random.shuffle(meth_to_place)
+            num_methuselahs_per_team = random.randint(*chosen_meth_number)
+            meth_to_place = [{'team': 1} for _ in range(num_methuselahs_per_team)] + \
+                              [{'team': 2} for _ in range(num_methuselahs_per_team)]
+            random.shuffle(meth_to_place)
 
-                all_occupied_points = team1_points.copy()
-                all_occupied_points.update(team2_points)
+            all_occupied_points = team1_points.copy()
+            all_occupied_points.update(team2_points)
 
-                for meth_info in meth_to_place:
-                    placed = False
-                    attempts = 0
-                    max_attempts = 100
+            for meth_info in meth_to_place:
+                # Apply random transformation to the current methuselah instance
+                transformed_meth_points_relative = _apply_random_transformation(meth_initial_relative_points)
 
-                    while not placed and attempts < max_attempts:
-                        start_x = random.randint(placement_min_x, placement_max_x)
-                        start_y = random.randint(placement_min_y, placement_max_y)
-                        
-                        current_meth_absolute_points = set()
-                        overlap_detected = False
-                        for rel_x, rel_y in meth_points_relative:
-                            abs_x, abs_y = start_x + rel_x, start_y + rel_y
-                            if (abs_x, abs_y) in all_occupied_points:
-                                overlap_detected = True
-                                break
-                            current_meth_absolute_points.add((abs_x, abs_y))
+                # Recalculate meth_width and meth_height based on the transformed pattern for this instance
+                current_meth_width = 0
+                current_meth_height = 0
+                if transformed_meth_points_relative:
+                    min_x = min(p[0] for p in transformed_meth_points_relative)
+                    max_x = max(p[0] for p in transformed_meth_points_relative)
+                    min_y = min(p[1] for p in transformed_meth_points_relative)
+                    max_y = max(p[1] for p in transformed_meth_points_relative)
+                    current_meth_width = max_x - min_x + 1
+                    current_meth_height = max_y - min_y + 1
+                
+                if current_meth_width == 0 or current_meth_height == 0:
+                    continue # Skip if transformation resulted in an empty pattern (shouldn't happen with current transformations, but for robustness)
 
-                        if not overlap_detected:
-                            if meth_info['team'] == 1:
-                                team1_points.update(current_meth_absolute_points)
-                            else:
-                                team2_points.update(current_meth_absolute_points)
-                            all_occupied_points.update(current_meth_absolute_points)
-                            placed = True
-                        attempts += 1
+                # Define placement area for this specific transformed methuselah
+                placement_min_x = methuselah_bbox_min_x
+                placement_max_x = methuselah_bbox_max_x - current_meth_width + 1
+                placement_min_y = methuselah_bbox_min_y
+                placement_max_y = methuselah_bbox_max_y - current_meth_height + 1
+
+                if placement_max_x < placement_min_x or placement_max_y < placement_min_y:
+                    continue # No valid placement area for this transformed methuselah
+
+                placed = False
+                attempts = 0
+                max_attempts = 100
+
+                while not placed and attempts < max_attempts:
+                    start_x = random.randint(placement_min_x, placement_max_x)
+                    start_y = random.randint(placement_min_y, placement_max_y)
+                    
+                    current_meth_absolute_points = set()
+                    overlap_detected = False
+                    for rel_x, rel_y in transformed_meth_points_relative:
+                        abs_x, abs_y = start_x + rel_x, start_y + rel_y
+                        if (abs_x, abs_y) in all_occupied_points:
+                            overlap_detected = True
+                            break
+                        current_meth_absolute_points.add((abs_x, abs_y))
+
+                    if not overlap_detected:
+                        if meth_info['team'] == 1:
+                            team1_points.update(current_meth_absolute_points)
+                        else:
+                            team2_points.update(current_meth_absolute_points)
+                        all_occupied_points.update(current_meth_absolute_points)
+                        placed = True
+                    attempts += 1
 
     # 4. Convert team points to URL format
     s1_output = _points_to_url(team1_points, rows, cols)
     s2_output = _points_to_url(team2_points, rows, cols)
 
     return s1_output, "[]", "[]", s2_output, "[]", "[]"
-
-
 
 
 def spaceelevator(rows, cols, seed=None):
