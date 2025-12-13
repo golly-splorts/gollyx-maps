@@ -74,12 +74,12 @@ def apply_random_transformation(points_set):
         pattern_list_str = (
             hflip_pattern(pattern_list_str)
             if random.getrandbits(1)
-            else transformed_pattern_list_str
+            else pattern_list_str
         )
         pattern_list_str = (
             vflip_pattern(pattern_list_str)
             if random.getrandbits(1)
-            else transformed_pattern_list_str
+            else pattern_list_str
         )
     else:
         # Random rotation
