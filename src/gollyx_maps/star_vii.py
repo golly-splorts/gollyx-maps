@@ -1,80 +1,37 @@
 import json
 import os
 import random
-from .geom import hflip_pattern, vflip_pattern, rot_pattern
-from .utils import pattern2url, retry_on_failure, pattern2url_char, pattern2url_chars
-from .patterns import get_grid_empty, pattern_union, get_pattern, get_grid_pattern
+import itertools
+from .geom import hflip_pattern, vflip_pattern, rot_pattern, hjiggle, vjiggle, apply_random_transformation
+from .utils import pattern2url_chars, points_to_url
+from .patterns import get_pattern, get_grid_pattern
 from .error import GollyXGeomError
-from .star import (
-    random_2color,
-    flyingv1,
-    flyingv2,
-    stlouis,
-    newyork,
-    chicago,
-    combs,
-    precipitation,
-    evaporation,
-    denaturation,
-    gastank,
-    rustytank,
-    dinnerplate,
-    dessertplate,
-    squarestar,
-    kitchensink,
-    ricepudding,
-    fishsoup,
-)
+from .star import get_star_pattern_function_map
+
 
 def get_star_vii_pattern_function_map():
-    """Returns a map of names to pattern generation functions."""
-    return {
-        ####################################
-        ######### STAR CUP CLASSICS ########
-        "random": random_2color,
-        "flyingv1": flyingv1,
-        "flyingv2": flyingv2,
-        "stlouis": stlouis,
-        "newyork": newyork,
-        "chicago": chicago,
-        "combs": combs,
-        # containment lines
-        "precipitation": precipitation,
-        "evaporation": evaporation,
-        "denaturation": denaturation,
-        # containment rectangles
-        "gastank": gastank,
-        "rustytank": rustytank,
-        "dinnerplate": dinnerplate,
-        "dessertplate": dessertplate,
-        # stamps
-        "squarestar": squarestar,
-        "kitchensink": kitchensink,
-        "ricepudding": ricepudding,
-        "fishsoup": fishsoup,
-        #####################################
-        ###### STAR VIII CUP NEW SHIT #######
-        "choochoo": choochoo,
+    patterns = get_star_pattern_function_map()
+    new_patterns = {
+        "twochoochoo": twochoochoo,
         "midnightexpress": midnightexpress,
         "spaceelevator": spaceelevator,
         "faradaycage": faradaycage,
-        #"ironhorse": ironhorse,
-        #"deadendterminal": deadendterminal,
-        #"bando": bando,
-        #"ghosttrain": ghosttrain,
+        # "ironhorse": ironhorse,
+        # "deadendterminal": deadendterminal,
+        # "bando": bando,
+        # "ghosttrain": ghosttrain,
     }
+    return patterns | new_patterns
 
 
-# Define the 3x3 star pattern as a module-level constant
-STAR_3X3_PATTERN_STR = [
-    ".o.",
-    "ooo",
-    ".o."
-]
+################################################
+# TODO 1: use star.txt pattern/stamp instead
+
+STAR_3X3_PATTERN_STR = [".o.", "ooo", ".o."]
 STAR_3X3_RELATIVE_POINTS = set()
 for y_idx, row in enumerate(STAR_3X3_PATTERN_STR):
     for x_idx, char in enumerate(row):
-        if char == 'o':
+        if char == "o":
             STAR_3X3_RELATIVE_POINTS.add((x_idx, y_idx))
 
 # Calculate width and height of the STAR_3X3 stamp
@@ -85,77 +42,17 @@ max_y_star = max(p[1] for p in STAR_3X3_RELATIVE_POINTS)
 STAR_STAMP_WIDTH = max_x_star - min_x_star + 1
 STAR_STAMP_HEIGHT = max_y_star - min_y_star + 1
 
+# END TODO 1
+################################################
+
 
 ##############################################################################################
 ########################## utility functions #################################################
 
 
-def _points_to_url(points, rows, cols, char='o'):
-    """Converts a set of points to a URL-encoded character string."""
-    grid = get_grid_empty(rows, cols, flat=False)
-    for x, y in points:
-        if 0 <= y < rows and 0 <= x < cols:
-            grid[y][x] = char
-    grid_flat = ["".join(row) for row in grid]
-    return pattern2url_char(grid_flat, char)
-
-def _apply_random_transformation(points_set):
-    """
-    Applies a random transformation (hflip, vflip, or rotation) to a set of (x,y) points.
-    Returns the new set of points.
-    """
-    if not points_set:
-        return set()
-
-    # Determine bounding box of the pattern
-    min_x = min(p[0] for p in points_set)
-    max_x = max(p[0] for p in points_set)
-    min_y = min(p[1] for p in points_set)
-    max_y = max(p[1] for p in points_set)
-
-    width = max_x - min_x + 1
-    height = max_y - min_y + 1
-
-    # Convert points to a grid (list of strings)
-    pattern_grid = [['.' for _ in range(width)] for _ in range(height)]
-    for x, y in points_set:
-        pattern_grid[y - min_y][x - min_x] = 'o'
-
-    pattern_list_str = ["".join(row) for row in pattern_grid]
-
-    # Choose a random transformation
-    transformation_choice = random.choice(['none', 'hflip', 'vflip', 'rot90', 'rot180', 'rot270'])
-
-    transformed_pattern_list_str = pattern_list_str
-    
-    if transformation_choice == 'hflip':
-        transformed_pattern_list_str = hflip_pattern(transformed_pattern_list_str)
-    elif transformation_choice == 'vflip':
-        transformed_pattern_list_str = vflip_pattern(transformed_pattern_list_str)
-    elif transformation_choice == 'rot90':
-        transformed_pattern_list_str = rot_pattern(transformed_pattern_list_str, 90)
-    elif transformation_choice == 'rot180':
-        transformed_pattern_list_str = rot_pattern(transformed_pattern_list_str, 180)
-    elif transformation_choice == 'rot270':
-        transformed_pattern_list_str = rot_pattern(transformed_pattern_list_str, 270)
-    elif transformation_choice == 'none':
-        pass # No transformation applied
-    
-    # Convert back to points, adjusting for new dimensions if rotated
-    new_points_set = set()
-    new_height = len(transformed_pattern_list_str)
-    new_width = len(transformed_pattern_list_str[0]) if new_height > 0 else 0
-
-    for r_idx, row_str in enumerate(transformed_pattern_list_str):
-        for c_idx, char in enumerate(row_str):
-            if char == 'o':
-                # The new points are relative to their own new bounding box,
-                # which effectively starts at (0,0).
-                new_points_set.add((c_idx, r_idx))
-    
-    return new_points_set
-
-def _flood_fill_check(current_path_tiles, rows_grid, cols_grid, x_min, x_max, y_min, y_max):
+def _flood_fill_check(
+    current_path_tiles, rows_grid, cols_grid, x_min, x_max, y_min, y_max
+):
     """
     Checks if adding a new segment creates a closed loop in the path.
 
@@ -167,8 +64,10 @@ def _flood_fill_check(current_path_tiles, rows_grid, cols_grid, x_min, x_max, y_
     # Create a grid representation
     grid = [[0 for _ in range(cols_grid)] for _ in range(rows_grid)]
     for r, c in current_path_tiles:
-        if x_min <= r < x_max and y_min <= c < y_max: # Ensure path tiles are within the relevant bounds
-            grid[c][r] = 1 # Mark path tiles as obstacles
+        if (
+            x_min <= r < x_max and y_min <= c < y_max
+        ):  # Ensure path tiles are within the relevant bounds
+            grid[c][r] = 1  # Mark path tiles as obstacles
 
     # Perform flood fill from all empty boundary cells to detect enclosed regions (loops).
 
@@ -188,7 +87,6 @@ def _flood_fill_check(current_path_tiles, rows_grid, cols_grid, x_min, x_max, y_
         if grid[rows_grid - 1][c] == 0:
             start_points.add((rows_grid - 1, c))
 
-
     for start_r, start_c in start_points:
         if (start_r, start_c) not in visited and grid[start_r][start_c] == 0:
             q.append((start_r, start_c))
@@ -199,21 +97,29 @@ def _flood_fill_check(current_path_tiles, rows_grid, cols_grid, x_min, x_max, y_
 
                 for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                     nr, nc = r + dr, c + dc
-                    if 0 <= nr < rows_grid and 0 <= nc < cols_grid and \
-                        grid[nr][nc] == 0 and (nr, nc) not in visited:
+                    if (
+                        0 <= nr < rows_grid
+                        and 0 <= nc < cols_grid
+                        and grid[nr][nc] == 0
+                        and (nr, nc) not in visited
+                    ):
                         visited.add((nr, nc))
                         q.append((nr, nc))
 
     # After flood fill, check if any empty cell within the relevant search area is unvisited
     for r in range(rows_grid):
         for c in range(cols_grid):
-            if grid[r][c] == 0 and (r,c) not in visited:
-                # An empty cell within bounds was not visited, implying it's enclosed
-                return True # Loop detected
-    return False # No loop detected
+            if grid[r][c] == 0 and (r, c) not in visited:
+                # Loop detected
+                return True  # Loop detected
+
+    # No loop detected
+    return False
 
 
-def _count_empty_neighbors(tx, ty, current_path, x_tile_min, x_tile_max, y_tile_min, y_tile_max):
+def _count_empty_neighbors(
+    tx, ty, current_path, x_tile_min, x_tile_max, y_tile_min, y_tile_max
+):
     """
     Counts the number of empty neighboring tiles around a specific tile.
 
@@ -222,14 +128,28 @@ def _count_empty_neighbors(tx, ty, current_path, x_tile_min, x_tile_max, y_tile_
     """
     count = 0
     # Include diagonals for openness
-    for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+    moves = [move for move in itertools.product((-1, 0, 1), repeat=2) if move != (0,0)]
+    for dx, dy in moves:
         nx, ny = tx + dx, ty + dy
-        if x_tile_min <= nx < x_tile_max and y_tile_min <= ny < y_tile_max and (nx, ny) not in current_path:
+        if (
+            x_tile_min <= nx < x_tile_max
+            and y_tile_min <= ny < y_tile_max
+            and (nx, ny) not in current_path
+        ):
             count += 1
     return count
 
 
-def _is_valid_tile_step(tx, ty, is_horizontal_step, current_path_tiles, x_tile_min, x_tile_max, y_tile_min, y_tile_max):
+def _is_valid_tile_step(
+    tx,
+    ty,
+    is_horizontal_step,
+    current_path_tiles,
+    x_tile_min,
+    x_tile_max,
+    y_tile_min,
+    y_tile_max,
+):
     """
     Validates a single tile step in a path.
 
@@ -244,36 +164,57 @@ def _is_valid_tile_step(tx, ty, is_horizontal_step, current_path_tiles, x_tile_m
         # Check for adjacent path segments (prevents U-turns and parallel tracks)
         neighbor1 = (tx, ty - 1)
         neighbor2 = (tx, ty + 1)
-        if (y_tile_min <= neighbor1[1] < y_tile_max and neighbor1 in current_path_tiles) or \
-            (y_tile_min <= neighbor2[1] < y_tile_max and neighbor2 in current_path_tiles):
+        if (
+            y_tile_min <= neighbor1[1] < y_tile_max and neighbor1 in current_path_tiles
+        ) or (
+            y_tile_min <= neighbor2[1] < y_tile_max and neighbor2 in current_path_tiles
+        ):
             return False
-    else: # is_vertical_step
+    else:  # is_vertical_step
         if not (y_tile_min <= ty < y_tile_max and (tx, ty) not in current_path_tiles):
             return False
         # Check for adjacent path segments (prevents U-turns and parallel tracks)
         neighbor1 = (tx - 1, ty)
         neighbor2 = (tx + 1, ty)
-        if (x_tile_min <= neighbor1[0] < x_tile_max and neighbor1 in current_path_tiles) or \
-            (x_tile_min <= neighbor2[0] < x_tile_max and neighbor2 in current_path_tiles):
+        if (
+            x_tile_min <= neighbor1[0] < x_tile_max and neighbor1 in current_path_tiles
+        ) or (
+            x_tile_min <= neighbor2[0] < x_tile_max and neighbor2 in current_path_tiles
+        ):
             return False
     return True
 
 
 def _get_segment_props(
-    max_len, is_horizontal, current_tile_x, current_tile_y, path_of_tiles,
-    last_direction_x, last_direction_y, grid_tile_rows, grid_tile_cols,
-    x_tile_min, x_tile_max, y_tile_min, y_tile_max
+    max_len,
+    is_horizontal,
+    current_tile_x,
+    current_tile_y,
+    path_of_tiles,
+    last_direction_x,
+    last_direction_y,
+    grid_tile_rows,
+    grid_tile_cols,
+    x_tile_min,
+    x_tile_max,
+    y_tile_min,
+    y_tile_max,
 ):
     """Calculates the valid length and direction of a segment."""
     possible_directions = []
     if is_horizontal:
-        if last_direction_x != -1: possible_directions.append(1)
-        if last_direction_x != 1: possible_directions.append(-1)
-    else: # is_vertical
-        if last_direction_y != -1: possible_directions.append(1)
-        if last_direction_y != 1: possible_directions.append(-1)
+        if last_direction_x != -1:
+            possible_directions.append(1)
+        if last_direction_x != 1:
+            possible_directions.append(-1)
+    else:  # is_vertical
+        if last_direction_y != -1:
+            possible_directions.append(1)
+        if last_direction_y != 1:
+            possible_directions.append(-1)
 
-    if not possible_directions: possible_directions = [1, -1]
+    if not possible_directions:
+        possible_directions = [1, -1]
 
     evaluated_options = []
     for direction_to_try in possible_directions:
@@ -287,8 +228,14 @@ def _get_segment_props(
                 current_proposed_tile = (current_tile_x, next_y)
 
             if not _is_valid_tile_step(
-                current_proposed_tile[0], current_proposed_tile[1], is_horizontal, path_of_tiles,
-                x_tile_min, x_tile_max, y_tile_min, y_tile_max
+                current_proposed_tile[0],
+                current_proposed_tile[1],
+                is_horizontal,
+                path_of_tiles,
+                x_tile_min,
+                x_tile_max,
+                y_tile_min,
+                y_tile_max,
             ):
                 break
             segment_tiles.append(current_proposed_tile)
@@ -297,28 +244,44 @@ def _get_segment_props(
         if final_length > 0:
             temporary_path = path_of_tiles.union(set(segment_tiles))
             if _flood_fill_check(
-                temporary_path, grid_tile_rows, grid_tile_cols,
-                x_tile_min, x_tile_max, y_tile_min, y_tile_max
+                temporary_path,
+                grid_tile_rows,
+                grid_tile_cols,
+                x_tile_min,
+                x_tile_max,
+                y_tile_min,
+                y_tile_max,
             ):
-                continue # This segment creates a loop, discard it
+                continue  # This segment creates a loop, discard it
 
             end_tile_x = segment_tiles[-1][0] if is_horizontal else current_tile_x
             end_tile_y = segment_tiles[-1][1] if not is_horizontal else current_tile_y
 
             openness_score = _count_empty_neighbors(
-                end_tile_x, end_tile_y, temporary_path,
-                x_tile_min, x_tile_max, y_tile_min, y_tile_max
+                end_tile_x,
+                end_tile_y,
+                temporary_path,
+                x_tile_min,
+                x_tile_max,
+                y_tile_min,
+                y_tile_max,
             )
-            evaluated_options.append((final_length, openness_score, direction_to_try, segment_tiles))
-
+            evaluated_options.append(
+                (final_length, openness_score, direction_to_try, segment_tiles)
+            )
     if not evaluated_options:
-        return 0, 0, [] # No valid move found
+        # No valid move
+        return 0, 0, []
 
     evaluated_options.sort(key=lambda x: (x[0], x[1]), reverse=True)
 
     best_length = evaluated_options[0][0]
     best_openness = evaluated_options[0][1]
-    top_options = [opt for opt in evaluated_options if opt[0] == best_length and opt[1] == best_openness]
+    top_options = [
+        opt
+        for opt in evaluated_options
+        if opt[0] == best_length and opt[1] == best_openness
+    ]
 
     selected_option = random.choice(top_options)
     return selected_option[0], selected_option[2], selected_option[3]
@@ -329,7 +292,7 @@ def _place_oo_methuselah(region, occupied_points, rows, cols):
     # Check if empty region
     if x_start >= x_end or y_start >= y_end:
         return set()
-    for _ in range(100): # max attempts to place
+    for _ in range(100):  # max attempts to place
         px = random.randint(x_start, x_end - 1)
         py = random.randint(y_start, y_end - 1)
         potential_neighbors = []
@@ -344,12 +307,12 @@ def _place_oo_methuselah(region, occupied_points, rows, cols):
         cell2 = neighbor
         if cell1 not in occupied_points and cell2 not in occupied_points:
             return {cell1, cell2}
-    return set() # Could not place
+    return set()  # Could not place
 
 
 def _fill_region_with_stamps(target_points_set, region, stamp_size, rows, cols):
     rx_start, ry_start, rx_end, ry_end = region
-    
+
     # Iterate through the region, placing stamp_size x stamp_size blocks
     # The loop range ensures that the entire stamp fits within the region bounds
     for y in range(ry_start, ry_end - stamp_size + 1, stamp_size):
@@ -372,149 +335,398 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
     # Iterate along the top side (stamp directly above the region)
     sy = ry_start - stamp_height
     if 0 <= sy < rows:
-        for sx in range(max(0, rx_start - stamp_width + 1), min(cols - stamp_width + 1, rx_end)):
+        for sx in range(
+            max(0, rx_start - stamp_width + 1), min(cols - stamp_width + 1, rx_end)
+        ):
             if 0 <= sx < cols and 0 <= sx + stamp_width - 1 < cols:
                 potential_coords.add((sx, sy))
 
     # Iterate along the bottom side (stamp directly below the region)
     sy = ry_end
     if 0 <= sy < rows:
-        for sx in range(max(0, rx_start - stamp_width + 1), min(cols - stamp_width + 1, rx_end)):
+        for sx in range(
+            max(0, rx_start - stamp_width + 1), min(cols - stamp_width + 1, rx_end)
+        ):
             if 0 <= sx < cols and 0 <= sx + stamp_width - 1 < cols:
                 potential_coords.add((sx, sy))
 
     # Iterate along the left side (stamp directly to the left of the region)
     sx = rx_start - stamp_width
     if 0 <= sx < cols:
-        for sy in range(max(0, ry_start - stamp_height + 1), min(rows - stamp_height + 1, ry_end)):
+        for sy in range(
+            max(0, ry_start - stamp_height + 1), min(rows - stamp_height + 1, ry_end)
+        ):
             if 0 <= sy < rows and 0 <= sy + stamp_height - 1 < rows:
                 potential_coords.add((sx, sy))
 
     # Iterate along the right side (stamp directly to the right of the region)
     sx = rx_end
     if 0 <= sx < cols:
-        for sy in range(max(0, ry_start - stamp_height + 1), min(rows - stamp_height + 1, ry_end)):
+        for sy in range(
+            max(0, ry_start - stamp_height + 1), min(rows - stamp_height + 1, ry_end)
+        ):
             if 0 <= sy < rows and 0 <= sy + stamp_height - 1 < rows:
                 potential_coords.add((sx, sy))
 
-            
-    
-            
-    
-            
-    ##############################################################################################
-            
-    
+
+
+
+
+##############################################################################################
 ########################## map functions #####################################################
 
 
-def choochoo(rows, cols, seed=None, turns=9):
-    """
-    Generates a final, correct, expansive, and resilient "railroad track"
-    of stars, preventing loops and U-turns.
-    """
+### def choochoo2(rows, cols, seed=None, turns=9):
+###     """
+###     Generates a final, correct, expansive, and resilient "railroad track"
+###     of stars, preventing loops and U-turns.
+###     """
+###     if seed is not None:
+###         random.seed(seed)
+### 
+###     ###############################################
+###     # TODO 2: make use of star.txt pattern/stamp here
+### 
+###     tile_width  = 3
+###     tile_height = 3
+### 
+###     # END TODO 2
+###     ###############################################
+### 
+###     # 1. Define the tile grid dimensions
+###     grid_tile_rows = rows // tile_height
+###     grid_tile_cols = cols // tile_width
+### 
+###     # 2. Choose half and define tile boundaries
+###     use_left_half = random.choice([True, False])
+###     half_tile_cols = grid_tile_cols // 2
+###     if use_left_half:
+###         x_tile_min, x_tile_max = 0, half_tile_cols
+###     else:
+###         x_tile_min, x_tile_max = half_tile_cols, grid_tile_cols
+### 
+###     y_tile_min, y_tile_max = 0, grid_tile_rows
+### 
+###     # 3. Path Generation
+###     path_of_tiles = set()
+### 
+###     current_tile_x = random.randint(x_tile_min, x_tile_max - 1)
+###     current_tile_y = random.randint(y_tile_min, y_tile_max - 1)
+###     path_of_tiles.add((current_tile_x, current_tile_y))
+### 
+###     # Calculate average segment length
+###     num_h_segments = (turns + 1) // 2
+###     num_v_segments = (turns + 1) - num_h_segments
+###     avg_len_x = (((x_tile_max - x_tile_min) / (num_h_segments + 1)))
+###     avg_len_y = (((y_tile_max - y_tile_min) / (num_v_segments + 1)))
+### 
+###     last_move_was_horizontal = random.choice([True, False])
+###     last_direction_x = 0
+###     last_direction_y = 0
+### 
+###     for _ in range(turns + 1):
+###         segment_generated = False
+### 
+###         # Define the primary and secondary attempts based on the last move
+###         if last_move_was_horizontal:
+###             # Last was horizontal, so try vertical first
+###             primary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
+###             secondary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
+###         else:
+###             # Last was vertical, so try horizontal first
+###             primary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
+###             secondary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
+### 
+###         for attempt in [primary_attempt, secondary_attempt]:
+###             max_len = max(1, int(random.uniform(0.7, 1.3) * attempt["avg_len"]))
+###             actual_length, direction, segment_tiles = _get_segment_props(
+###                 max_len,
+###                 attempt["is_horizontal"],
+###                 current_tile_x,
+###                 current_tile_y,
+###                 path_of_tiles,
+###                 last_direction_x,
+###                 last_direction_y,
+###                 grid_tile_rows,
+###                 grid_tile_cols,
+###                 x_tile_min,
+###                 x_tile_max,
+###                 y_tile_min,
+###                 y_tile_max,
+###             )
+### 
+###             if actual_length > 0:
+###                 path_of_tiles.update(segment_tiles)
+###                 if attempt["is_horizontal"]:
+###                     current_tile_x = segment_tiles[-1][0]
+###                     last_direction_x = direction
+###                     last_direction_y = 0
+###                 else:
+###                     current_tile_y = segment_tiles[-1][1]
+###                     last_direction_x = 0
+###                     last_direction_y = direction
+###                 last_move_was_horizontal = attempt["is_horizontal"]
+###                 segment_generated = True
+###                 break
+### 
+###         if not segment_generated:
+###             break
+### 
+###     ###############################################
+###     # TODO 3: make use of star.txt pattern/stamp here
+### 
+###     # 4. Translate tile path to cell coordinates and stamp stars
+###     points = set()
+###     star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}
+### 
+###     def stamp_star(center_x, center_y):
+###         for dx, dy in star_shape:
+###             points.add((center_x + dx, center_y + dy))
+### 
+###     for tile_x, tile_y in path_of_tiles:
+###         center_x = tile_x * tile_width + (tile_width // 2)
+###         center_y = tile_y * tile_height + (tile_height // 2)
+###         stamp_star(center_x, center_y)
+### 
+###     # END TODO 3
+###     ###############################################
+### 
+###     ###############################################
+###     # TODO 4: see if there is a utility function to convert
+###     # a list of alive cells (x, y) to url format. if not, add one to utils.py,
+###     # import it at the top of this file, and use it below.
+### 
+###     # 5. Serialize to URL format
+###     pattern_rows = [
+###         "".join("o" if (x_coord, y_coord) in points else "." for x_coord in range(cols))
+###         for y_coord in range(rows)
+###     ]
+### 
+###     # END TODO 4
+###     ###############################################
+### 
+###     # s1, b1, c1 form a pattern for color 1 on one side of the grid.
+###     # Now horiz flip it, give it some vertical jiggle, and assign to color2
+###     s1, b1, c1 = pattern2url_chars(pattern_rows)
+###     s2, b2, c2 = pattern2url_chars(hflip_pattern(vjiggle(pattern_rows, 100)))
+### 
+###     return s1, b1, c1, s2, b2, c2
+
+
+def twochoochoo(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-
-    tile_width = 3
+    tile_width  = 3
     tile_height = 3
 
-    # 1. Define the tile grid dimensions
     grid_tile_rows = rows // tile_height
     grid_tile_cols = cols // tile_width
-
-    # 2. Choose half and define tile boundaries
-    use_left_half = random.choice([True, False])
     half_tile_cols = grid_tile_cols // 2
-    if use_left_half:
-        x_tile_min, x_tile_max = 0, half_tile_cols
-    else:
-        x_tile_min, x_tile_max = half_tile_cols, grid_tile_cols
 
-    y_tile_min, y_tile_max = 0, grid_tile_rows
-
-    # 3. Path Generation
-    path_of_tiles = set()
-
-    if x_tile_min >= x_tile_max or y_tile_min >= y_tile_max:
-        return "23", "3", "{}", "[]", "[]", "[]"
-
-    current_tile_x = random.randint(x_tile_min, x_tile_max - 1)
-    current_tile_y = random.randint(y_tile_min, y_tile_max - 1)
-    path_of_tiles.add((current_tile_x, current_tile_y))
+    turns = random.randint(4, 12)
 
     # Calculate average segment length
     num_h_segments = (turns + 1) // 2
     num_v_segments = (turns + 1) - num_h_segments
-    avg_len_x = ((x_tile_max - x_tile_min) / (num_h_segments + 1)) if num_h_segments > 0 else 0
-    avg_len_y = ((y_tile_max - y_tile_min) / (num_v_segments + 1)) if num_v_segments > 0 else 0
+    avg_len_x = half_tile_cols / (num_h_segments + 1)
+    avg_len_y = grid_tile_rows / (num_v_segments + 1)
 
-    last_move_was_horizontal = random.choice([True, False])
-    last_direction_x = 0
-    last_direction_y = 0
+    approved = False
+    while not approved:
 
-    for _ in range(turns + 1):
-        segment_generated = False
-        
-        # Define the primary and secondary attempts based on the last move
-        if last_move_was_horizontal:
-            # Last was horizontal, so try vertical first
-            primary_attempt = {'is_horizontal': False, 'avg_len': avg_len_y}
-            secondary_attempt = {'is_horizontal': True, 'avg_len': avg_len_x}
-        else:
-            # Last was vertical, so try horizontal first
-            primary_attempt = {'is_horizontal': True, 'avg_len': avg_len_x}
-            secondary_attempt = {'is_horizontal': False, 'avg_len': avg_len_y}
+        max_moves = random.randint(35,120)
 
-        for attempt in [primary_attempt, secondary_attempt]:
-            max_len = max(1, int(random.uniform(0.7, 1.3) * attempt['avg_len']))
-            actual_length, direction, segment_tiles = _get_segment_props(
-                max_len, attempt['is_horizontal'], current_tile_x, current_tile_y, path_of_tiles,
-                last_direction_x, last_direction_y, grid_tile_rows, grid_tile_cols,
-                x_tile_min, x_tile_max, y_tile_min, y_tile_max
-            )
+        #########################################
+        ####### COLOR 1 RAILROAD TRACKS #########
 
-            if actual_length > 0:
-                path_of_tiles.update(segment_tiles)
-                if attempt['is_horizontal']:
-                    current_tile_x = segment_tiles[-1][0]
-                    last_direction_x = direction
-                    last_direction_y = 0
-                else:
-                    current_tile_y = segment_tiles[-1][1]
-                    last_direction_x = 0
-                    last_direction_y = direction
-                last_move_was_horizontal = attempt['is_horizontal']
-                segment_generated = True
-                break  # A segment was successfully generated, move to the next turn
+        # left half
+        x_tile_min, x_tile_max = 0, half_tile_cols
+        y_tile_min, y_tile_max = 0, grid_tile_rows
+        path_of_tiles1 = set()
 
-        if not segment_generated:
-            break  # No valid segment could be generated
+        current_tile_x = random.randint(x_tile_min, x_tile_max - 1)
+        current_tile_y = random.randint(y_tile_min, y_tile_max - 1)
+        path_of_tiles1.add((current_tile_x, current_tile_y))
+
+        last_move_was_horizontal = random.choice([True, False])
+        last_direction_x = 0
+        last_direction_y = 0
+
+        nmoves1 = 0
+        for _ in range(turns + 1):
+            segment_generated = False
+
+            # Define the primary and secondary attempts based on the last move
+            if last_move_was_horizontal:
+                # Last was horizontal, so try vertical first
+                primary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
+                secondary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
+            else:
+                # Last was vertical, so try horizontal first
+                primary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
+                secondary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
+
+            for attempt in [primary_attempt, secondary_attempt]:
+                max_len = max(1, int(random.uniform(0.7, 1.3) * attempt["avg_len"]))
+                moves_budget = max_moves - nmoves1
+                max_len = min(max_len, moves_budget)
+                actual_length, direction, segment_tiles = _get_segment_props(
+                    max_len,
+                    attempt["is_horizontal"],
+                    current_tile_x,
+                    current_tile_y,
+                    path_of_tiles1,
+                    last_direction_x,
+                    last_direction_y,
+                    grid_tile_rows,
+                    grid_tile_cols,
+                    x_tile_min,
+                    x_tile_max,
+                    y_tile_min,
+                    y_tile_max,
+
+                )
+                if actual_length > 0:
+                    path_of_tiles1.update(segment_tiles)
+                    if attempt["is_horizontal"]:
+                        current_tile_x = segment_tiles[-1][0]
+                        last_direction_x = direction
+                        last_direction_y = 0
+                    else:
+                        current_tile_y = segment_tiles[-1][1]
+                        last_direction_x = 0
+                        last_direction_y = direction
+                    last_move_was_horizontal = attempt["is_horizontal"]
+                    segment_generated = True
+                    nmoves1 += actual_length
+                    break
+
+            if not segment_generated:
+                break
+
+        #########################################
+        ####### COLOR 2 RAILROAD TRACKS #########
+
+        # right half
+        x_tile_min, x_tile_max = half_tile_cols, grid_tile_cols
+        y_tile_min, y_tile_max = 0, grid_tile_rows
+        path_of_tiles2 = set()
+
+        current_tile_x = random.randint(x_tile_min, x_tile_max - 1)
+        current_tile_y = random.randint(y_tile_min, y_tile_max - 1)
+        path_of_tiles2.add((current_tile_x, current_tile_y))
+
+        last_move_was_horizontal = random.choice([True, False])
+        last_direction_x = 0
+        last_direction_y = 0
+
+        nmoves2 = 0
+        for _ in range(turns + 1):
+            segment_generated = False
+
+            # Define the primary and secondary attempts based on the last move
+            if last_move_was_horizontal:
+                # Last was horizontal, so try vertical first
+                primary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
+                secondary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
+            else:
+                # Last was vertical, so try horizontal first
+                primary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
+                secondary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
+
+            for attempt in [primary_attempt, secondary_attempt]:
+                max_len = max(1, int(random.uniform(0.7, 1.3) * attempt["avg_len"]))
+                moves_budget = max_moves - nmoves2
+                max_len = min(max_len, moves_budget)
+                actual_length, direction, segment_tiles = _get_segment_props(
+                    max_len,
+                    attempt["is_horizontal"],
+                    current_tile_x,
+                    current_tile_y,
+                    path_of_tiles2,
+                    last_direction_x,
+                    last_direction_y,
+                    grid_tile_rows,
+                    grid_tile_cols,
+                    x_tile_min,
+                    x_tile_max,
+                    y_tile_min,
+                    y_tile_max,
+
+                )
+                if actual_length > 0:
+                    path_of_tiles2.update(segment_tiles)
+                    if attempt["is_horizontal"]:
+                        current_tile_x = segment_tiles[-1][0]
+                        last_direction_x = direction
+                        last_direction_y = 0
+                    else:
+                        current_tile_y = segment_tiles[-1][1]
+                        last_direction_x = 0
+                        last_direction_y = direction
+                    last_move_was_horizontal = attempt["is_horizontal"]
+                    segment_generated = True
+                    nmoves2 += actual_length
+                    break
+
+            if not segment_generated:
+                break
+
+        if nmoves1 == nmoves2:
+            approved = True
+
+    ###############################################
+    # TODO 3: make use of star.txt pattern/stamp here
 
     # 4. Translate tile path to cell coordinates and stamp stars
-    points = set()
     star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}
 
-    def stamp_star(center_x, center_y):
+    def stamp_star(center_x, center_y, points):
         for dx, dy in star_shape:
             points.add((center_x + dx, center_y + dy))
 
-    for tile_x, tile_y in path_of_tiles:
+    points1 = set()
+    for tile_x, tile_y in path_of_tiles1:
         center_x = tile_x * tile_width + (tile_width // 2)
         center_y = tile_y * tile_height + (tile_height // 2)
-        stamp_star(center_x, center_y)
+        stamp_star(center_x, center_y, points1)
+
+    points2 = set()
+    for tile_x, tile_y in path_of_tiles2:
+        center_x = tile_x * tile_width + (tile_width // 2)
+        center_y = tile_y * tile_height + (tile_height // 2)
+        stamp_star(center_x, center_y, points2)
+
+    # END TODO 3
+    ###############################################
+
+    ###############################################
+    # TODO 4: see if there is a utility function to convert
+    # a list of alive cells (x, y) to url format. if not, add one to utils.py,
+    # import it at the top of this file, and use it below.
 
     # 5. Serialize to URL format
-    pattern_rows = [
-        "".join("o" if (x_coord, y_coord) in points else "." for x_coord in range(cols))
+    pattern_rows1 = [
+        "".join("o" if (x_coord, y_coord) in points1 else "."
+        for x_coord in range(cols))
         for y_coord in range(rows)
     ]
 
-    s1, b1, c1 = pattern2url_chars(pattern_rows)
-    s2, b2, c2 = "[]", "[]", "[]"
+    pattern_rows2 = [
+        "".join("o" if (x_coord, y_coord) in points2 else "." 
+        for x_coord in range(cols))
+        for y_coord in range(rows)
+    ]
+
+    # END TODO 4
+    ###############################################
+
+    # s1, b1, c1 form a pattern for color 1 on one side of the grid.
+    # Now horiz flip it, give it some vertical jiggle, and assign to color2
+    s1, b1, c1 = pattern2url_chars(pattern_rows1)
+    s2, b2, c2 = pattern2url_chars(pattern_rows2) 
 
     return s1, b1, c1, s2, b2, c2
-
 
 def midnightexpress(rows, cols, seed=None):
     """
@@ -527,20 +739,19 @@ def midnightexpress(rows, cols, seed=None):
     # 1. Load ONE methuselah pattern to be used for all placements
 
     methuselah_names_numbers = [
-        ("escapingsatellites",  (2, 4)),
-        ("solarsail",           (1, 3)),
-        ("squarepair",           (1, 1)),
-        ("ylingrow96",           (1, 3)),
-        ("scaffoldunfusing",    (1, 2)),
-        ("backedupsink",        (1, 4)),
-        ("spaceship2platform",  (1, 2)),
+        ("escapingsatellites", (2, 4)),
+        ("solarsail", (1, 3)),
+        ("squarepair", (1, 1)),
+        ("ylingrow96", (1, 3)),
+        ("scaffoldunfusing", (1, 2)),
+        ("backedupsink", (1, 4)),
+        ("spaceship2platform", (1, 2)),
     ]
 
     chosen_meth = random.choice(methuselah_names_numbers)
     chosen_meth_name = chosen_meth[0]
     chosen_meth_number = chosen_meth[1]
     meth_pattern_str = get_pattern(chosen_meth_name)
-
 
     meth_height = 0
     meth_width = 0
@@ -580,10 +791,18 @@ def midnightexpress(rows, cols, seed=None):
     for i in range(start_pos, end_pos, spacing):
         for dx, dy in star_shape:
             # Point for track 1
-            p1 = (i + dx, track1_coord + dy) if is_horizontal_tracks else (track1_coord + dx, i + dy)
+            p1 = (
+                (i + dx, track1_coord + dy)
+                if is_horizontal_tracks
+                else (track1_coord + dx, i + dy)
+            )
             team1_points.add(p1)
             # Point for track 2
-            p2 = (i + dx, track2_coord + dy) if is_horizontal_tracks else (track2_coord + dx, i + dy)
+            p2 = (
+                (i + dx, track2_coord + dy)
+                if is_horizontal_tracks
+                else (track2_coord + dx, i + dy)
+            )
             team2_points.add(p2)
 
     # Define the bounding box for Methuselah placement
@@ -599,31 +818,38 @@ def midnightexpress(rows, cols, seed=None):
         methuselah_bbox_max_y = end_pos - 1
 
     # 3. Place Methuselahs if there is a valid pattern and space
-    if meth_pattern_str and methuselah_bbox_min_x <= methuselah_bbox_max_x and \
-       methuselah_bbox_min_y <= methuselah_bbox_max_y:
+    if (
+        meth_pattern_str
+        and methuselah_bbox_min_x <= methuselah_bbox_max_x
+        and methuselah_bbox_min_y <= methuselah_bbox_max_y
+    ):
 
         meth_initial_relative_points = set()
         if meth_height > 0 and meth_width > 0:
             for r_idx, row_str in enumerate(meth_pattern_str):
                 for c_idx, char in enumerate(row_str):
-                    if char == 'o':
+                    if char == "o":
                         meth_initial_relative_points.add((c_idx, r_idx))
 
-        if meth_initial_relative_points and \
-           methuselah_bbox_min_x <= methuselah_bbox_max_x and \
-           methuselah_bbox_min_y <= methuselah_bbox_max_y:
+        if (
+            meth_initial_relative_points
+            and methuselah_bbox_min_x <= methuselah_bbox_max_x
+            and methuselah_bbox_min_y <= methuselah_bbox_max_y
+        ):
 
             num_methuselahs_per_team = random.randint(*chosen_meth_number)
-            meth_to_place = [{'team': 1} for _ in range(num_methuselahs_per_team)] + \
-                              [{'team': 2} for _ in range(num_methuselahs_per_team)]
+            meth_to_place = [{"team": 1} for _ in range(num_methuselahs_per_team)] + [
+                {"team": 2} for _ in range(num_methuselahs_per_team)
+            ]
             random.shuffle(meth_to_place)
 
             all_occupied_points = team1_points.copy()
             all_occupied_points.update(team2_points)
 
             for meth_info in meth_to_place:
-                # Apply random transformation to the current methuselah instance
-                transformed_meth_points_relative = _apply_random_transformation(meth_initial_relative_points)
+                transformed_meth_points_relative = apply_random_transformation(
+                    meth_initial_relative_points
+                )
 
                 # Recalculate meth_width and meth_height based on the transformed pattern for this instance
                 current_meth_width = 0
@@ -635,9 +861,9 @@ def midnightexpress(rows, cols, seed=None):
                     max_y = max(p[1] for p in transformed_meth_points_relative)
                     current_meth_width = max_x - min_x + 1
                     current_meth_height = max_y - min_y + 1
-                
+
                 if current_meth_width == 0 or current_meth_height == 0:
-                    continue # Skip if transformation resulted in an empty pattern (shouldn't happen with current transformations, but for robustness)
+                    continue  # Skip if transformation resulted in an empty pattern (shouldn't happen with current transformations, but for robustness)
 
                 # Define placement area for this specific transformed methuselah
                 placement_min_x = methuselah_bbox_min_x
@@ -645,8 +871,11 @@ def midnightexpress(rows, cols, seed=None):
                 placement_min_y = methuselah_bbox_min_y
                 placement_max_y = methuselah_bbox_max_y - current_meth_height + 1
 
-                if placement_max_x < placement_min_x or placement_max_y < placement_min_y:
-                    continue # No valid placement area for this transformed methuselah
+                if (
+                    placement_max_x < placement_min_x
+                    or placement_max_y < placement_min_y
+                ):
+                    continue  # No valid placement area for this transformed methuselah
 
                 placed = False
                 attempts = 0
@@ -655,7 +884,7 @@ def midnightexpress(rows, cols, seed=None):
                 while not placed and attempts < max_attempts:
                     start_x = random.randint(placement_min_x, placement_max_x)
                     start_y = random.randint(placement_min_y, placement_max_y)
-                    
+
                     current_meth_absolute_points = set()
                     overlap_detected = False
                     for rel_x, rel_y in transformed_meth_points_relative:
@@ -666,7 +895,7 @@ def midnightexpress(rows, cols, seed=None):
                         current_meth_absolute_points.add((abs_x, abs_y))
 
                     if not overlap_detected:
-                        if meth_info['team'] == 1:
+                        if meth_info["team"] == 1:
                             team1_points.update(current_meth_absolute_points)
                         else:
                             team2_points.update(current_meth_absolute_points)
@@ -675,8 +904,8 @@ def midnightexpress(rows, cols, seed=None):
                     attempts += 1
 
     # 4. Convert team points to URL format
-    s1_output = _points_to_url(team1_points, rows, cols)
-    s2_output = _points_to_url(team2_points, rows, cols)
+    s1_output = points_to_url(team1_points, rows, cols)
+    s2_output = points_to_url(team2_points, rows, cols)
 
     return s1_output, "[]", "[]", s2_output, "[]", "[]"
 
@@ -692,11 +921,11 @@ def spaceelevator(rows, cols, seed=None):
     team1_points = set()
     team2_points = set()
 
-    star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)} # 5-cell star stamp
-    spacing = 3 # Spacing between star centers along the track, ensuring no overlap
+    star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}  # 5-cell star stamp
+    spacing = 3  # Spacing between star centers along the track, ensuring no overlap
 
     # 1. Determine track orientation and split the grid
-    is_horizontal_split = False # Tracks are always vertical
+    is_horizontal_split = False  # Tracks are always vertical
 
     # Calculate jitter once, applied symmetrically to both tracks
     jitter_amount_rows = int(0.1 * rows * (random.random() * 2 - 1))
@@ -707,14 +936,18 @@ def spaceelevator(rows, cols, seed=None):
         # Top half of the grid
         half_rows = rows // 2
         mid_row_half = half_rows // 2
-        track1_row_center = max(1, min(rows - 2, mid_row_half + jitter_amount_rows)) # Ensure star fits
+        track1_row_center = max(
+            1, min(rows - 2, mid_row_half + jitter_amount_rows)
+        )  # Ensure star fits
         for x_center in range(1, cols - 1, spacing):
             for dx, dy in star_shape:
                 team1_points.add((x_center + dx, track1_row_center + dy))
-    else: # Vertical split, left half of the grid
+    else:  # Vertical split, left half of the grid
         half_cols = cols // 2
         mid_col_half = half_cols // 2
-        track1_col_center = max(1, min(cols - 2, mid_col_half + jitter_amount_cols)) # Ensure star fits
+        track1_col_center = max(
+            1, min(cols - 2, mid_col_half + jitter_amount_cols)
+        )  # Ensure star fits
         for y_center in range(1, rows - 1, spacing):
             for dx, dy in star_shape:
                 team1_points.add((track1_col_center + dx, y_center + dy))
@@ -724,14 +957,18 @@ def spaceelevator(rows, cols, seed=None):
         # Bottom half of the grid
         half_rows = rows // 2
         mid_row_half = rows // 2 + half_rows // 2
-        track2_row_center = max(1, min(rows - 2, mid_row_half + jitter_amount_rows)) # Ensure star fits
+        track2_row_center = max(
+            1, min(rows - 2, mid_row_half + jitter_amount_rows)
+        )  # Ensure star fits
         for x_center in range(1, cols - 1, spacing):
             for dx, dy in star_shape:
                 team2_points.add((x_center + dx, track2_row_center + dy))
-    else: # Vertical split, right half of the grid
+    else:  # Vertical split, right half of the grid
         half_cols = cols // 2
         mid_col_half = cols // 2 + half_cols // 2
-        track2_col_center = max(1, min(cols - 2, mid_col_half + jitter_amount_cols)) # Ensure star fits
+        track2_col_center = max(
+            1, min(cols - 2, mid_col_half + jitter_amount_cols)
+        )  # Ensure star fits
         for y_center in range(1, rows - 1, spacing):
             for dx, dy in star_shape:
                 team2_points.add((track2_col_center + dx, y_center + dy))
@@ -741,7 +978,7 @@ def spaceelevator(rows, cols, seed=None):
         while True:
             start_x = random.randint(0, cols - 1)
             start_y = random.randint(0, rows - 1)
-            
+
             is_horizontal_shape = random.choice([True, False])
 
             if is_horizontal_shape:
@@ -749,13 +986,16 @@ def spaceelevator(rows, cols, seed=None):
                     continue
                 cell1 = (start_x, start_y)
                 cell2 = (start_x + 1, start_y)
-            else: # Vertical shape
+            else:  # Vertical shape
                 if start_y + 1 >= rows:
                     continue
                 cell1 = (start_x, start_y)
                 cell2 = (start_x, start_y + 1)
-            
-            if cell1 not in all_occupied_points_so_far and cell2 not in all_occupied_points_so_far:
+
+            if (
+                cell1 not in all_occupied_points_so_far
+                and cell2 not in all_occupied_points_so_far
+            ):
                 return {cell1, cell2}
 
     # Gather all points already occupied by tracks for overlap checking
@@ -764,16 +1004,16 @@ def spaceelevator(rows, cols, seed=None):
     # 2. Put one two-cell "oo" shape for color 1 (add to team1_points)
     shape1_cells = place_two_cell_shape(all_occupied_initial)
     team1_points.update(shape1_cells)
-    all_occupied_initial.update(shape1_cells) # Update occupied points for next check
+    all_occupied_initial.update(shape1_cells)  # Update occupied points for next check
 
     # 3. Put one two-cell "oo" shape for color 2 (add to team2_points)
-    shape2_cells = place_two_cell_shape(all_occupied_initial) 
+    shape2_cells = place_two_cell_shape(all_occupied_initial)
     team2_points.update(shape2_cells)
 
     # Convert to URL format
-    s1_output = _points_to_url(team1_points, rows, cols)
-    s2_output = _points_to_url(team2_points, rows, cols)
-    
+    s1_output = points_to_url(team1_points, rows, cols)
+    s2_output = points_to_url(team2_points, rows, cols)
+
     return s1_output, "[]", "[]", s2_output, "[]", "[]"
 
 
@@ -789,29 +1029,29 @@ def faradaycage(rows, cols, seed=None):
     team1_points = set()
     team2_points = set()
 
-    stamp_size = STAR_STAMP_WIDTH 
+    stamp_size = STAR_STAMP_WIDTH
 
     # Define the N x N pieces of the grid
     info = []
 
     # Calculate division points
-    N = random.choice(list(range(7,11)))
-    x_divs = [i * (cols // N) for i in range(N+1)]
-    y_divs = [i * (rows // N) for i in range(N+1)]
+    N = random.choice(list(range(7, 11)))
+    x_divs = [i * (cols // N) for i in range(N + 1)]
+    y_divs = [i * (rows // N) for i in range(N + 1)]
 
     for j in range(N):
         for i in range(N):
             x_start = x_divs[i]
             y_start = y_divs[j]
-            x_end = x_divs[i+1] if i < N-1 else cols
-            y_end = y_divs[j+1] if j < N-1 else rows
-            
+            x_end = x_divs[i + 1] if i < N - 1 else cols
+            y_end = y_divs[j + 1] if j < N - 1 else rows
+
             region = (x_start, y_start, x_end, y_end)
-            info.append({'id': f'{j}-{i}', 'region': region})
+            info.append({"id": f"{j}-{i}", "region": region})
 
     valid = []
     for piece in info:
-        x_start, y_start, x_end, y_end = piece['region']
+        x_start, y_start, x_end, y_end = piece["region"]
         # Check if the region is large enough to fit at least one stamp
         if (x_end - x_start >= stamp_size) and (y_end - y_start >= stamp_size):
             valid.append(piece)
@@ -825,8 +1065,12 @@ def faradaycage(rows, cols, seed=None):
     team2_faraday_info = chosen[1]
 
     # Fill Faraday cage regions with stamps
-    _fill_region_with_stamps(team1_points, team1_faraday_info['region'], stamp_size, rows, cols)
-    _fill_region_with_stamps(team2_points, team2_faraday_info['region'], stamp_size, rows, cols)
+    _fill_region_with_stamps(
+        team1_points, team1_faraday_info["region"], stamp_size, rows, cols
+    )
+    _fill_region_with_stamps(
+        team2_points, team2_faraday_info["region"], stamp_size, rows, cols
+    )
 
     # -------------------------------------
     # Chef's choice:
@@ -834,36 +1078,42 @@ def faradaycage(rows, cols, seed=None):
     # - Type 2: add one extra star stamp of opp color, somewhere on the perimeter
     # - Type 3: add N alive cells somewhere on the perimeter, N random locations
 
-    #chefs_choice = random.choice([1, 2, 3])
-    #chefs_choice = 1
-    #chefs_choice = 2
+    # chefs_choice = random.choice([1, 2, 3])
+    # chefs_choice = 1
+    # chefs_choice = 2
     chefs_choice = 3
 
     # Initial occupied points after filling Faraday cages
     all_occupied_points = team1_points.union(team2_points)
 
-    if chefs_choice==1:
+    if chefs_choice == 1:
         team1_methuselah_info = chosen[2]
         team2_methuselah_info = chosen[3]
 
         # Place methuselah for team 1
-        methuselah1_points = _place_oo_methuselah(team1_methuselah_info['region'], all_occupied_points, rows, cols)
+        methuselah1_points = _place_oo_methuselah(
+            team1_methuselah_info["region"], all_occupied_points, rows, cols
+        )
         if methuselah1_points:
             team1_points.update(methuselah1_points)
-            all_occupied_points.update(methuselah1_points) # Update occupied points for next placement
+            all_occupied_points.update(
+                methuselah1_points
+            )  # Update occupied points for next placement
 
         # Place methuselah for team 2
-        methuselah2_points = _place_oo_methuselah(team2_methuselah_info['region'], all_occupied_points, rows, cols)
+        methuselah2_points = _place_oo_methuselah(
+            team2_methuselah_info["region"], all_occupied_points, rows, cols
+        )
         if methuselah2_points:
-            team2_points.update(methuselah2_points) 
+            team2_points.update(methuselah2_points)
 
-    elif chefs_choice==2:
+    elif chefs_choice == 2:
         # TODO:
         # - determine the perimeter of the faraday cage, the tiled 3x3 star stamp
         # - add one 3x3 star stamp that is a DIRECT neighbor of the faraday cage, at a random location on the perimeter.
         pass
 
-    elif chefs_choice==3:
+    elif chefs_choice == 3:
         # This choice is made AFTER team1_points and team2_points have been filled
         # with their respective Faraday cage stamps.
 
@@ -883,31 +1133,41 @@ def faradaycage(rows, cols, seed=None):
             y = min_y_t1 - 1
             if 0 <= y < rows:
                 for x in range(min_x_t1, max_x_t1 + 1):
-                    if 0 <= x < cols: perimeter_candidates_t1.add((x, y))
+                    if 0 <= x < cols:
+                        perimeter_candidates_t1.add((x, y))
             # Bottom perimeter
             y = max_y_t1 + 1
             if 0 <= y < rows:
                 for x in range(min_x_t1, max_x_t1 + 1):
-                     if 0 <= x < cols: perimeter_candidates_t1.add((x, y))
+                    if 0 <= x < cols:
+                        perimeter_candidates_t1.add((x, y))
             # Left perimeter
             x = min_x_t1 - 1
             if 0 <= x < cols:
                 for y in range(min_y_t1, max_y_t1 + 1):
-                    if 0 <= y < rows: perimeter_candidates_t1.add((x, y))
+                    if 0 <= y < rows:
+                        perimeter_candidates_t1.add((x, y))
             # Right perimeter
             x = max_x_t1 + 1
             if 0 <= x < cols:
                 for y in range(min_y_t1, max_y_t1 + 1):
-                    if 0 <= y < rows: perimeter_candidates_t1.add((x, y))
-            
-            final_perimeter_points_team1 = {p for p in perimeter_candidates_t1 if p not in all_occupied_points}
-        
+                    if 0 <= y < rows:
+                        perimeter_candidates_t1.add((x, y))
+
+            final_perimeter_points_team1 = {
+                p for p in perimeter_candidates_t1 if p not in all_occupied_points
+            }
+
         # Add cells to team 1
         if final_perimeter_points_team1:
-            num_to_place_t1 = min(num_cells_to_add_per_team, len(final_perimeter_points_team1))
-            cells_to_add_t1 = random.sample(list(final_perimeter_points_team1), num_to_place_t1)
+            num_to_place_t1 = min(
+                num_cells_to_add_per_team, len(final_perimeter_points_team1)
+            )
+            cells_to_add_t1 = random.sample(
+                list(final_perimeter_points_team1), num_to_place_t1
+            )
             team1_points.update(cells_to_add_t1)
-        
+
         # --- Process Team 2's perimeter ---
         current_all_occupied_points = team1_points.union(team2_points)
         final_perimeter_points_team2 = set()
@@ -922,33 +1182,45 @@ def faradaycage(rows, cols, seed=None):
             y = min_y_t2 - 1
             if 0 <= y < rows:
                 for x in range(min_x_t2, max_x_t2 + 1):
-                    if 0 <= x < cols: perimeter_candidates_t2.add((x, y))
+                    if 0 <= x < cols:
+                        perimeter_candidates_t2.add((x, y))
             # Bottom perimeter
             y = max_y_t2 + 1
             if 0 <= y < rows:
                 for x in range(min_x_t2, max_x_t2 + 1):
-                     if 0 <= x < cols: perimeter_candidates_t2.add((x, y))
+                    if 0 <= x < cols:
+                        perimeter_candidates_t2.add((x, y))
             # Left perimeter
             x = min_x_t2 - 1
             if 0 <= x < cols:
                 for y in range(min_y_t2, max_y_t2 + 1):
-                    if 0 <= y < rows: perimeter_candidates_t2.add((x, y))
+                    if 0 <= y < rows:
+                        perimeter_candidates_t2.add((x, y))
             # Right perimeter
             x = max_x_t2 + 1
             if 0 <= x < cols:
                 for y in range(min_y_t2, max_y_t2 + 1):
-                    if 0 <= y < rows: perimeter_candidates_t2.add((x, y))
+                    if 0 <= y < rows:
+                        perimeter_candidates_t2.add((x, y))
 
-            final_perimeter_points_team2 = {p for p in perimeter_candidates_t2 if p not in current_all_occupied_points}
+            final_perimeter_points_team2 = {
+                p
+                for p in perimeter_candidates_t2
+                if p not in current_all_occupied_points
+            }
 
         # Add cells to team 2
         if final_perimeter_points_team2:
-            num_to_place_t2 = min(num_cells_to_add_per_team, len(final_perimeter_points_team2))
-            cells_to_add_t2 = random.sample(list(final_perimeter_points_team2), num_to_place_t2)
+            num_to_place_t2 = min(
+                num_cells_to_add_per_team, len(final_perimeter_points_team2)
+            )
+            cells_to_add_t2 = random.sample(
+                list(final_perimeter_points_team2), num_to_place_t2
+            )
             team2_points.update(cells_to_add_t2)
-    
-    s1 = _points_to_url(team1_points, rows, cols)
-    s2 = _points_to_url(team2_points, rows, cols)
+
+    s1 = points_to_url(team1_points, rows, cols)
+    s2 = points_to_url(team2_points, rows, cols)
 
     return s1, "[]", "[]", s2, "[]", "[]"
 
