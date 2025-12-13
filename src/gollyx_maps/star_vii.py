@@ -310,7 +310,7 @@ def _place_oo_methuselah(region, occupied_points, rows, cols):
     return set()  # Could not place
 
 
-def _fill_region_with_stamps(target_points_set, region, stamp_size, rows, cols):
+def _faraday_fill_region(target_points_set, region, stamp_size, rows, cols):
     rx_start, ry_start, rx_end, ry_end = region
 
     # Iterate through the region, placing stamp_size x stamp_size blocks
@@ -367,9 +367,6 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
         ):
             if 0 <= sy < rows and 0 <= sy + stamp_height - 1 < rows:
                 potential_coords.add((sx, sy))
-
-
-
 
 
 ##############################################################################################
@@ -730,8 +727,7 @@ def twochoochoo(rows, cols, seed=None):
 
 def midnightexpress(rows, cols, seed=None):
     """
-    Creates two parallel tracks of stars with Methuselah patterns scattered
-    between them, resembling a "midnight express" train scenario.
+    Creates two parallel tracks of stars with Methuselah patterns scattered between them
     """
     if seed is not None:
         random.seed(seed)
@@ -913,102 +909,136 @@ def midnightexpress(rows, cols, seed=None):
 def spaceelevator(rows, cols, seed=None):
     """
     Creates a "space elevator" track of stars across the grid,
-    with two adjacent Methuselah cells poised to interact with it.
+    with two adjacent methuselah cells poised to interact with it.
     """
     if seed is not None:
         random.seed(seed)
 
     team1_points = set()
     team2_points = set()
+    all_occupied_points = set()
 
+    #################################################
+    # TODO 1: Fix this to use common star.txt pattern
     star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}  # 5-cell star stamp
     spacing = 3  # Spacing between star centers along the track, ensuring no overlap
+    # END TODO 1
+    #################################################
 
-    # 1. Determine track orientation and split the grid
+    # 1. Track orientation, grid split
     is_horizontal_split = False  # Tracks are always vertical
 
-    # Calculate jitter once, applied symmetrically to both tracks
-    jitter_amount_rows = int(0.1 * rows * (random.random() * 2 - 1))
-    jitter_amount_cols = int(0.1 * cols * (random.random() * 2 - 1))
+    xjitter = random.randint(-12, 12)
 
     # Generate Track 1 (for team1_points)
-    if is_horizontal_split:
-        # Top half of the grid
-        half_rows = rows // 2
-        mid_row_half = half_rows // 2
-        track1_row_center = max(
-            1, min(rows - 2, mid_row_half + jitter_amount_rows)
-        )  # Ensure star fits
-        for x_center in range(1, cols - 1, spacing):
-            for dx, dy in star_shape:
-                team1_points.add((x_center + dx, track1_row_center + dy))
-    else:  # Vertical split, left half of the grid
-        half_cols = cols // 2
-        mid_col_half = half_cols // 2
-        track1_col_center = max(
-            1, min(cols - 2, mid_col_half + jitter_amount_cols)
-        )  # Ensure star fits
-        for y_center in range(1, rows - 1, spacing):
-            for dx, dy in star_shape:
-                team1_points.add((track1_col_center + dx, y_center + dy))
+    half_cols = cols // 2
+    mid_col_half = half_cols // 2
+    track1_xloc = max(
+        1, min(cols - 2, mid_col_half + xjitter)
+    )
+    for y_center in range(1, rows - 1, spacing):
+        for dx, dy in star_shape:
+            p = (track1_xloc + dx, y_center + dy)
+            team1_points.add(p)
+            all_occupied_points.add(p)
 
     # Generate Track 2 (for team2_points)
-    if is_horizontal_split:
-        # Bottom half of the grid
-        half_rows = rows // 2
-        mid_row_half = rows // 2 + half_rows // 2
-        track2_row_center = max(
-            1, min(rows - 2, mid_row_half + jitter_amount_rows)
-        )  # Ensure star fits
-        for x_center in range(1, cols - 1, spacing):
-            for dx, dy in star_shape:
-                team2_points.add((x_center + dx, track2_row_center + dy))
-    else:  # Vertical split, right half of the grid
-        half_cols = cols // 2
-        mid_col_half = cols // 2 + half_cols // 2
-        track2_col_center = max(
-            1, min(cols - 2, mid_col_half + jitter_amount_cols)
-        )  # Ensure star fits
-        for y_center in range(1, rows - 1, spacing):
-            for dx, dy in star_shape:
-                team2_points.add((track2_col_center + dx, y_center + dy))
+    half_cols = cols // 2
+    mid_col_half = cols // 2 + half_cols // 2
+    track2_xloc = max(
+        1, min(cols - 2, mid_col_half + xjitter)
+    )  # Ensure star fits
+    for y_center in range(1, rows - 1, spacing):
+        for dx, dy in star_shape:
+            p = (track2_xloc + dx, y_center + dy)
+            team2_points.add(p)
+            all_occupied_points.add(p)
 
-    # Helper function to place a two-cell shape
-    def place_two_cell_shape(all_occupied_points_so_far):
-        while True:
-            start_x = random.randint(0, cols - 1)
-            start_y = random.randint(0, rows - 1)
+    # -------------------------------------
+    # Chef's choice:
+    # - Type 1: 1 oo methuselah somewhere on the grid
+    # - Type 2: add one extra star stamp of opp color, somewhere on the perimeter
+    # - Type 3: add N alive cells somewhere on the perimeter, N random locations
 
-            is_horizontal_shape = random.choice([True, False])
+    # chefs_choice = random.choice([1, 2, 3])
+    # chefs_choice = 1
+    chefs_choice = 2
+    # chefs_choice = 3
 
-            if is_horizontal_shape:
-                if start_x + 1 >= cols:
-                    continue
-                cell1 = (start_x, start_y)
-                cell2 = (start_x + 1, start_y)
-            else:  # Vertical shape
-                if start_y + 1 >= rows:
-                    continue
-                cell1 = (start_x, start_y)
-                cell2 = (start_x, start_y + 1)
+    if chefs_choice == 1:
+        buffer = 3
+        team1_methuselah_region = 0+buffer, 0+buffer, cols-buffer, rows-buffer
+        team2_methuselah_region = 0+buffer, 0+buffer, cols-buffer, rows-buffer 
 
-            if (
-                cell1 not in all_occupied_points_so_far
-                and cell2 not in all_occupied_points_so_far
-            ):
-                return {cell1, cell2}
+        # Place methuselah for team 1
+        methuselah1_points = _place_oo_methuselah(
+            team1_methuselah_region, all_occupied_points, rows, cols
+        )
+        if methuselah1_points:
+            team1_points.update(methuselah1_points)
+            all_occupied_points.update(
+                methuselah1_points
+            )  # Update occupied points for next placement
 
-    # Gather all points already occupied by tracks for overlap checking
-    all_occupied_initial = team1_points.union(team2_points)
+        # Place methuselah for team 2
+        methuselah2_points = _place_oo_methuselah(
+            team2_methuselah_region, all_occupied_points, rows, cols
+        )
+        if methuselah2_points:
+            team2_points.update(methuselah2_points)
 
-    # 2. Put one two-cell "oo" shape for color 1 (add to team1_points)
-    shape1_cells = place_two_cell_shape(all_occupied_initial)
-    team1_points.update(shape1_cells)
-    all_occupied_initial.update(shape1_cells)  # Update occupied points for next check
+    elif chefs_choice == 2:
+        # Add some 3x3 star stamps that are DIRECT neighbors of the space elevator track
+        nstars = random.randint(3, 10)
+        buffer = 3
 
-    # 3. Put one two-cell "oo" shape for color 2 (add to team2_points)
-    shape2_cells = place_two_cell_shape(all_occupied_initial)
-    team2_points.update(shape2_cells)
+        star_points1 = set()
+        star_points2 = set()
+
+        for _ in range(nstars):
+            xloc = track1_xloc
+            xjitter = random.choice([-3, 3])
+            yloc = random.randint(0+buffer, rows-buffer) 
+            p = (xloc + xjitter - 1, yloc)
+            star_points1.add(p)
+
+        for _ in range(nstars):
+            xloc = track2_xloc
+            xjitter = random.choice([-3, 3])
+            yloc = random.randint(0+buffer, rows-buffer) 
+            p = (xloc + xjitter -1, yloc)
+            star_points2.add(p)
+
+        for (x, y) in star_points1:
+            for dx, dy in STAR_3X3_RELATIVE_POINTS:
+                # Ensure points are within the overall grid boundaries (rows, cols)
+                if 0 <= (x + dx) < cols and 0 <= (y + dy) < rows:
+                    team1_points.add((x + dx, y + dy))
+
+        for (x, y) in star_points2:
+            for dx, dy in STAR_3X3_RELATIVE_POINTS:
+                # Ensure points are within the overall grid boundaries (rows, cols)
+                if 0 <= (x + dx) < cols and 0 <= (y + dy) < rows:
+                    team2_points.add((x + dx, y + dy))
+
+    elif chefs_choice == 3:
+        # Add random points around the perimeter of the elevators
+        ncells = random.randint(15, 35)
+        buffer = 3
+
+        for _ in range(ncells):
+            xloc = track1_xloc
+            xjitter = random.choice([-2, 2])
+            yloc = random.randint(0+buffer, rows-buffer) 
+            p = (xloc + xjitter, yloc)
+            team1_points.add(p)
+
+        for _ in range(ncells):
+            xloc = track2_xloc
+            xjitter = random.choice([-2, 2])
+            yloc = random.randint(0+buffer, rows-buffer) 
+            p = (xloc + xjitter, yloc)
+            team2_points.add(p)
 
     # Convert to URL format
     s1_output = points_to_url(team1_points, rows, cols)
@@ -1031,8 +1061,8 @@ def faradaycage(rows, cols, seed=None):
 
     stamp_size = STAR_STAMP_WIDTH
 
-    # Define the N x N pieces of the grid
-    info = []
+    # Define the N x N regions of the grid
+    regions = []
 
     # Calculate division points
     N = random.choice(list(range(7, 11)))
@@ -1047,29 +1077,29 @@ def faradaycage(rows, cols, seed=None):
             y_end = y_divs[j + 1] if j < N - 1 else rows
 
             region = (x_start, y_start, x_end, y_end)
-            info.append({"id": f"{j}-{i}", "region": region})
+            regions.append(region)
 
     valid = []
-    for piece in info:
-        x_start, y_start, x_end, y_end = piece["region"]
+    for region in regions:
+        x_start, y_start, x_end, y_end = region
         # Check if the region is large enough to fit at least one stamp
         if (x_end - x_start >= stamp_size) and (y_end - y_start >= stamp_size):
-            valid.append(piece)
+            valid.append(region)
 
     # -------------------
     # Faraday region:
 
     # Select four regions to fill with stamps and ...something else
     chosen = random.sample(valid, 4)
-    team1_faraday_info = chosen[0]
-    team2_faraday_info = chosen[1]
+    team1_faraday_region = chosen[0]
+    team2_faraday_region = chosen[1]
 
     # Fill Faraday cage regions with stamps
-    _fill_region_with_stamps(
-        team1_points, team1_faraday_info["region"], stamp_size, rows, cols
+    _faraday_fill_region(
+        team1_points, team1_faraday_region, stamp_size, rows, cols
     )
-    _fill_region_with_stamps(
-        team2_points, team2_faraday_info["region"], stamp_size, rows, cols
+    _faraday_fill_region(
+        team2_points, team2_faraday_region, stamp_size, rows, cols
     )
 
     # -------------------------------------
