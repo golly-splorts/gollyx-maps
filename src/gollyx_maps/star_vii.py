@@ -16,6 +16,7 @@ def get_star_vii_pattern_function_map():
         "midnightexpress": midnightexpress,
         "spaceelevator": spaceelevator,
         "faradaycage": faradaycage,
+        "housewithears": housewithears,
         # "ironhorse": ironhorse,
         # "deadendterminal": deadendterminal,
         # "bando": bando,
@@ -287,11 +288,12 @@ def _get_segment_props(
     return selected_option[0], selected_option[2], selected_option[3]
 
 
-def _place_oo_methuselah(region, occupied_points, rows, cols):
+def _place_oo_methuselah(region, occupied_points, rows, cols, n=1):
     x_start, y_start, x_end, y_end = region
     # Check if empty region
     if x_start >= x_end or y_start >= y_end:
-        return set()
+        err = "Error: no region to place oo methuselah"
+        raise GollyXMapsError(err)
     for _ in range(100):  # max attempts to place
         px = random.randint(x_start, x_end - 1)
         py = random.randint(y_start, y_end - 1)
@@ -307,11 +309,14 @@ def _place_oo_methuselah(region, occupied_points, rows, cols):
         cell2 = neighbor
         if cell1 not in occupied_points and cell2 not in occupied_points:
             return {cell1, cell2}
-    return set()  # Could not place
+
+    err = "Error: could not find anywhere to place oo methuselah"
+    raise GollyXMapsError(err)
 
 
-def _faraday_fill_region(target_points_set, region, stamp_size, rows, cols):
+def _faraday_fill_region(target_points_set, region, rows, cols):
     rx_start, ry_start, rx_end, ry_end = region
+    stamp_size = STAR_STAMP_WIDTH
 
     # Iterate through the region, placing stamp_size x stamp_size blocks
     # The loop range ensures that the entire stamp fits within the region bounds
@@ -382,12 +387,12 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###         random.seed(seed)
 ### 
 ###     ###############################################
-###     # TODO 2: make use of star.txt pattern/stamp here
+###     # TODO: make use of star.txt pattern/stamp here
 ### 
 ###     tile_width  = 3
 ###     tile_height = 3
 ### 
-###     # END TODO 2
+###     # END TODO
 ###     ###############################################
 ### 
 ###     # 1. Define the tile grid dimensions
@@ -470,7 +475,7 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###             break
 ### 
 ###     ###############################################
-###     # TODO 3: make use of star.txt pattern/stamp here
+###     # TODO: make use of star.txt pattern/stamp here
 ### 
 ###     # 4. Translate tile path to cell coordinates and stamp stars
 ###     points = set()
@@ -485,11 +490,11 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###         center_y = tile_y * tile_height + (tile_height // 2)
 ###         stamp_star(center_x, center_y)
 ### 
-###     # END TODO 3
+###     # END TODO 
 ###     ###############################################
 ### 
 ###     ###############################################
-###     # TODO 4: see if there is a utility function to convert
+###     # TODO: see if there is a utility function to convert
 ###     # a list of alive cells (x, y) to url format. if not, add one to utils.py,
 ###     # import it at the top of this file, and use it below.
 ### 
@@ -499,7 +504,7 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###         for y_coord in range(rows)
 ###     ]
 ### 
-###     # END TODO 4
+###     # END TODO
 ###     ###############################################
 ### 
 ###     # s1, b1, c1 form a pattern for color 1 on one side of the grid.
@@ -673,7 +678,7 @@ def twochoochoo(rows, cols, seed=None):
             approved = True
 
     ###############################################
-    # TODO 3: make use of star.txt pattern/stamp here
+    # TODO: make use of star.txt pattern/stamp here
 
     # 4. Translate tile path to cell coordinates and stamp stars
     star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}
@@ -694,11 +699,11 @@ def twochoochoo(rows, cols, seed=None):
         center_y = tile_y * tile_height + (tile_height // 2)
         stamp_star(center_x, center_y, points2)
 
-    # END TODO 3
+    # END TODO
     ###############################################
 
     ###############################################
-    # TODO 4: see if there is a utility function to convert
+    # TODO: see if there is a utility function to convert
     # a list of alive cells (x, y) to url format. if not, add one to utils.py,
     # import it at the top of this file, and use it below.
 
@@ -715,7 +720,7 @@ def twochoochoo(rows, cols, seed=None):
         for y_coord in range(rows)
     ]
 
-    # END TODO 4
+    # END TODO
     ###############################################
 
     # s1, b1, c1 form a pattern for color 1 on one side of the grid.
@@ -919,10 +924,10 @@ def spaceelevator(rows, cols, seed=None):
     all_occupied_points = set()
 
     #################################################
-    # TODO 1: Fix this to use common star.txt pattern
+    # TODO: Fix this to use common star.txt pattern
     star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}  # 5-cell star stamp
     spacing = 3  # Spacing between star centers along the track, ensuring no overlap
-    # END TODO 1
+    # END TODO
     #################################################
 
     # 1. Track orientation, grid split
@@ -960,9 +965,9 @@ def spaceelevator(rows, cols, seed=None):
     # - Type 2: add one extra star stamp of opp color, somewhere on the perimeter
     # - Type 3: add N alive cells somewhere on the perimeter, N random locations
 
-    # chefs_choice = random.choice([1, 2, 3])
+    chefs_choice = random.choice([1, 2, 3])
     # chefs_choice = 1
-    chefs_choice = 2
+    # chefs_choice = 2
     # chefs_choice = 3
 
     if chefs_choice == 1:
@@ -1074,16 +1079,9 @@ def faradaycage(rows, cols, seed=None):
             y_start = y_divs[j]
             x_end = x_divs[i + 1] if i < N - 1 else cols
             y_end = y_divs[j + 1] if j < N - 1 else rows
-
-            region = (x_start, y_start, x_end, y_end)
-            regions.append(region)
-
-    valid = []
-    for region in regions:
-        x_start, y_start, x_end, y_end = region
-        # Check if the region is large enough to fit at least one stamp
-        if (x_end - x_start >= stamp_size) and (y_end - y_start >= stamp_size):
-            valid.append(region)
+            if (x_end - x_start >= stamp_size) and (y_end - y_start >= stamp_size):
+                region = (x_start, y_start, x_end, y_end)
+                regions.append(region)
 
     # -------------------
     # Faraday region:
@@ -1104,13 +1102,11 @@ def faradaycage(rows, cols, seed=None):
     # -------------------------------------
     # Chef's choice:
     # - Type 1: 1 oo methuselah somewhere on the grid
-    # - Type 2: add one extra star stamp of opp color, somewhere on the perimeter
-    # - Type 3: add N alive cells somewhere on the perimeter, N random locations
+    # - Type 2: add N alive cells somewhere on the perimeter, N random locations
 
-    # chefs_choice = random.choice([1, 2, 3])
+    chefs_choice = random.choice([1, 2])
     # chefs_choice = 1
     # chefs_choice = 2
-    chefs_choice = 3
 
     # Initial occupied points after filling Faraday cages
     all_occupied_points = team1_points.union(team2_points)
@@ -1137,12 +1133,6 @@ def faradaycage(rows, cols, seed=None):
             team2_points.update(methuselah2_points)
 
     elif chefs_choice == 2:
-        # TODO:
-        # - determine the perimeter of the faraday cage, the tiled 3x3 star stamp
-        # - add one 3x3 star stamp that is a DIRECT neighbor of the faraday cage, at a random location on the perimeter.
-        pass
-
-    elif chefs_choice == 3:
         # This choice is made AFTER team1_points and team2_points have been filled
         # with their respective Faraday cage stamps.
 
@@ -1252,6 +1242,178 @@ def faradaycage(rows, cols, seed=None):
     s2 = points_to_url(team2_points, rows, cols)
 
     return s1, "[]", "[]", s2, "[]", "[]"
+
+
+def housewithears(rows, cols, seed=None):
+    """
+    Make a house with ears (similar to Faraday cage, but slightly different)
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    team1_points = set()
+    team2_points = set()
+
+    team1_b = set()
+    team2_b = set()
+
+    team1_c = set()
+    team2_c = set()
+
+    pbuff = 2
+
+    # --------------------------------
+    # The House
+
+    # Calculate valid house regions
+    N = random.choice(list(range(16, 20)))
+    x_divs = [i * (cols // N) for i in range(N + 1)]
+    y_divs = [i * (rows // N) for i in range(N + 1)]
+
+    valid = []
+    for j in range(N):
+        for i in range(N):
+            x_start = x_divs[i]
+            y_start = y_divs[j]
+            x_end = x_divs[i + 1] if i < N - 1 else cols
+            y_end = y_divs[j + 1] if j < N - 1 else rows
+            if x_start > pbuff and x_end < cols - pbuff:
+                if y_start > pbuff and y_end < rows - pbuff:
+                    region = (x_start, y_start, x_end, y_end)
+                    valid.append(region)
+
+    chosen = random.sample(valid, 4)
+    team1_faraday_region = chosen[0]
+    team2_faraday_region = chosen[1]
+
+    _faraday_fill_region(
+        team1_points, team1_faraday_region, rows, cols
+    )
+    _faraday_fill_region(
+        team2_points, team2_faraday_region, rows, cols
+    )
+
+    # --------------------------------
+    # The Ears
+
+    all_occupied_points = team1_points.union(team2_points)
+
+    # Add ears/horns/etc
+    for (team_points, team_points_b, team_points_c, region) in [
+            (team1_points, team1_b, team1_c, chosen[2]),
+            (team2_points, team2_b, team2_c, chosen[3])
+    ]:
+        min_x = min(p[0] for p in team_points)
+        max_x = max(p[0] for p in team_points)
+        min_y = min(p[1] for p in team_points)
+        max_y = max(p[1] for p in team_points)
+
+        if random.getrandbits(1)==1:
+
+            # Top and bottom perimeters
+            top_perimeter_candidates = set()
+            y = min_y - 1
+            if pbuff <= y < rows-pbuff:
+                for x in range(min_x, max_x + 1):
+                    if pbuff <= x < cols-pbuff:
+                        top_perimeter_candidates.add((x, y))
+            top_perimeter_points = {p for p in top_perimeter_candidates if p not in all_occupied_points}
+
+            bot_perimeter_candidates = set()
+            y = max_y + 1
+            if pbuff <= y < rows-pbuff:
+                for x in range(min_x, max_x + 1):
+                    if pbuff <= x < cols-pbuff:
+                        bot_perimeter_candidates.add((x, y))
+            bot_perimeter_points = {p for p in bot_perimeter_candidates if p not in all_occupied_points}
+
+            if len(top_perimeter_points)==0 or len(bot_perimeter_points)==0:
+                err = "Error: no perimeter points found"
+                raise GollyXMapsError(err)
+
+            # Top ears
+            (x_, y_) = random.choice(list(top_perimeter_points))
+            p = (x_, y_)
+            pb = (x_-1, y_-1)
+            pc = (x_-2, y_-1)
+            team_points.update([p])
+            team_points_b.update([pb])
+            team_points_c.update([pc])
+            all_occupied_points.update([p, pb, pc])
+
+            # Bottom ears
+            (x_, y_) = random.choice(list(bot_perimeter_points))
+            p = (x_, y_)
+            pb = (x_-1, y_+1)
+            pc = (x_-2, y_+1)
+            team_points.update([p])
+            team_points_b.update([pb])
+            team_points_c.update([pc])
+            all_occupied_points.update([p, pb, pc])
+
+
+        else:
+
+            # Left and right perimeters
+            # "top" is actually left
+            top_perimeter_candidates = set()
+            x = min_x - 1
+            if pbuff <= x < cols-pbuff:
+                for y in range(min_y, max_y + 1):
+                    if pbuff <= y < rows-pbuff:
+                        top_perimeter_candidates.add((x, y))
+            top_perimeter_points = {p for p in top_perimeter_candidates if p not in all_occupied_points}
+
+            # "bot" is actually right
+            bot_perimeter_candidates = set()
+            x = max_x + 1
+            if pbuff <= x < cols-pbuff:
+                for y in range(min_y, max_y + 1):
+                    if pbuff <= y < cols-pbuff:
+                        bot_perimeter_candidates.add((x, y))
+            bot_perimeter_points = {p for p in bot_perimeter_candidates if p not in all_occupied_points}
+
+            if len(top_perimeter_points)==0 or len(bot_perimeter_points)==0:
+                err = "Error: no perimeter points found"
+                raise GollyXMapsError(err)
+
+            # Top ears
+            (x_, y_) = random.choice(list(top_perimeter_points))
+            p = (x_, y_)
+            pb = (x_-1, y_-1)
+            pc = (x_-1, y_-2)
+            team_points.update([p])
+            team_points_b.update([pb])
+            team_points_c.update([pc])
+            all_occupied_points.update([p, pb, pc])
+
+            # Bottom ears
+            (x_, y_) = random.choice(list(bot_perimeter_points))
+            p = (x_, y_)
+            pb = (x_+1, y_+1)
+            pc = (x_+1, y_+2)
+            team_points.update([p])
+            team_points_b.update([pb])
+            team_points_c.update([pc])
+            all_occupied_points.update([p, pb, pc])
+
+        for _ in range(2):
+            methuselah_points = _place_oo_methuselah(
+                region, all_occupied_points, rows, cols
+            )
+            team_points.update(methuselah_points)
+            all_occupied_points.update(methuselah_points)
+
+    s1 = points_to_url(team1_points, rows, cols)
+    s2 = points_to_url(team2_points, rows, cols)
+
+    b1 = points_to_url(team1_b, rows, cols, char="b")
+    b2 = points_to_url(team2_b, rows, cols, char="b")
+
+    c1 = points_to_url(team1_c, rows, cols, char="c")
+    c2 = points_to_url(team2_c, rows, cols, char="c")
+
+    return s1, b1, c1, s2, b2, c2
 
 
 def ironhorse(rows, cols, seed=None):
