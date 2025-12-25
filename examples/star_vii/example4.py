@@ -10,6 +10,9 @@ rows = 160
 cols = 240
 
 
+# Added this as a new pattern, ringaroundtherosy
+
+
 if __name__ == "__main__":
 
     team1_pattern = """
