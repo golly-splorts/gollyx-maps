@@ -431,20 +431,20 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###     """
 ###     if seed is not None:
 ###         random.seed(seed)
-### 
+###
 ###     ###############################################
 ###     # TODO: make use of star.txt pattern/stamp here
-### 
+###
 ###     tile_width  = 3
 ###     tile_height = 3
-### 
+###
 ###     # END TODO
 ###     ###############################################
-### 
+###
 ###     # 1. Define the tile grid dimensions
 ###     grid_tile_rows = rows // tile_height
 ###     grid_tile_cols = cols // tile_width
-### 
+###
 ###     # 2. Choose half and define tile boundaries
 ###     use_left_half = random.choice([True, False])
 ###     half_tile_cols = grid_tile_cols // 2
@@ -452,29 +452,29 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###         x_tile_min, x_tile_max = 0, half_tile_cols
 ###     else:
 ###         x_tile_min, x_tile_max = half_tile_cols, grid_tile_cols
-### 
+###
 ###     y_tile_min, y_tile_max = 0, grid_tile_rows
-### 
+###
 ###     # 3. Path Generation
 ###     path_of_tiles = set()
-### 
+###
 ###     current_tile_x = random.randint(x_tile_min, x_tile_max - 1)
 ###     current_tile_y = random.randint(y_tile_min, y_tile_max - 1)
 ###     path_of_tiles.add((current_tile_x, current_tile_y))
-### 
+###
 ###     # Calculate average segment length
 ###     num_h_segments = (turns + 1) // 2
 ###     num_v_segments = (turns + 1) - num_h_segments
 ###     avg_len_x = (((x_tile_max - x_tile_min) / (num_h_segments + 1)))
 ###     avg_len_y = (((y_tile_max - y_tile_min) / (num_v_segments + 1)))
-### 
+###
 ###     last_move_was_horizontal = random.choice([True, False])
 ###     last_direction_x = 0
 ###     last_direction_y = 0
-### 
+###
 ###     for _ in range(turns + 1):
 ###         segment_generated = False
-### 
+###
 ###         # Define the primary and secondary attempts based on the last move
 ###         if last_move_was_horizontal:
 ###             # Last was horizontal, so try vertical first
@@ -484,7 +484,7 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###             # Last was vertical, so try horizontal first
 ###             primary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
 ###             secondary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
-### 
+###
 ###         for attempt in [primary_attempt, secondary_attempt]:
 ###             max_len = max(1, int(random.uniform(0.7, 1.3) * attempt["avg_len"]))
 ###             actual_length, direction, segment_tiles = _get_segment_props(
@@ -502,7 +502,7 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###                 y_tile_min,
 ###                 y_tile_max,
 ###             )
-### 
+###
 ###             if actual_length > 0:
 ###                 path_of_tiles.update(segment_tiles)
 ###                 if attempt["is_horizontal"]:
@@ -516,48 +516,48 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 ###                 last_move_was_horizontal = attempt["is_horizontal"]
 ###                 segment_generated = True
 ###                 break
-### 
+###
 ###         if not segment_generated:
 ###             break
-### 
+###
 ###     ###############################################
 ###     # TODO: make use of star.txt pattern/stamp here
-### 
+###
 ###     # 4. Translate tile path to cell coordinates and stamp stars
 ###     points = set()
 ###     star_shape = {(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)}
-### 
+###
 ###     def stamp_star(center_x, center_y):
 ###         for dx, dy in star_shape:
 ###             points.add((center_x + dx, center_y + dy))
-### 
+###
 ###     for tile_x, tile_y in path_of_tiles:
 ###         center_x = tile_x * tile_width + (tile_width // 2)
 ###         center_y = tile_y * tile_height + (tile_height // 2)
 ###         stamp_star(center_x, center_y)
-### 
-###     # END TODO 
+###
+###     # END TODO
 ###     ###############################################
-### 
+###
 ###     ###############################################
 ###     # TODO: see if there is a utility function to convert
 ###     # a list of alive cells (x, y) to url format. if not, add one to utils.py,
 ###     # import it at the top of this file, and use it below.
-### 
+###
 ###     # 5. Serialize to URL format
 ###     pattern_rows = [
 ###         "".join("o" if (x_coord, y_coord) in points else "." for x_coord in range(cols))
 ###         for y_coord in range(rows)
 ###     ]
-### 
+###
 ###     # END TODO
 ###     ###############################################
-### 
+###
 ###     # s1, b1, c1 form a pattern for color 1 on one side of the grid.
 ###     # Now horiz flip it, give it some vertical jiggle, and assign to color2
 ###     s1, b1, c1 = pattern2url_chars(pattern_rows)
 ###     s2, b2, c2 = pattern2url_chars(hflip_pattern(vjiggle(pattern_rows, 100)))
-### 
+###
 ###     return s1, b1, c1, s2, b2, c2
 
 
@@ -768,7 +768,7 @@ def twochoochoo(rows, cols, seed=None):
     ]
 
     pattern_rows2 = [
-        "".join("o" if (x_coord, y_coord) in points2 else "." 
+        "".join("o" if (x_coord, y_coord) in points2 else "."
         for x_coord in range(cols))
         for y_coord in range(rows)
     ]
@@ -779,19 +779,23 @@ def twochoochoo(rows, cols, seed=None):
     # s1, b1, c1 form a pattern for color 1 on one side of the grid.
     # Now horiz flip it, give it some vertical jiggle, and assign to color2
     s1, b1, c1 = pattern2url_chars(pattern_rows1)
-    s2, b2, c2 = pattern2url_chars(pattern_rows2) 
+    s2, b2, c2 = pattern2url_chars(pattern_rows2)
 
     return s1, b1, c1, s2, b2, c2
 
 
 def candychoochoo(rows, cols, seed=None):
     """
-    Generates a single space-filling "railroad track" of star stamps across the entire grid.
-    The path is then divided between two teams using a 3x3 checkerboard pattern on the
-    tile grid, where each 3x3 tile area is assigned to a team in an alternating fashion.
+    Use a flood fill algorithm to generate a random space filling curve
+    of 90-degree railroad tracks (side-by-side crosses).
+    Create one random track, with an even number of total stamps, alternating colors
+    to ensure each team has the same number of cells.
     """
     if seed is not None:
         random.seed(seed)
+
+    turns = random.randint(7, 10)
+    max_moves = 2*random.randint(30, 120)
 
     tile_width  = STAR_STAMP_WIDTH
     tile_height = STAR_STAMP_HEIGHT
@@ -799,24 +803,22 @@ def candychoochoo(rows, cols, seed=None):
     grid_tile_rows = rows // tile_height
     grid_tile_cols = cols // tile_width
 
-    turns = random.randint(7, 21)
-
     # Calculate average segment length for the whole grid
     num_h_segments = (turns + 1) // 2
     num_v_segments = (turns + 1) - num_h_segments
     avg_len_x = grid_tile_cols / (num_h_segments + 1) if num_h_segments > -1 else grid_tile_cols
     avg_len_y = grid_tile_rows / (num_v_segments + 1) if num_v_segments > -1 else grid_tile_rows
 
-    max_moves = 2*random.randint(60, 180)
-
-    # --- 1. Generate a single path across the whole grid ---
-    path_of_tiles = set()
+    # --- 1. Generate a single path of tiles, preserving order ---
+    path_of_tiles_list = []
+    path_of_tiles_set = set()
     x_tile_min, x_tile_max = 0, grid_tile_cols
     y_tile_min, y_tile_max = 0, grid_tile_rows
 
     current_tile_x = random.randint(x_tile_min, x_tile_max - 1)
     current_tile_y = random.randint(y_tile_min, y_tile_max - 1)
-    path_of_tiles.add((current_tile_x, current_tile_y))
+    path_of_tiles_list.append((current_tile_x, current_tile_y))
+    path_of_tiles_set.add((current_tile_x, current_tile_y))
 
     last_move_was_horizontal = random.choice([True, False])
     last_direction_x = 0
@@ -843,7 +845,7 @@ def candychoochoo(rows, cols, seed=None):
                 attempt["is_horizontal"],
                 current_tile_x,
                 current_tile_y,
-                path_of_tiles,
+                path_of_tiles_set,
                 last_direction_x,
                 last_direction_y,
                 grid_tile_rows,
@@ -855,7 +857,9 @@ def candychoochoo(rows, cols, seed=None):
             )
 
             if actual_length > 0:
-                path_of_tiles.update(segment_tiles)
+                path_of_tiles_list.extend(segment_tiles)
+                path_of_tiles_set.update(segment_tiles)
+
                 if attempt["is_horizontal"]:
                     current_tile_x = segment_tiles[-1][0]
                     last_direction_x = direction
@@ -872,18 +876,20 @@ def candychoochoo(rows, cols, seed=None):
         if not segment_generated:
             break
 
-    # --- 2. Split the path into two teams using a 3x3 checkerboard pattern ---
+    # --- 2. Ensure path has an even number of tiles for balanced teams ---
+    if len(path_of_tiles_list) % 2 != 0:
+        path_of_tiles_list.pop()
+
+    # --- 3. Split tiles between teams in an alternating fashion ---
     path_of_tiles1 = set()
     path_of_tiles2 = set()
-    for tile_x, tile_y in path_of_tiles:
-        patch_x = tile_x // 3
-        patch_y = tile_y // 3
-        if (patch_x + patch_y) % 2 == 0:
-            path_of_tiles1.add((tile_x, tile_y))
+    for i, tile in enumerate(path_of_tiles_list):
+        if i % 2 == 0:
+            path_of_tiles1.add(tile)
         else:
-            path_of_tiles2.add((tile_x, tile_y))
+            path_of_tiles2.add(tile)
 
-    # --- 3. Translate tile paths to cell coordinates and stamp stars ---
+    # --- 4. Translate tile paths to cell coordinates ---
     points1 = set()
     for tile_x, tile_y in path_of_tiles1:
         base_x = tile_x * tile_width
@@ -898,7 +904,7 @@ def candychoochoo(rows, cols, seed=None):
         for dx, dy in STAR_3X3_RELATIVE_POINTS:
             points2.add((base_x + dx, base_y + dy))
 
-    # --- 4. Serialize to URL format ---
+    # --- 5. Serialize to URL format ---
     pattern_rows1 = [
         "".join("o" if (x_coord, y_coord) in points1 else "." for x_coord in range(cols))
         for y_coord in range(rows)
@@ -912,11 +918,6 @@ def candychoochoo(rows, cols, seed=None):
     s2, b2, c2 = pattern2url_chars(pattern_rows2)
 
     return s1, b1, c1, s2, b2, c2
-
-
-
-
-
 
 
 def midnightexpress(rows, cols, seed=None):
@@ -1162,7 +1163,7 @@ def spaceelevator(rows, cols, seed=None):
     if chefs_choice == 1:
         buffer = 3
         team1_methuselah_region = 0+buffer, 0+buffer, cols-buffer, rows-buffer
-        team2_methuselah_region = 0+buffer, 0+buffer, cols-buffer, rows-buffer 
+        team2_methuselah_region = 0+buffer, 0+buffer, cols-buffer, rows-buffer
 
         # Place methuselah for team 1
         methuselah1_points = _place_oo_methuselah(
@@ -1192,14 +1193,14 @@ def spaceelevator(rows, cols, seed=None):
         for _ in range(nstars):
             xloc = track1_xloc
             xjitter = random.choice([-3, 3])
-            yloc = random.randint(0+buffer, rows-buffer) 
+            yloc = random.randint(0+buffer, rows-buffer)
             p = (xloc + xjitter - 1, yloc)
             star_points1.add(p)
 
         for _ in range(nstars):
             xloc = track2_xloc
             xjitter = random.choice([-3, 3])
-            yloc = random.randint(0+buffer, rows-buffer) 
+            yloc = random.randint(0+buffer, rows-buffer)
             p = (xloc + xjitter -1, yloc)
             star_points2.add(p)
 
@@ -1223,14 +1224,14 @@ def spaceelevator(rows, cols, seed=None):
         for _ in range(ncells):
             xloc = track1_xloc
             xjitter = random.choice([-2, 2])
-            yloc = random.randint(0+buffer, rows-buffer) 
+            yloc = random.randint(0+buffer, rows-buffer)
             p = (xloc + xjitter, yloc)
             team1_points.add(p)
 
         for _ in range(ncells):
             xloc = track2_xloc
             xjitter = random.choice([-2, 2])
-            yloc = random.randint(0+buffer, rows-buffer) 
+            yloc = random.randint(0+buffer, rows-buffer)
             p = (xloc + xjitter, yloc)
             team2_points.add(p)
 
