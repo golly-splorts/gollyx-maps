@@ -1049,9 +1049,8 @@ def spaceelevator(rows, cols, seed=None):
 
 def faradaycage(rows, cols, seed=None):
     """
-    Generates a map with two randomly selected segment of the grid
-    filled with tiled 3x3 solid stamps, one for each team.
-    Also adds a 2-cell methuselah for each team in two other random segments.
+    Generates a map with two randomly selected segments of the grid
+    filled with a tiled 3x3 grid with 2x2 empty square in the middle.
     """
     if seed is not None:
         random.seed(seed)
