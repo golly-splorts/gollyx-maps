@@ -17,7 +17,7 @@ def get_star_vii_pattern_function_map():
         "spaceelevator": spaceelevator,
         "faradaycage": faradaycage,
         "housewithears": housewithears,
-        # "ironhorse": ironhorse,
+        "ironhorse": ironhorse,
         # "deadendterminal": deadendterminal,
         # "bando": bando,
         # "ghosttrain": ghosttrain,
@@ -36,12 +36,10 @@ for y_idx, row in enumerate(STAR_3X3_PATTERN_STR):
             STAR_3X3_RELATIVE_POINTS.add((x_idx, y_idx))
 
 # Calculate width and height of the STAR_3X3 stamp
-min_x_star = min(p[0] for p in STAR_3X3_RELATIVE_POINTS)
 max_x_star = max(p[0] for p in STAR_3X3_RELATIVE_POINTS)
-min_y_star = min(p[1] for p in STAR_3X3_RELATIVE_POINTS)
 max_y_star = max(p[1] for p in STAR_3X3_RELATIVE_POINTS)
-STAR_STAMP_WIDTH = max_x_star - min_x_star + 1
-STAR_STAMP_HEIGHT = max_y_star - min_y_star + 1
+STAR_STAMP_WIDTH = max_x_star + 1
+STAR_STAMP_HEIGHT = max_y_star + 1
 
 # END TODO 1
 ################################################
@@ -1282,7 +1280,7 @@ def housewithears(rows, cols, seed=None):
                     region = (x_start, y_start, x_end, y_end)
                     valid.append(region)
 
-    chosen = random.sample(valid, 4)
+    chosen = random.sample(valid, 2)
     team1_faraday_region = chosen[0]
     team2_faraday_region = chosen[1]
 
@@ -1299,9 +1297,10 @@ def housewithears(rows, cols, seed=None):
     all_occupied_points = team1_points.union(team2_points)
 
     # Add ears/horns/etc
-    for (team_points, team_points_b, team_points_c, region) in [
-            (team1_points, team1_b, team1_c, chosen[2]),
-            (team2_points, team2_b, team2_c, chosen[3])
+    regions = random.sample(valid, 3)
+    for (team_points, team_points_b, team_points_c, region1, region2) in [
+            (team1_points, team1_b, team1_c, regions[0], regions[1]),
+            (team2_points, team2_b, team2_c, regions[1], regions[2])
     ]:
         min_x = min(p[0] for p in team_points)
         max_x = max(p[0] for p in team_points)
@@ -1351,7 +1350,6 @@ def housewithears(rows, cols, seed=None):
             team_points_c.update([pc])
             all_occupied_points.update([p, pb, pc])
 
-
         else:
 
             # Left and right perimeters
@@ -1397,7 +1395,7 @@ def housewithears(rows, cols, seed=None):
             team_points_c.update([pc])
             all_occupied_points.update([p, pb, pc])
 
-        for _ in range(2):
+        for region in [region1, region2]:
             methuselah_points = _place_oo_methuselah(
                 region, all_occupied_points, rows, cols
             )
@@ -1417,7 +1415,127 @@ def housewithears(rows, cols, seed=None):
 
 
 def ironhorse(rows, cols, seed=None):
-    pass
+    """
+    Create a line of crosses, randomly add satellites to some, "o" or "ob" or "bc"
+
+    Set them up so they are facing off
+
+    Pick a random y-value level, add at y+25 and y-25
+
+    Add some x-jiggle +/-10
+    """
+    # ----------------------------
+    # Input parameters
+    nstamps_range = [22, 44]
+    orbiter_prob = 0.70
+    # (min, max)
+    xjit = (-15, 15)
+    yjit = (25, 75)
+
+    # ----------------------------
+    # 5 x 5 star pattern
+    STAR_5X5_PATTERN_STR = [".....", "..o..", ".ooo.", "..o..", "....."]
+    STAR_5X5_RELATIVE_POINTS = set()
+    for y_idx, row in enumerate(STAR_5X5_PATTERN_STR):
+        for x_idx, char in enumerate(row):
+            if char == "o":
+                STAR_5X5_RELATIVE_POINTS.add((x_idx, y_idx))
+    stamp_size = len(STAR_5X5_PATTERN_STR[0])
+
+    # ---------------------------
+    # Add the lineup of stars
+
+    team1_points = set()
+    team2_points = set()
+
+    team1_b = set()
+    team2_b = set()
+
+    team1_c = set()
+    team2_c = set()
+
+    nstamps = random.randint(nstamps_range[0], nstamps_range[1])
+
+    xcenter, ycenter = cols//2, rows//2
+    ytop, ybot = ycenter - random.randint(*yjit), ycenter + random.randint(*yjit)
+    xofftop, xoffbot = random.randint(*xjit), random.randint(*xjit)
+    rx_start, rx_end = xcenter - stamp_size*(nstamps//2+1), xcenter + stamp_size*(nstamps//2+1)
+
+    def _add_orbiter(team_points, team_b, team_c, stamp_size, x, y, p=orbiter_prob):
+        add_orbiter = random.random() < p
+        if add_orbiter:
+            point_choice = random.randint(1, 4)
+            if point_choice==1:
+                dx = 1
+                dy = stamp_size-1
+                ghost = 'y'
+            elif point_choice==2:
+                dx = stamp_size-1
+                dy = 1
+                ghost = 'x'
+            elif point_choice==3:
+                dx = 0
+                dy = 1
+                ghost = 'x'
+            elif point_choice==4:
+                dx = 1
+                dy = 0
+                ghost = 'y'
+            team_points.add((x + dx,  y + dy))
+
+            add_ghost = random.random() < p
+            if add_ghost:
+                rand_sign = random.choice([1, -1])
+                if ghost=='y':
+                    team_b.add((x + dx + rand_sign*1, y + dy))
+                    team_c.add((x + dx + rand_sign*2, y + dy))
+                elif ghost=='x':
+                    team_b.add((x + dx, y + dy + rand_sign*1))
+                    team_c.add((x + dx, y + dy + rand_sign*2))
+
+    # Top row
+    for y in range(ytop, ytop + stamp_size - 1, stamp_size):
+        for x in range(rx_start, rx_end + stamp_size - 1, stamp_size):
+            for dx, dy in STAR_5X5_RELATIVE_POINTS:
+                # Ensure points are within the overall grid boundaries (rows, cols)
+                if 0 <= (x + dx) < cols and 0 <= (y + dy) < rows:
+                    team1_points.add((x + dx, y + dy))
+
+            # Optionally, add an orbiter
+            _add_orbiter(team1_points, team1_b, team1_c, stamp_size, x, y)
+
+    # Bot row
+    for y in range(ybot, ybot + stamp_size - 1, stamp_size):
+        for x in range(rx_start, rx_end + stamp_size - 1, stamp_size):
+            for dx, dy in STAR_5X5_RELATIVE_POINTS:
+                # Ensure points are within the overall grid boundaries (rows, cols)
+                if 0 <= (x + dx) < cols and 0 <= (y + dy) < rows:
+                    team2_points.add((x + dx, y + dy))
+
+            # Optionally, add an orbiter
+            _add_orbiter(team2_points, team2_b, team2_c, stamp_size, x, y)
+
+    if random.getrandbits(1)==1:
+        s1 = points_to_url(team1_points, rows, cols)
+        s2 = points_to_url(team2_points, rows, cols)
+
+        b1 = points_to_url(team1_b, rows, cols)
+        b2 = points_to_url(team2_b, rows, cols)
+
+        c1 = points_to_url(team1_c, rows, cols)
+        c2 = points_to_url(team2_c, rows, cols)
+
+    else:
+        s2 = points_to_url(team1_points, rows, cols)
+        s1 = points_to_url(team2_points, rows, cols)
+
+        b2 = points_to_url(team1_b, rows, cols, char="b")
+        b1 = points_to_url(team2_b, rows, cols, char="b")
+
+        c2 = points_to_url(team1_c, rows, cols, char="c")
+        c1 = points_to_url(team2_c, rows, cols, char="c")
+
+    return s1, b1, c1, s2, b2, c2
 
 
 def deadendterminal(rows, cols, seed=None):
