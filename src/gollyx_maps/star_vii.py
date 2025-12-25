@@ -13,6 +13,7 @@ def get_star_vii_pattern_function_map():
     patterns = get_star_pattern_function_map()
     new_patterns = {
         "twochoochoo": twochoochoo,
+        "candychoochoo": candychoochoo,
         "midnightexpress": midnightexpress,
         "spaceelevator": spaceelevator,
         "faradaycage": faradaycage,
@@ -198,22 +199,69 @@ def _get_segment_props(
     x_tile_max,
     y_tile_min,
     y_tile_max,
+    alternating=False,
 ):
-    """Calculates the valid length and direction of a segment."""
+    """
+    Evaluates and selects the best possible next segment for a path on a tile-based grid.
+
+    This function attempts to extend a path from a given point (`current_tile_x`, `current_tile_y`)
+    by adding a straight line segment, either horizontally or vertically. It is the core of the
+    random "railroad track" generation logic.
+
+    The selection process is opinionated to create aesthetically pleasing, non-looping paths:
+    1.  **Direction**: It determines possible directions (e.g., right/left for horizontal). If
+        the new segment has the same orientation as the previous one, this logic forces the path
+        to continue straight, preventing 180-degree reversals. If the orientation is different,
+        both perpendicular directions are considered.
+    2.  **Validation**: For each direction, it generates the longest possible segment (up to `max_len`)
+        that stays within the grid boundaries and doesn't violate path integrity rules defined in
+        `_is_valid_tile_step` (no self-intersection, no parallel adjacent tracks).
+    3.  **Loop Prevention**: It uses a flood-fill check (`_flood_fill_check`) to discard any segment
+        that would form a closed loop in the path.
+    4.  **Scoring**: Each valid potential segment is scored based on two criteria:
+        a. `length`: The number of tiles in the segment. Longer is better.
+        b. `openness_score`: The number of empty neighbors around the end tile of the segment.
+           A higher score means the path is heading into a more open area, reducing the chance
+           of getting trapped.
+    5.  **Selection**: The function prioritizes the longest segments. Among segments of the same
+        maximum length, it prioritizes those with the highest openness score. If multiple
+        segments tie for the best score, one is chosen randomly.
+
+    Args:
+        max_len (int): The maximum allowed length for the new segment.
+        is_horizontal (bool): If True, generate a horizontal segment; otherwise, a vertical one.
+        current_tile_x (int): The starting X coordinate (in tiles) for the new segment.
+        current_tile_y (int): The starting Y coordinate (in tiles) for the new segment.
+        path_of_tiles (set): A set of (x, y) tuples representing the tiles already in the path.
+        last_direction_x (int): The direction of the last horizontal move (1 for right, -1 for left, 0 if none).
+        last_direction_y (int): The direction of the last vertical move (1 for down, -1 for up, 0 if none).
+        grid_tile_rows (int): The total number of rows in the tile grid.
+        grid_tile_cols (int): The total number of columns in the tile grid.
+        x_tile_min (int): The minimum allowed X coordinate for a tile in the current region.
+        x_tile_max (int): The maximum allowed X coordinate for a tile in the current region.
+        y_tile_min (int): The minimum allowed Y coordinate for a tile in the current region.
+        y_tile_max (int): The maximum allowed Y coordinate for a tile in the current region.
+        alternating (bool): Unused parameter.
+
+    Returns:
+        tuple[int, int, list]: A tuple containing:
+        - The length of the selected segment (0 if no valid segment was found).
+        - The direction of the segment (1 or -1).
+        - A list of (x, y) tile tuples that form the segment.
+    """
+    # Determine which directions to try. If the last move was in the same orientation,
+    # this logic forces the path to continue straight. Otherwise, it allows turning.
     possible_directions = []
     if is_horizontal:
-        if last_direction_x != -1:
-            possible_directions.append(1)
-        if last_direction_x != 1:
-            possible_directions.append(-1)
+        if last_direction_x == 0:  # Previous move was vertical, can go left or right
+            possible_directions = [1, -1]
+        else:  # Previous move was horizontal, must continue in that direction
+            possible_directions.append(last_direction_x)
     else:  # is_vertical
-        if last_direction_y != -1:
-            possible_directions.append(1)
-        if last_direction_y != 1:
-            possible_directions.append(-1)
-
-    if not possible_directions:
-        possible_directions = [1, -1]
+        if last_direction_y == 0:  # Previous move was horizontal, can go up or down
+            possible_directions = [1, -1]
+        else:  # Previous move was vertical, must continue in that direction
+            possible_directions.append(last_direction_y)
 
     evaluated_options = []
     for direction_to_try in possible_directions:
@@ -236,12 +284,14 @@ def _get_segment_props(
                 y_tile_min,
                 y_tile_max,
             ):
-                break
+                break  # Segment hits an invalid tile, stop extending it
             segment_tiles.append(current_proposed_tile)
-        final_length = len(segment_tiles)
 
-        if final_length > 0:
-            temporary_path = path_of_tiles.union(set(segment_tiles))
+        # If a valid segment of any length was created, evaluate it
+        if segment_tiles:
+            temporary_path = path_of_tiles.union(segment_tiles)
+
+            # Discard segments that create closed loops
             if _flood_fill_check(
                 temporary_path,
                 grid_tile_rows,
@@ -251,14 +301,13 @@ def _get_segment_props(
                 y_tile_min,
                 y_tile_max,
             ):
-                continue  # This segment creates a loop, discard it
+                continue
 
-            end_tile_x = segment_tiles[-1][0] if is_horizontal else current_tile_x
-            end_tile_y = segment_tiles[-1][1] if not is_horizontal else current_tile_y
-
+            # Score the segment based on length and "openness"
+            end_tile = segment_tiles[-1]
             openness_score = _count_empty_neighbors(
-                end_tile_x,
-                end_tile_y,
+                end_tile[0],
+                end_tile[1],
                 temporary_path,
                 x_tile_min,
                 x_tile_max,
@@ -266,24 +315,23 @@ def _get_segment_props(
                 y_tile_max,
             )
             evaluated_options.append(
-                (final_length, openness_score, direction_to_try, segment_tiles)
+                (len(segment_tiles), openness_score, direction_to_try, segment_tiles)
             )
+
+    # If no valid segments were found, return empty
     if not evaluated_options:
-        # No valid move
         return 0, 0, []
 
+    # Select the best option: sort by length then openness, descending
     evaluated_options.sort(key=lambda x: (x[0], x[1]), reverse=True)
 
-    best_length = evaluated_options[0][0]
-    best_openness = evaluated_options[0][1]
-    top_options = [
-        opt
-        for opt in evaluated_options
-        if opt[0] == best_length and opt[1] == best_openness
-    ]
+    # Find all options that are tied for the best score
+    best_score = (evaluated_options[0][0], evaluated_options[0][1])
+    top_options = [opt for opt in evaluated_options if (opt[0], opt[1]) == best_score]
 
-    selected_option = random.choice(top_options)
-    return selected_option[0], selected_option[2], selected_option[3]
+    # Randomly choose one of the top options
+    final_length, _, direction, segment_tiles = random.choice(top_options)
+    return final_length, direction, segment_tiles
 
 
 def _place_oo_methuselah(region, occupied_points, rows, cols, n=1):
@@ -514,10 +562,17 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
 
 
 def twochoochoo(rows, cols, seed=None):
+    """
+    Split the grid in half. Use a flood fill algorithm to generate a random
+    space filling curve of 90-degree railroad tracks (side-by-side crosses).
+    Create two separate random tracks, one of each color. Number of cells for
+    each team kept identical with a star stamps budget.
+    """
     if seed is not None:
         random.seed(seed)
-    tile_width  = 3
-    tile_height = 3
+
+    tile_width  = STAR_STAMP_WIDTH
+    tile_height = STAR_STAMP_HEIGHT
 
     grid_tile_rows = rows // tile_height
     grid_tile_cols = cols // tile_width
@@ -727,6 +782,142 @@ def twochoochoo(rows, cols, seed=None):
     s2, b2, c2 = pattern2url_chars(pattern_rows2) 
 
     return s1, b1, c1, s2, b2, c2
+
+
+def candychoochoo(rows, cols, seed=None):
+    """
+    Generates a single space-filling "railroad track" of star stamps across the entire grid.
+    The path is then divided between two teams using a 3x3 checkerboard pattern on the
+    tile grid, where each 3x3 tile area is assigned to a team in an alternating fashion.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    tile_width  = STAR_STAMP_WIDTH
+    tile_height = STAR_STAMP_HEIGHT
+
+    grid_tile_rows = rows // tile_height
+    grid_tile_cols = cols // tile_width
+
+    turns = random.randint(7, 21)
+
+    # Calculate average segment length for the whole grid
+    num_h_segments = (turns + 1) // 2
+    num_v_segments = (turns + 1) - num_h_segments
+    avg_len_x = grid_tile_cols / (num_h_segments + 1) if num_h_segments > -1 else grid_tile_cols
+    avg_len_y = grid_tile_rows / (num_v_segments + 1) if num_v_segments > -1 else grid_tile_rows
+
+    max_moves = 2*random.randint(60, 180)
+
+    # --- 1. Generate a single path across the whole grid ---
+    path_of_tiles = set()
+    x_tile_min, x_tile_max = 0, grid_tile_cols
+    y_tile_min, y_tile_max = 0, grid_tile_rows
+
+    current_tile_x = random.randint(x_tile_min, x_tile_max - 1)
+    current_tile_y = random.randint(y_tile_min, y_tile_max - 1)
+    path_of_tiles.add((current_tile_x, current_tile_y))
+
+    last_move_was_horizontal = random.choice([True, False])
+    last_direction_x = 0
+    last_direction_y = 0
+
+    nmoves = 0
+    for _ in range(turns + 1):
+        segment_generated = False
+
+        if last_move_was_horizontal:
+            primary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
+            secondary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
+        else:
+            primary_attempt = {"is_horizontal": True, "avg_len": avg_len_x}
+            secondary_attempt = {"is_horizontal": False, "avg_len": avg_len_y}
+
+        for attempt in [primary_attempt, secondary_attempt]:
+            max_len = max(1, int(random.uniform(0.7, 1.3) * attempt["avg_len"]))
+            moves_budget = max_moves - nmoves
+            max_len = min(max_len, moves_budget)
+
+            actual_length, direction, segment_tiles = _get_segment_props(
+                max_len,
+                attempt["is_horizontal"],
+                current_tile_x,
+                current_tile_y,
+                path_of_tiles,
+                last_direction_x,
+                last_direction_y,
+                grid_tile_rows,
+                grid_tile_cols,
+                x_tile_min,
+                x_tile_max,
+                y_tile_min,
+                y_tile_max,
+            )
+
+            if actual_length > 0:
+                path_of_tiles.update(segment_tiles)
+                if attempt["is_horizontal"]:
+                    current_tile_x = segment_tiles[-1][0]
+                    last_direction_x = direction
+                    last_direction_y = 0
+                else:
+                    current_tile_y = segment_tiles[-1][1]
+                    last_direction_x = 0
+                    last_direction_y = direction
+                last_move_was_horizontal = attempt["is_horizontal"]
+                segment_generated = True
+                nmoves += actual_length
+                break
+
+        if not segment_generated:
+            break
+
+    # --- 2. Split the path into two teams using a 3x3 checkerboard pattern ---
+    path_of_tiles1 = set()
+    path_of_tiles2 = set()
+    for tile_x, tile_y in path_of_tiles:
+        patch_x = tile_x // 3
+        patch_y = tile_y // 3
+        if (patch_x + patch_y) % 2 == 0:
+            path_of_tiles1.add((tile_x, tile_y))
+        else:
+            path_of_tiles2.add((tile_x, tile_y))
+
+    # --- 3. Translate tile paths to cell coordinates and stamp stars ---
+    points1 = set()
+    for tile_x, tile_y in path_of_tiles1:
+        base_x = tile_x * tile_width
+        base_y = tile_y * tile_height
+        for dx, dy in STAR_3X3_RELATIVE_POINTS:
+            points1.add((base_x + dx, base_y + dy))
+
+    points2 = set()
+    for tile_x, tile_y in path_of_tiles2:
+        base_x = tile_x * tile_width
+        base_y = tile_y * tile_height
+        for dx, dy in STAR_3X3_RELATIVE_POINTS:
+            points2.add((base_x + dx, base_y + dy))
+
+    # --- 4. Serialize to URL format ---
+    pattern_rows1 = [
+        "".join("o" if (x_coord, y_coord) in points1 else "." for x_coord in range(cols))
+        for y_coord in range(rows)
+    ]
+    pattern_rows2 = [
+        "".join("o" if (x_coord, y_coord) in points2 else "." for x_coord in range(cols))
+        for y_coord in range(rows)
+    ]
+
+    s1, b1, c1 = pattern2url_chars(pattern_rows1)
+    s2, b2, c2 = pattern2url_chars(pattern_rows2)
+
+    return s1, b1, c1, s2, b2, c2
+
+
+
+
+
+
 
 def midnightexpress(rows, cols, seed=None):
     """
