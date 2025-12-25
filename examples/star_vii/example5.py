@@ -10,6 +10,9 @@ rows = 160
 cols = 240
 
 
+# This is added as a map, twochoochoo
+
+
 if __name__ == "__main__":
 
     team1_pattern = """
