@@ -44,12 +44,12 @@ def pattern2url_char(pattern, char, xoffset=0, yoffset=0):
     rows = len(pattern)
     if rows == 0:
         return "[]"
-    cols = len(pattern[0])
     listLife = []
     for i in range(rows):
         listLifeRow = {}
-        for j in range(cols):
-            if pattern[i][j] == char:
+        current_row = pattern[i].strip()
+        for j in range(len(current_row)):
+            if current_row[j] == char:
                 y = str(i + yoffset)
                 x = j + xoffset
                 if y in listLifeRow.keys():
