@@ -1725,9 +1725,12 @@ def horsewithears(rows, cols, seed=None):
     team1_points.update(_place_oo_methuselah(chosen[2], set(), rows, cols))
     team2_points.update(_place_oo_methuselah(chosen[3], set(), rows, cols))
 
+    team1_points.update(_place_oo_methuselah(chosen[4], set(), rows, cols))
+    team2_points.update(_place_oo_methuselah(chosen[5], set(), rows, cols))
+
     if random.getrandbits(1):
-        team1_points.update(_place_oo_methuselah(chosen[4], set(), rows, cols))
-        team2_points.update(_place_oo_methuselah(chosen[5], set(), rows, cols))
+        team1_points.update(_place_oo_methuselah(chosen[6], set(), rows, cols))
+        team2_points.update(_place_oo_methuselah(chosen[7], set(), rows, cols))
 
     s1 = points_to_url(team1_points, rows, cols)
     s2 = points_to_url(team2_points, rows, cols)
