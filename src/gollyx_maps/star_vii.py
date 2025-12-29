@@ -18,6 +18,7 @@ def get_star_vii_pattern_function_map():
         "spaceelevator": spaceelevator,
         "faradaycage": faradaycage,
         "housewithears": housewithears,
+        "horsewithears": horsewithears,
         "ironhorse": ironhorse,
         # "deadendterminal": deadendterminal,
         # "bando": bando,
@@ -334,7 +335,7 @@ def _get_segment_props(
     return final_length, direction, segment_tiles
 
 
-def _place_oo_methuselah(region, occupied_points, rows, cols, n=1):
+def _place_oo_methuselah(region, occupied_points, rows, cols):
     x_start, y_start, x_end, y_end = region
     # Check if empty region
     if x_start >= x_end or y_start >= y_end:
@@ -1436,7 +1437,10 @@ def faradaycage(rows, cols, seed=None):
 
 def housewithears(rows, cols, seed=None):
     """
-    Make a house with ears (similar to Faraday cage, but slightly different)
+    Make a house with ears.
+    A house is similar to Faraday cage,
+    but limited in size (a few rows).
+    Ears = satellites orbiting the structure.
     """
     if seed is not None:
         random.seed(seed)
@@ -1602,6 +1606,137 @@ def housewithears(rows, cols, seed=None):
 
     c1 = points_to_url(team1_c, rows, cols, char="c")
     c2 = points_to_url(team2_c, rows, cols, char="c")
+
+    return s1, b1, c1, s2, b2, c2
+
+
+def horsewithears(rows, cols, seed=None):
+    """
+    Make a horse with ears.
+    A horse is similar to Faraday cage,
+    and similar to a house, but different.
+    Ears = satellites orbiting the structure.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    team1_points = set()
+    team2_points = set()
+
+    team1_b = set()
+    team2_b = set()
+
+    team1_c = set()
+    team2_c = set()
+
+    pbuff = 10
+
+    # --------------------------------
+    # The Horse
+
+    N = random.choice(list(range(6, 7)))
+    x_divs = [i * (cols // N) for i in range(N + 1)]
+    y_divs = [i * (rows // N) for i in range(N + 1)]
+
+    valid = []
+    for j in range(N):
+        for i in range(N):
+            x_start = x_divs[i]
+            y_start = y_divs[j]
+            x_end = x_divs[i + 1] if i < N - 1 else cols
+            y_end = y_divs[j + 1] if j < N - 1 else rows
+            if x_start > pbuff and x_end < cols - pbuff:
+                if y_start > pbuff and y_end < rows - pbuff:
+                    region = (x_start, y_start, x_end, y_end)
+                    valid.append(region)
+
+    chosen = random.sample(valid, 8)
+    team1_region = chosen[0]
+    team2_region = chosen[1]
+
+    for team_region, team_points, team_b, team_c in [
+        (team1_region, team1_points, team1_b, team1_c),
+        (team2_region, team2_points, team2_b, team2_c)
+    ]:
+        # x, y of start loc
+        start_loc = (team_region[0], team_region[1])
+        end_loc   = (team_region[2], team_region[3])
+        nx = (end_loc[0]-start_loc[0])//3
+        ny = 2
+
+        for ix in range(start_loc[0]+1, end_loc[0]-1):
+            # First row,
+            y = 0
+            team_points.add((ix, start_loc[1] + y))
+
+            # Middle row,
+            y = 3
+            team_points.add((ix, start_loc[1] + y))
+
+            # Bottom row
+            y = 6
+            team_points.add((ix, start_loc[1] + y))
+
+        for ix in range(start_loc[0], end_loc[0], 3):
+            for iy in range(start_loc[1]+1, start_loc[1] + 3*ny):
+                team_points.add((ix, iy))
+
+        # Four corners
+        corners = [
+            (start_loc[0] - 1, start_loc[1] ),
+            (start_loc[0] - 1, start_loc[1] + 2*ny + 2),
+            (end_loc[0]      , start_loc[1] ),
+            (end_loc[0]      , start_loc[1] + 2*ny + 2),
+        ]
+
+        for i, corner in enumerate(corners):
+            if random.getrandbits(1):
+                team_points.add(corner)
+
+        # Ears
+        if True:
+
+            # Add ears
+            if random.getrandbits(1):
+                # Add ears to top
+                yloc = start_loc[1] - 1
+                yloc2 = start_loc[1] - 2
+            else:
+                # Add ears to bottom
+                yloc = start_loc[1] + ny*3 + 1
+                yloc2 = yloc + 1
+
+            # Pick a random x location, add the ears there
+            xloc = random.randint(start_loc[0] + 3, end_loc[0] - 3)
+            team_points.add((xloc, yloc))
+
+            if random.getrandbits(1):
+                # Leftward ear
+                team_b.add((xloc-1, yloc2))
+                team_b.add((xloc-1, yloc2))
+                team_c.add((xloc-2, yloc2))
+
+            if random.getrandbits(1):
+                # Rightward ear
+                team_b.add((xloc+1, yloc2))
+                team_b.add((xloc+1, yloc2))
+                team_c.add((xloc+2, yloc2))
+
+    team1_points.update(_place_oo_methuselah(chosen[2], set(), rows, cols))
+    team2_points.update(_place_oo_methuselah(chosen[3], set(), rows, cols))
+
+    if random.getrandbits(1):
+        team1_points.update(_place_oo_methuselah(chosen[4], set(), rows, cols))
+        team2_points.update(_place_oo_methuselah(chosen[5], set(), rows, cols))
+
+    s1 = points_to_url(team1_points, rows, cols)
+    s2 = points_to_url(team2_points, rows, cols)
+
+    b1 = points_to_url(team1_b, rows, cols)
+    b2 = points_to_url(team2_b, rows, cols)
+
+    c1 = points_to_url(team1_c, rows, cols)
+    c2 = points_to_url(team2_c, rows, cols)
 
     return s1, b1, c1, s2, b2, c2
 
