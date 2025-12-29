@@ -10,6 +10,10 @@ rows = 160
 cols = 240
 
 
+# Added first one as "howitzer" (small and medium versions)
+# Second one looks like iron horse idea
+
+
 if __name__ == "__main__":
 
     team1_pattern = """
