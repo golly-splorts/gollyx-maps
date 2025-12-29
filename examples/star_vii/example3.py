@@ -1,9 +1,3 @@
-# from bars import bars
-# from comb import comb
-# from flying_v import flying_v
-# from stamps import two_stamps, stamps_squarepair, stamps_sink, stamps_pudding, stamps_soup
-# from containment_rectangle import containment_rectangle
-# from containment_lines import containment_lines
 from gollyx_maps.utils import pattern2url
 
 rows = 160
