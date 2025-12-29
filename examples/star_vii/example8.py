@@ -10,6 +10,9 @@ rows = 160
 cols = 240
 
 
+# Added as a new "ironhorse" map
+
+
 if __name__ == "__main__":
 
     team1_pattern = """
