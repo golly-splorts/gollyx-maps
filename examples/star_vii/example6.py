@@ -10,6 +10,9 @@ rows = 160
 cols = 240
 
 
+# Added as new map, housewithears (well, not really...)
+
+
 if __name__ == "__main__":
 
     team1_pattern = """
