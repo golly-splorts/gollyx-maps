@@ -4,6 +4,9 @@ rows = 160
 cols = 240
 
 
+# Not added as new shape/map, but useful illustration of ladder junction
+
+
 if __name__ == "__main__":
 
     team1_pattern = """

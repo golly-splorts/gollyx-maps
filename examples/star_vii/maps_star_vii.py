@@ -9,8 +9,10 @@ cols = 280
 #m = maps.get_map_realization("star_vii", "spaceelevator", rows=rows, columns=cols)
 #m = maps.get_map_realization("star_vii", "faradaycage", rows=rows, columns=cols)
 #m = maps.get_map_realization("star_vii", "housewithears", rows=rows, columns=cols)
-m = maps.get_map_realization("star_vii", "horsewithears", rows=rows, columns=cols)
+#m = maps.get_map_realization("star_vii", "horsewithears", rows=rows, columns=cols)
 #m = maps.get_map_realization("star_vii", "ironhorse", rows=rows, columns=cols)
+m = maps.get_map_realization("star_vii", "deadendterminal", rows=rows, columns=cols)
+#m = maps.get_map_realization("star_vii", "bando", rows=rows, columns=cols)
 
 
 print(
