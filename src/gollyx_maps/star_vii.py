@@ -9,9 +9,9 @@ from .error import GollyXGeomError, GollyXMapsError
 from .star import get_star_pattern_function_map, _stamps
 
 
-def get_star_vii_pattern_function_map():
-    patterns = get_star_pattern_function_map()
-    new_patterns = {
+def get_star_vii_new_pattern_function_map():
+    """Only the patterns NEW in star-vii (not inherited from star)."""
+    return {
         "twochoochoo": twochoochoo,
         "candychoochoo": candychoochoo,
         "midnightexpress": midnightexpress,
@@ -24,7 +24,11 @@ def get_star_vii_pattern_function_map():
         "bando": bando,
         # "ghosttrain": ghosttrain,
     }
-    return patterns | new_patterns
+
+
+def get_star_vii_pattern_function_map():
+    """Full cumulative map (star + star-vii new patterns)."""
+    return get_star_pattern_function_map() | get_star_vii_new_pattern_function_map()
 
 
 ################################################
@@ -49,7 +53,6 @@ STAR_STAMP_HEIGHT = max_y_star + 1
 
 ##############################################################################################
 ########################## utility functions #################################################
-
 
 def _flood_fill_check(
     current_path_tiles, rows_grid, cols_grid, x_min, x_max, y_min, y_max
@@ -339,8 +342,11 @@ def _place_oo_methuselah(region, occupied_points, rows, cols):
     x_start, y_start, x_end, y_end = region
     # Check if empty region
     if x_start >= x_end or y_start >= y_end:
-        err = "Error: no region to place oo methuselah"
+        err = "Error: invalid region for placing oo methuselah\n"
+        err += f"Region: {region}"
         raise GollyXMapsError(err)
+    # First cell of methuselah is center of a "star", then pick from four remaining candidates
+    attempts = []
     for _ in range(100):  # max attempts to place
         px = random.randint(x_start, x_end - 1)
         py = random.randint(y_start, y_end - 1)
@@ -356,8 +362,14 @@ def _place_oo_methuselah(region, occupied_points, rows, cols):
         cell2 = neighbor
         if cell1 not in occupied_points and cell2 not in occupied_points:
             return {cell1, cell2}
+        else:
+            attempts.append(f"({cell1}, {cell2})")
 
-    err = "Error: could not find anywhere to place oo methuselah"
+    err = "Error: could not find anywhere to place oo methuselah\n"
+    err += f"Region: x = {x_start}..{x_end}, y = {y_start}..{y_end}\n"
+    err += f"Rows: {rows}\n"
+    err += f"Cols: {cols}\n\n\n"
+    err += f"Attempts: {'\n'.join(sorted(attempts))}\n\n\n"
     raise GollyXMapsError(err)
 
 
@@ -419,6 +431,168 @@ def _get_adjacent_placement_coords(region, stamp_width, stamp_height, rows, cols
         ):
             if 0 <= sy < rows and 0 <= sy + stamp_height - 1 < rows:
                 potential_coords.add((sx, sy))
+
+
+def _add_ladder_rectangle(team_points, team_b, team_c, buff, m, n, rows, cols, xoffset, yoffset, methuselahs=False):
+    """
+    Add an M x N rectangle whose perimeter is "ladders" (side by side hollow 4 x 4 squares) like this:
+    oooooooooooooooo
+    o..o..o..o..o..o
+    o..o..o..o..o..o
+    oooooooooooooooo
+    """
+
+    x_start = random.randint(1, buff) + xoffset
+    y_start = random.randint(1, buff) + yoffset
+
+    x_end = (x_start + 3*n)%cols
+    y_end = (y_start + 3*m)%rows
+
+    if x_start > x_end:
+        tmp = x_end
+        x_end = x_start
+        x_start = tmp
+
+    if y_start > y_end:
+        tmp = y_end
+        y_end = y_start
+        y_start = tmp
+
+    # --------------------------
+    # Vertical stripes
+
+    # Two stripes on left side
+    x1 = x_start + 0
+    x2 = x_start + 3
+    # Two stripes on right side
+    x3 = (x_end - 3 + cols)%cols
+    x4 = x_end
+
+    for i, iy in enumerate(range(y_start, y_start + 3*m + 1)):
+
+        if iy >= rows:
+            iy = iy%rows
+
+        # Left side
+        team_points.add((x1, iy))
+        team_points.add((x2, iy))
+        # Right side
+        team_points.add((x3, iy))
+        team_points.add((x4, iy))
+
+        # Ladder steps on every 3rd row
+        if i%3==0:
+            # Left side steps
+            ladder_x1 = x_start + 1
+            ladder_x2 = x_start + 2
+            team_points.add((ladder_x1, iy))
+            team_points.add((ladder_x2, iy))
+
+            # Right side steps
+            ladder_x3 = x_end - 2
+            ladder_x4 = x_end - 1
+            team_points.add((ladder_x3, iy))
+            team_points.add((ladder_x4, iy))
+
+            # Inner steps
+            ladder_x5 = x_start + 4
+            ladder_x6 = x_end - 4
+            team_points.add((ladder_x5, iy))
+            team_points.add((ladder_x6, iy))
+
+    # --------------------------
+    # Horizontal stripes
+
+    # Two stripes on left side
+    y1 = y_start + 0
+    y2 = y_start + 3
+    # Two stripes on right side
+    y3 = (y_end - 3 + rows)%rows
+    y4 = y_end
+
+    for i, ix in enumerate(range(x_start, x_start + 3*n + 1)):
+
+        if ix >= cols:
+            ix = ix%cols
+
+        # Left side
+        team_points.add((ix, y1))
+        team_points.add((ix, y2))
+        # Right side
+        team_points.add((ix, y3))
+        team_points.add((ix, y4))
+
+        # Ladder steps at every 3rd col
+        if i%3==0:
+            # Top side ladder steps
+            ladder_y1 = y_start + 1
+            ladder_y2 = y_start + 2
+            team_points.add((ix, ladder_y1))
+            team_points.add((ix, ladder_y2))
+
+            # Bottom side ladder steps
+            ladder_y3 = y_end - 2
+            ladder_y4 = y_end - 1
+            team_points.add((ix, ladder_y3))
+            team_points.add((ix, ladder_y4))
+
+            # Inner ladder steps
+            ladder_y5 = y_start + 4
+            ladder_y6 = y_end - 4
+            team_points.add((ix, ladder_y5))
+            team_points.add((ix, ladder_y6))
+
+    # --------------------------
+    # Corner points
+
+    # NW
+    team_points.add((x_start, y_start-1))
+    team_points.add((x_start-1, y_start))
+
+    # NE
+    team_points.add((x_end, y_start-1))
+    team_points.add((x_end+1, y_start))
+
+    # SW
+    team_points.add((x_start, y_end+1))
+    team_points.add((x_start-1, y_end))
+
+    # SE
+    team_points.add((x_end, y_end+1))
+    team_points.add((x_end+1, y_end))
+
+    # --------------------------
+    # Key element: Poke a hole in the perimeter
+
+    # One hole on top/bottom
+    if random.getrandbits(1):
+        point = (random.randint(x_start, x_end), y_start)
+        team_points.remove(point)
+        team_b.add(point)
+    else:
+        point = (random.randint(x_start, x_end), y_end)
+        team_points.remove(point)
+        team_b.add(point)
+
+    # One hole on left/right
+    if random.getrandbits(1):
+        point = (x_start, random.randint(y_start, y_end))
+        team_points.remove(point)
+        team_b.add(point)
+    else:
+        point = (x_end, random.randint(y_start, y_end))
+        team_points.remove(point)
+        team_b.add(point)
+
+    # --------------------------
+    # Optional: oo methuselah
+
+    if methuselahs:
+        region = (x_start, y_start, x_end, y_end)
+        team_points.update(_place_oo_methuselah(region, team_points, rows, cols))
+
+    return team_points
+
 
 
 ##############################################################################################
@@ -1868,159 +2042,6 @@ def ironhorse(rows, cols, seed=None):
     return s1, b1, c1, s2, b2, c2
 
 
-def _add_ladder_square(team_points, team_b, team_c, buff, m, n, rows, cols, xoffset, yoffset, methuselahs=False):
-
-    x_start = random.randint(1, buff) + xoffset
-    y_start = random.randint(1, buff) + yoffset
-
-    x_end = (x_start + 3*n)%cols
-    y_end = (y_start + 3*m)%rows
-
-    if x_start > x_end:
-        tmp = x_end
-        x_end = x_start
-        x_start = tmp
-
-    if y_start > y_end:
-        tmp = y_end
-        y_end = y_start
-        y_start = tmp
-
-    # --------------------------
-    # Vertical stripes
-    x1 = x_start + 0
-    x2 = x_start + 3
-    x3 = (x_end - 3 + cols)%cols
-    x4 = x_end
-
-    for i, iy in enumerate(range(y_start, y_start + 3*m + 1)):
-
-        if iy >= rows:
-            iy = iy%rows
-
-        # Two vertical strips on left side
-        team_points.add((x1, iy))
-        team_points.add((x2, iy))
-
-        # Two vertical strips on right side
-        team_points.add((x3, iy))
-        team_points.add((x4, iy))
-
-        # Ladder steps
-        ladder_x1 = x_start + 1
-        ladder_x2 = x_start + 2
-        ladder_x3 = x_end - 2
-        ladder_x4 = x_end - 1
-
-        ladder_x5 = x_start + 4
-        ladder_x6 = x_end - 4
-
-        if i%3==0:
-            # Ladder steps left side
-            team_points.add((ladder_x1, iy))
-            team_points.add((ladder_x2, iy))
-
-            # Ladder steps right side
-            team_points.add((ladder_x3, iy))
-            team_points.add((ladder_x4, iy))
-
-            # Internal
-            team_points.add((ladder_x5, iy))
-            team_points.add((ladder_x6, iy))
-
-    # --------------------------
-    # Horizontal stripes
-    y1 = y_start + 0
-    y2 = y_start + 3
-    y3 = (y_end - 3 + rows)%rows
-    y4 = y_end
-    for i, ix in enumerate(range(x_start, x_start + 3*n + 1)):
-
-        if ix >= cols:
-            ix = ix%cols
-
-        # Two horizontal strips on left side
-        team_points.add((ix, y1))
-        team_points.add((ix, y2))
-
-        # Two horizontal strips on right side
-        team_points.add((ix, y3))
-        team_points.add((ix, y4))
-
-        # Horizontal ladder steps
-        ladder_y1 = y_start + 1
-        ladder_y2 = y_start + 2
-        ladder_y3 = y_end - 2
-        ladder_y4 = y_end - 1
-
-        ladder_y5 = y_start + 4
-        ladder_y6 = y_end - 4
-
-        if i%3==0:
-            # Ladder steps left side
-            team_points.add((ix, ladder_y1))
-            team_points.add((ix, ladder_y2))
-
-            # Ladder steps right side
-            team_points.add((ix, ladder_y3))
-            team_points.add((ix, ladder_y4))
-
-            # Internal
-            team_points.add((ix, ladder_y5))
-            team_points.add((ix, ladder_y6))
-
-    # --------------------------
-    # Corner points
-
-    # NW
-    team_points.add((x_start, y_start-1))
-    team_points.add((x_start-1, y_start))
-
-    # NE
-    team_points.add((x_end, y_start-1))
-    team_points.add((x_end+1, y_start))
-
-    # SW
-    team_points.add((x_start, y_end+1))
-    team_points.add((x_start-1, y_end))
-
-    # SE
-    team_points.add((x_end, y_end+1))
-    team_points.add((x_end+1, y_end))
-
-    # --------------------------
-    # Key element: Poke a hole in the perimeter
-
-    if random.getrandbits(1):
-        point = (random.randint(x_start, x_end), y_start)
-        team_points.remove(point)
-        team_b.add(point)
-
-    if random.getrandbits(1):
-        point = (random.randint(x_start, x_end), y_end)
-        team_points.remove(point)
-        team_b.add(point)
-
-    if random.getrandbits(1):
-        point = (x_start, random.randint(y_start, y_end))
-        team_points.remove(point)
-        team_b.add(point)
-
-    if random.getrandbits(1):
-        point = (x_end, random.randint(y_start, y_end))
-        team_points.remove(point)
-        team_b.add(point)
-
-    # --------------------------
-    # Optional: oo methuselah
-
-    if methuselahs:
-        region = (x_start, y_start, x_end, y_end)
-        team_points.update(_place_oo_methuselah(region, team_points, rows, cols))
-
-    return team_points
-
-
 def deadendterminal(rows, cols, seed=None):
     """
     Create a rectangle, N columns x M rows
@@ -2033,12 +2054,13 @@ def deadendterminal(rows, cols, seed=None):
 
     # -----------------------
     # Input parameters
-    min_steps = 12
+    min_steps = 5
     buff = 15
     # -----------------------
 
     team1_points = set()
     team2_points = set()
+    all_points = set()
 
     team1_b = set()
     team2_b = set()
@@ -2046,20 +2068,30 @@ def deadendterminal(rows, cols, seed=None):
     team1_c = set()
     team2_c = set()
 
-    max_n = (cols-2*buff)//(2*3)
-    max_m = (rows-2*buff)//(2*3)
+    # Keep trying until both teams have equal number of squares
+    done = False
+    while not done:
+        # Max steps in either direction
+        max_n = (cols-2*buff)//(2*3)
+        max_m = (rows-2*buff)//(2*3)
 
-    n = random.randint(min_steps, max_n)
-    m = random.randint(min_steps, max_m)
+        n = random.randint(min_steps, max_n)
+        m = random.randint(min_steps, max_m)
 
-    xoffset_half = cols//2
-    yoffset_half = rows//2
+        xoffset_half = cols//2
+        yoffset_half = rows//2
 
-    team1_points = _add_ladder_square(team1_points, team1_b, team1_c, buff, m, n, rows, cols, 0, 0, methuselahs=True)
-    if random.getrandbits(1):
-        team2_points = _add_ladder_square(team2_points, team2_b, team2_c, buff, n, m, rows, cols, xoffset_half, yoffset_half, methuselahs=True)
-    else:
-        team2_points = _add_ladder_square(team2_points, team2_b, team2_c, buff, m, n, rows, cols, xoffset_half, yoffset_half, methuselahs=True)
+        try:
+            team1_points = _add_ladder_rectangle(team1_points, team1_b, team1_c, buff, m, n, rows, cols, 0, 0, methuselahs=True)
+            if random.getrandbits(1):
+                team2_points = _add_ladder_rectangle(team2_points, team2_b, team2_c, buff, n, m, rows, cols, xoffset_half, yoffset_half, methuselahs=True)
+            else:
+                team2_points = _add_ladder_rectangle(team2_points, team2_b, team2_c, buff, m, n, rows, cols, xoffset_half, yoffset_half, methuselahs=True)
+        except GollyXMapsError:
+            continue
+
+        if len(team1_points) - len(team2_points) < 10 and len(team1_points) <= 800:
+            done = True
 
     s1 = points_to_url(team1_points, rows, cols)
     s2 = points_to_url(team2_points, rows, cols)
@@ -2074,11 +2106,32 @@ def deadendterminal(rows, cols, seed=None):
 
 
 def bando(rows, cols, seed=None):
+    """
+    Create a battery of (patterns) on the left/right or top/bottom,
+    aligned and facing off, with a field of stars between them.
+    """
     if seed is not None:
         random.seed(seed)
-    pass
+
+    # Divide grid into 4 strips, with some buffer between each
+    # Place the generators along the middle axis of the outer strips.
+    # Orient generators pointing toward middle.
+    # Place random stars in the inner strips, random placement
+
+    
+
+
+
+
+
+
+
+
+
 
 def ghosttrain(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
     pass
+
+
