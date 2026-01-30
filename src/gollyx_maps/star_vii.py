@@ -369,7 +369,8 @@ def _place_oo_methuselah(region, occupied_points, rows, cols):
     err += f"Region: x = {x_start}..{x_end}, y = {y_start}..{y_end}\n"
     err += f"Rows: {rows}\n"
     err += f"Cols: {cols}\n\n\n"
-    err += f"Attempts: {'\n'.join(sorted(attempts))}\n\n\n"
+    attempts_str = '\n'.join(sorted(attempts))
+    err += f"Attempts: {attempts_str}\n\n\n"
     raise GollyXMapsError(err)
 
 
