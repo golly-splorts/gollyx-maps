@@ -142,6 +142,8 @@ def _parse_cup_name(cup_name):
         ("golly", int)            for roman numeral cups (golly union)
         ("peninsula", int)        for star-prefixed roman numeral cups
     """
+    if not isinstance(cup_name, str):
+        raise GollyXMapsError(f"Cup name must be a string, but got {type(cup_name)}")
     if cup_name in LEGACY_CUPS:
         return ("legacy", cup_name)
 
