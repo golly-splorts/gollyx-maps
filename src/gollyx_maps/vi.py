@@ -1197,12 +1197,25 @@ def _west3(rows, cols, oscillators):
             team2_oscillators.append(p)
 
     oscillator = random.choice(oscillators)
+    osc_h, osc_w = get_pattern_size(oscillator)
+
+    def _clamp(val, mindim, maxdim):
+        return max(mindim, min(maxdim, val))
+
+    def _xbounds(pw):
+        return (pw // 2, cols - (pw - pw // 2) - 1)
+
+    def _ybounds(ph):
+        return (ph // 2, rows - (ph - ph // 2) - 1)
+
+    osc_xmin, osc_xmax = _xbounds(osc_w)
+    osc_ymin, osc_ymax = _ybounds(osc_h)
 
     def _assemble_patterns(team_oscillators):
         team_pattern = []
         for i, (x_, y_) in enumerate(team_oscillators):
-            xx = x_ + xjitter()
-            yy = y_ + yjitter()
+            xx = _clamp(x_ + xjitter(), osc_xmin, osc_xmax)
+            yy = _clamp(y_ + yjitter(), osc_ymin, osc_ymax)
             vf = bool(random.randint(0,1))
             hf = bool(random.randint(0,1))
             if i==0:
@@ -1217,11 +1230,15 @@ def _west3(rows, cols, oscillators):
     # ----------------
     # Puffer locations
 
-    xx = cols//2 + xjitter()
-    yy1 = rows//4 + yjitter()
-    yy2 = 3*rows//4 + yjitter()
-
     methuselah = 'bisectingpuffers'
+    meth_h, meth_w = get_pattern_size(methuselah)
+    meth_xmin, meth_xmax = _xbounds(meth_w)
+    meth_ymin, meth_ymax = _ybounds(meth_h)
+
+    xx = _clamp(cols//2 + xjitter(), meth_xmin, meth_xmax)
+    yy1 = _clamp(rows//4 + yjitter(), meth_ymin, meth_ymax)
+    yy2 = _clamp(3*rows//4 + yjitter(), meth_ymin, meth_ymax)
+
     team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=xx, yoffset=yy1, hflip=False)])
     team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=xx, yoffset=yy2, hflip=True)])
 
