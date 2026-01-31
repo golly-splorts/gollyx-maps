@@ -568,20 +568,18 @@ def _add_ladder_rectangle(team_points, team_b, team_c, buff, m, n, rows, cols, x
     # One hole on top/bottom
     if random.getrandbits(1):
         point = (random.randint(x_start, x_end), y_start)
-        team_points.remove(point)
-        team_b.add(point)
     else:
         point = (random.randint(x_start, x_end), y_end)
+    if point in team_points:
         team_points.remove(point)
         team_b.add(point)
 
     # One hole on left/right
     if random.getrandbits(1):
         point = (x_start, random.randint(y_start, y_end))
-        team_points.remove(point)
-        team_b.add(point)
     else:
         point = (x_end, random.randint(y_start, y_end))
+    if point in team_points:
         team_points.remove(point)
         team_b.add(point)
 
@@ -1459,10 +1457,10 @@ def faradaycage(rows, cols, seed=None):
 
     # Fill Faraday cage regions with stamps
     _faraday_fill_region(
-        team1_points, team1_faraday_region, stamp_size, rows, cols
+        team1_points, team1_faraday_region, rows, cols
     )
     _faraday_fill_region(
-        team2_points, team2_faraday_region, stamp_size, rows, cols
+        team2_points, team2_faraday_region, rows, cols
     )
 
     # -------------------------------------
@@ -1483,7 +1481,7 @@ def faradaycage(rows, cols, seed=None):
 
         # Place methuselah for team 1
         methuselah1_points = _place_oo_methuselah(
-            team1_methuselah_info["region"], all_occupied_points, rows, cols
+            team1_methuselah_info, all_occupied_points, rows, cols
         )
         if methuselah1_points:
             team1_points.update(methuselah1_points)
@@ -1493,7 +1491,7 @@ def faradaycage(rows, cols, seed=None):
 
         # Place methuselah for team 2
         methuselah2_points = _place_oo_methuselah(
-            team2_methuselah_info["region"], all_occupied_points, rows, cols
+            team2_methuselah_info, all_occupied_points, rows, cols
         )
         if methuselah2_points:
             team2_points.update(methuselah2_points)
@@ -2069,9 +2067,17 @@ def deadendterminal(rows, cols, seed=None):
     team1_c = set()
     team2_c = set()
 
-    # Keep trying until both teams have equal number of squares
+    # Keep trying until both teams have similar number of squares
     done = False
     while not done:
+        # Reset all point sets each attempt
+        team1_points = set()
+        team2_points = set()
+        team1_b = set()
+        team2_b = set()
+        team1_c = set()
+        team2_c = set()
+
         # Max steps in either direction
         max_n = (cols-2*buff)//(2*3)
         max_m = (rows-2*buff)//(2*3)
@@ -2091,7 +2097,7 @@ def deadendterminal(rows, cols, seed=None):
         except GollyXMapsError:
             continue
 
-        if len(team1_points) - len(team2_points) < 10 and len(team1_points) <= 800:
+        if abs(len(team1_points) - len(team2_points)) < 10 and len(team1_points) <= 800:
             done = True
 
     s1 = points_to_url(team1_points, rows, cols)
