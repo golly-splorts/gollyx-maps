@@ -1823,7 +1823,7 @@ def horsewithears(rows, cols, seed=None):
                     region = (x_start, y_start, x_end, y_end)
                     valid.append(region)
 
-    chosen = random.sample(valid, 8)
+    chosen = random.sample(valid, min(14, len(valid)))
     team1_region = chosen[0]
     team2_region = chosen[1]
 
@@ -1908,9 +1908,19 @@ def horsewithears(rows, cols, seed=None):
     team1_points.update(_place_oo_methuselah(chosen[4], set(), rows, cols))
     team2_points.update(_place_oo_methuselah(chosen[5], set(), rows, cols))
 
+    team1_points.update(_place_oo_methuselah(chosen[6], set(), rows, cols))
+    team2_points.update(_place_oo_methuselah(chosen[7], set(), rows, cols))
+
+    team1_points.update(_place_oo_methuselah(chosen[8], set(), rows, cols))
+    team2_points.update(_place_oo_methuselah(chosen[9], set(), rows, cols))
+
     if random.getrandbits(1):
-        team1_points.update(_place_oo_methuselah(chosen[6], set(), rows, cols))
-        team2_points.update(_place_oo_methuselah(chosen[7], set(), rows, cols))
+        team1_points.update(_place_oo_methuselah(chosen[10], set(), rows, cols))
+        team2_points.update(_place_oo_methuselah(chosen[11], set(), rows, cols))
+
+    if random.getrandbits(1):
+        team1_points.update(_place_oo_methuselah(chosen[12], set(), rows, cols))
+        team2_points.update(_place_oo_methuselah(chosen[13], set(), rows, cols))
 
     s1 = points_to_url(team1_points, rows, cols)
     s2 = points_to_url(team2_points, rows, cols)
