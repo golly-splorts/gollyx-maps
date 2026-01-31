@@ -913,6 +913,15 @@ def _standoff(rows, cols, methuselahs, opposite_day=False):
     # Methuselahs
 
     methuselah = random.choice(methuselahs)
+    meth_h, meth_w = get_pattern_size(methuselah)
+
+    def _clamp(val, lo, hi):
+        return max(lo, min(hi, val))
+
+    meth_xmin = meth_w // 2
+    meth_xmax = cols - (meth_w - meth_w // 2) - 1
+    meth_ymin = meth_h // 2
+    meth_ymax = rows - (meth_h - meth_h // 2) - 1
 
     nw_x = cols//6
     nw_y = rows//6
@@ -934,8 +943,12 @@ def _standoff(rows, cols, methuselahs, opposite_day=False):
     r = lambda: bool(random.randint(0,1))
 
     # Put methuselahs in the NW/SE corners
-    team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=nw_x + xjitter(), yoffset=nw_y + yjitter(), vflip=r(), hflip=r())])
-    team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=se_x + xjitter(), yoffset=se_y + yjitter(), vflip=r(), hflip=r())])
+    nw_xx = _clamp(nw_x + xjitter(), meth_xmin, meth_xmax)
+    nw_yy = _clamp(nw_y + yjitter(), meth_ymin, meth_ymax)
+    se_xx = _clamp(se_x + xjitter(), meth_xmin, meth_xmax)
+    se_yy = _clamp(se_y + yjitter(), meth_ymin, meth_ymax)
+    team1_pattern = pattern_union([team1_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=nw_xx, yoffset=nw_yy, vflip=r(), hflip=r())])
+    team2_pattern = pattern_union([team2_pattern, get_grid_pattern(methuselah, rows, cols, xoffset=se_xx, yoffset=se_yy, vflip=r(), hflip=r())])
 
     s1 = pattern2url(team1_pattern)
     s2 = pattern2url(team2_pattern)
