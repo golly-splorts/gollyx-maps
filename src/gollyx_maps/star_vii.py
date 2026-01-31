@@ -1840,17 +1840,22 @@ def horsewithears(rows, cols, seed=None):
         for ix in range(start_loc[0]+1, end_loc[0]-1):
             # First row,
             y = 0
-            team_points.add((ix, start_loc[1] + y))
+            if random.random() >= 0.07:
+                team_points.add((ix, start_loc[1] + y))
 
             # Middle row,
             y = 3
-            team_points.add((ix, start_loc[1] + y))
+            if random.random() >= 0.07:
+                team_points.add((ix, start_loc[1] + y))
 
             # Bottom row
             y = 6
-            team_points.add((ix, start_loc[1] + y))
+            if random.random() >= 0.07:
+                team_points.add((ix, start_loc[1] + y))
 
         for ix in range(start_loc[0], end_loc[0], 3):
+            if random.random() < 0.07:
+                continue
             for iy in range(start_loc[1]+1, start_loc[1] + 3*ny):
                 team_points.add((ix, iy))
 
@@ -1881,17 +1886,19 @@ def horsewithears(rows, cols, seed=None):
 
             # Pick a random x location, add the ears there
             xloc = random.randint(start_loc[0] + 3, end_loc[0] - 3)
+            # Wider ear base (3 cells) + vertical bridge to satellite row
+            team_points.add((xloc - 1, yloc))
             team_points.add((xloc, yloc))
+            team_points.add((xloc + 1, yloc))
+            team_points.add((xloc, yloc2))
 
             if random.getrandbits(1):
-                # Leftward ear
-                team_b.add((xloc-1, yloc2))
+                # Leftward ear satellite
                 team_b.add((xloc-1, yloc2))
                 team_c.add((xloc-2, yloc2))
 
             if random.getrandbits(1):
-                # Rightward ear
-                team_b.add((xloc+1, yloc2))
+                # Rightward ear satellite
                 team_b.add((xloc+1, yloc2))
                 team_c.add((xloc+2, yloc2))
 
