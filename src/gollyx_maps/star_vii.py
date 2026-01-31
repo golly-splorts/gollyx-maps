@@ -21,7 +21,7 @@ def get_star_vii_new_pattern_function_map():
         "horsewithears": horsewithears,
         "ironhorse": ironhorse,
         "deadendterminal": deadendterminal,
-        "bando": bando,
+        # "bando": bando,  # stub — not yet implemented
         # "ghosttrain": ghosttrain,
     }
 
