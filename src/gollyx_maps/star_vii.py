@@ -1453,7 +1453,7 @@ def faradaycage(rows, cols, seed=None):
     # Faraday region:
 
     # Select four regions to fill with stamps and ...something else
-    chosen = random.sample(valid, 4)
+    chosen = random.sample(regions, 4)
     team1_faraday_region = chosen[0]
     team2_faraday_region = chosen[1]
 
