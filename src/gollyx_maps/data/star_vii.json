@@ -52,11 +52,5 @@
         "mapName": "Dead End Terminal",
         "mapDescription": "Ladder rectangles with methuselahs",
         "mapStartSeason": 0
-    },
-    {
-        "patternName": "bando",
-        "mapName": "Bando",
-        "mapDescription": "Batteries facing off with a star field between them",
-        "mapStartSeason": 0
     }
 ]
