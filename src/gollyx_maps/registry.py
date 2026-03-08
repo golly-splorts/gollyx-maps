@@ -188,13 +188,13 @@ def get_cup_maps(cup_name):
         )
 
     if kind == "golly":
-        return _build_numeric_cup_maps(value, GOLLY_REGISTRY, GOLLY_DEFAULTS, all_prior=False)
+        return _build_numeric_cup_maps(value, GOLLY_REGISTRY, GOLLY_DEFAULTS, append_all_prior=False)
 
     if kind == "peninsula":
-        return _build_numeric_cup_maps(value, PENINSULA_REGISTRY, PENINSULA_DEFAULTS, all_prior=True)
+        return _build_numeric_cup_maps(value, PENINSULA_REGISTRY, PENINSULA_DEFAULTS, append_all_prior=True)
 
 
-def _build_numeric_cup_maps(cup_number, registry, defaults, all_prior):
+def _build_numeric_cup_maps(cup_number, registry, defaults, append_all_prior):
     """
     Build a CupMaps for a numeric cup by accumulating all registry entries
     with cup_number <= the requested number.
@@ -205,11 +205,16 @@ def _build_numeric_cup_maps(cup_number, registry, defaults, all_prior):
 
     matched = False
     for entry_cup, entry_func, entry_config, entry_metadata in registry:
-        if (all_prior and entry_cup <= cup_number) or (entry_cup == cup_number):
-            pattern_funcs.append(entry_func)
-            metadata_files.append(entry_metadata)
-            config.update(entry_config)
-            matched = True
+        if entry_cup <= cup_number:
+            if append_all_prior:
+                pattern_funcs.append(entry_func)
+                metadata_files.append(entry_metadata)
+            else:
+                pattern_funcs = [entry_func]
+                metadata_files = [entry_metadata]
+            finally:
+                config.update(entry_config)
+                matched = True
 
     if not matched:
         min_cup = registry[0][0] if registry else "?"
