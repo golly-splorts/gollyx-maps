@@ -188,13 +188,13 @@ def get_cup_maps(cup_name):
         )
 
     if kind == "golly":
-        return _build_numeric_cup_maps(value, GOLLY_REGISTRY, GOLLY_DEFAULTS)
+        return _build_numeric_cup_maps(value, GOLLY_REGISTRY, GOLLY_DEFAULTS, all_prior=False)
 
     if kind == "peninsula":
-        return _build_numeric_cup_maps(value, PENINSULA_REGISTRY, PENINSULA_DEFAULTS)
+        return _build_numeric_cup_maps(value, PENINSULA_REGISTRY, PENINSULA_DEFAULTS, all_prior=True)
 
 
-def _build_numeric_cup_maps(cup_number, registry, defaults):
+def _build_numeric_cup_maps(cup_number, registry, defaults, all_prior):
     """
     Build a CupMaps for a numeric cup by accumulating all registry entries
     with cup_number <= the requested number.
@@ -205,7 +205,7 @@ def _build_numeric_cup_maps(cup_number, registry, defaults):
 
     matched = False
     for entry_cup, entry_func, entry_config, entry_metadata in registry:
-        if entry_cup <= cup_number:
+        if (all_prior and entry_cup <= cup_number) or (entry_cup == cup_number):
             pattern_funcs.append(entry_func)
             metadata_files.append(entry_metadata)
             config.update(entry_config)
