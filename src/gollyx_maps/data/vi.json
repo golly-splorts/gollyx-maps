@@ -18,6 +18,12 @@
         "mapStartSeason": 0
     },
     {
+        "patternName": "random",
+        "mapName": "East Hellmouth",
+        "mapDescription": "A completely random map layout, territory split 50/50.",
+        "mapStartSeason": 0
+    },
+    {
         "patternName": "spider_cave",
         "mapName": "Spider Cave",
         "mapDescription": "Wickstretchers vs wickstretchers.",
@@ -30,9 +36,9 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "random",
-        "mapName": "East Hellmouth",
-        "mapDescription": "A completely random map layout, territory split 50/50.",
+        "patternName": "cave_crash",
+        "mapName": "Cave Crash",
+        "mapDescription": "More flapper spaceships crashing into tiny methuselahs",
         "mapStartSeason": 0
     },
     {
@@ -60,15 +66,15 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "beach_crash",
-        "mapName": "Beach Crash",
-        "mapDescription": "Flapper spaceships crashing into tiny methuselahs",
+        "patternName": "spaceport_standoff",
+        "mapName": "Spaceport Standoff",
+        "mapDescription": "Gosper guns in the center, sending gliders toward mess-making spaceships.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "cave_crash",
-        "mapName": "Cave Crash",
-        "mapDescription": "More flapper spaceships crashing into tiny methuselahs",
+        "patternName": "beach_crash",
+        "mapName": "Beach Crash",
+        "mapDescription": "Flapper spaceships crashing into tiny methuselahs",
         "mapStartSeason": 0
     },
     {
@@ -78,21 +84,15 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "cheyenne_showdown",
-        "mapName": "Cheyenne Showdown",
-        "mapDescription": "Gosper guns in the center, sending gliders toward small methuselahs.",
+        "patternName": "crunchy_crash",
+        "mapName": "Crunchy Crash",
+        "mapDescription": "Spaceships crashing into oscillators",
         "mapStartSeason": 0
     },
     {
-        "patternName": "spaceport_standoff",
-        "mapName": "Spaceport Standoff",
-        "mapDescription": "Gosper guns in the center, sending gliders toward mess-making spaceships.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "sea_turtles",
-        "mapName": "Sea Turtles",
-        "mapDescription": "Sea turtle spaceships crashing into tiny methuselahs",
+        "patternName": "tasty_crash",
+        "mapName": "Tasty Crash",
+        "mapDescription": "Spaceships crashing into large methuselahs",
         "mapStartSeason": 0
     },
     {
@@ -117,18 +117,6 @@
         "patternName": "elko_carbomb",
         "mapName": "Elko Carbomb",
         "mapDescription": "Slow-burning wicks and crabs",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "crunchy_crash",
-        "mapName": "Crunchy Crash",
-        "mapDescription": "Spaceships crashing into oscillators",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "tasty_crash",
-        "mapName": "Tasty Crash",
-        "mapDescription": "Spaceships crashing into large methuselahs",
         "mapStartSeason": 0
     },
     {
@@ -211,6 +199,12 @@
         "mapStartSeason": 0
     },
     {
+        "patternName": "sea_turtles",
+        "mapName": "Sea Turtles",
+        "mapDescription": "Sea turtle spaceships crashing into tiny methuselahs",
+        "mapStartSeason": 0
+    },
+    {
         "patternName": "butterfly_crash",
         "mapName": "Butterfly Crash",
         "mapDescription": "Spaceships crashing into tiny methuselahs",
@@ -244,6 +238,12 @@
         "patternName": "multum_in_party",
         "mapName": "Multum in Party",
         "mapDescription": "Conga line of multum in parvo methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "cheyenne_showdown",
+        "mapName": "Cheyenne Showdown",
+        "mapDescription": "Gosper guns in the center, sending gliders toward small methuselahs.",
         "mapStartSeason": 0
     },
     {
