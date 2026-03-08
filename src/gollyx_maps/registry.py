@@ -212,9 +212,8 @@ def _build_numeric_cup_maps(cup_number, registry, defaults, append_all_prior):
             else:
                 pattern_funcs = [entry_func]
                 metadata_files = [entry_metadata]
-            finally:
-                config.update(entry_config)
-                matched = True
+            config.update(entry_config)
+            matched = True
 
     if not matched:
         min_cup = registry[0][0] if registry else "?"
