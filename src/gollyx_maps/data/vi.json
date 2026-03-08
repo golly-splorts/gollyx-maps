@@ -1,81 +1,92 @@
 [
     {
-        "patternName": "spacetime_complex_north",
-        "mapName": "Spacetime Complex North",
-        "mapDescription": "Two glider-generating spaceships creating crashes with still lifes. Vertical orientation.",
+        "patternName": "quad_beatty",
+        "mapName": "Quad Garden Beatty",
+        "mapDescription": "Plant-based methuselahs in each of the four corners.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "spacetime_complex_east",
-        "mapName": "Spacetime Complex East",
-        "mapDescription": "Two glider-generating spaceships creating crashes with still lifes. Horizontal orientation.",
+        "patternName": "quad_barstow",
+        "mapName": "Quad Garden Barstow",
+        "mapDescription": "Non-plant-based methuselahs in each of the four corners.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "bifurcating_spacetime_north",
-        "mapName": "Bifurcating Spacetime North",
-        "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Vertical orientation.",
-        "mapDescription": "",
+        "patternName": "quad_bakersfield",
+        "mapName": "Quad Garden Bakersfield",
+        "mapDescription": "Large methuselahs in each of the four corners.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "bifurcating_spacetime_east",
-        "mapName": "Bifurcating Spacetime East",
-        "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Horizontal orientation.",
+        "patternName": "spider_cave",
+        "mapName": "Spider Cave",
+        "mapDescription": "Wickstretchers vs wickstretchers.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "west_baltimore",
-        "mapName": "West Baltimore",
-        "mapDescription": "Timebomb methuselahs vs burloaferimeter oscillators.",
+        "patternName": "crab_cave",
+        "mapName": "Crab Cave",
+        "mapDescription": "Wickstretchers vs crabs.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "west_cambridge",
-        "mapName": "West Cambridge",
-        "mapDescription": "Small methuselahs vs large oscillators.",
+        "patternName": "random",
+        "mapName": "East Hellmouth",
+        "mapDescription": "A completely random map layout, territory split 50/50.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "west_seattle",
-        "mapName": "West Seattle",
-        "mapDescription": "Timebomb methuselahs vs burloaferimeter oscillators.",
+        "patternName": "doublegaussian",
+        "mapName": "Double Rainbow",
+        "mapDescription": "A bimodal Gaussian of random points.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "west_salt_lake",
-        "mapName": "West Salt Lake",
-        "mapDescription": "Small methuselahs vs large oscillators.",
+        "patternName": "tacoma_standoff",
+        "mapName": "Tacoma Standoff",
+        "mapDescription": "Gosper guns in the center, sending gliders toward tiny methuselahs in the corners.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "west_milwaukee",
-        "mapName": "West Milwaukee",
-        "mapDescription": "Mess-making puffers vs burloaferimeter oscillators.",
+        "patternName": "tombstone_standoff",
+        "mapName": "Tombstone Standoff",
+        "mapDescription": "Gosper guns in the center, sending gliders toward tiny methuselahs in opposite corners.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "west_detroit",
-        "mapName": "West Detroit",
-        "mapDescription": "Mess-making puffers vs large oscillators.",
+        "patternName": "red_rock_standoff",
+        "mapName": "Red Rock Standoff",
+        "mapDescription": "Gosper guns in the center, sending gliders toward small methuselahs.",
         "mapStartSeason": 0
     },
     {
-        "patternName": "hellmath",
-        "mapName": "Hellmath",
-        "mapDescription": "Bitfield patterns.",
+        "patternName": "beach_crash",
+        "mapName": "Beach Crash",
+        "mapDescription": "Flapper spaceships crashing into tiny methuselahs",
         "mapStartSeason": 0
     },
     {
-        "patternName": "porchlights",
-        "mapName": "Porch Lights",
-        "mapDescription": "A string of porch lights stretching across the map.",
+        "patternName": "cave_crash",
+        "mapName": "Cave Crash",
+        "mapDescription": "More flapper spaceships crashing into tiny methuselahs",
         "mapStartSeason": 0
     },
     {
-        "patternName": "suns_out_gosper_guns_out",
-        "mapName": "Sun's Out Gosper Guns Out",
-        "mapDescription": "Gosper guns in the center, sending gliders toward more Gosper guns in the corners.",
+        "patternName": "flotilla_crash",
+        "mapName": "Flotilla Crash",
+        "mapDescription": "Flotilla spaceships crashing into tiny methuselahs",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "cheyenne_showdown",
+        "mapName": "Cheyenne Showdown",
+        "mapDescription": "Gosper guns in the center, sending gliders toward small methuselahs.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spaceport_standoff",
+        "mapName": "Spaceport Standoff",
+        "mapDescription": "Gosper guns in the center, sending gliders toward mess-making spaceships.",
         "mapStartSeason": 0
     },
     {
@@ -121,6 +132,85 @@
         "mapStartSeason": 0
     },
     {
+        "patternName": "spacetime_complex_north",
+        "mapName": "Spacetime Complex North",
+        "mapDescription": "Two glider-generating spaceships creating crashes with still lifes. Vertical orientation.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "spacetime_complex_east",
+        "mapName": "Spacetime Complex East",
+        "mapDescription": "Two glider-generating spaceships creating crashes with still lifes. Horizontal orientation.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bifurcating_spacetime_north",
+        "mapName": "Bifurcating Spacetime North",
+        "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Vertical orientation.",
+        "mapDescription": "",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "bifurcating_spacetime_east",
+        "mapName": "Bifurcating Spacetime East",
+        "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Horizontal orientation.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_baltimore",
+        "mapName": "West Baltimore",
+        "mapDescription": "Timebomb methuselahs vs burloaferimeter oscillators in a four-corner arrangement.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_cambridge",
+        "mapName": "West Cambridge",
+        "mapDescription": "Small methuselahs vs large oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_seattle",
+        "mapName": "West Seattle",
+        "mapDescription": "Timebomb methuselahs vs burloaferimeter oscillators in a column-major arrangement.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_salt_lake",
+        "mapName": "West Salt Lake",
+        "mapDescription": "Small methuselahs vs large oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_milwaukee",
+        "mapName": "West Milwaukee",
+        "mapDescription": "Mess-making puffers vs burloaferimeter oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "west_detroit",
+        "mapName": "West Detroit",
+        "mapDescription": "Mess-making puffers vs large oscillators.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "hellmath",
+        "mapName": "Hellmath",
+        "mapDescription": "Bitfield patterns.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "porchlights",
+        "mapName": "Porch Lights",
+        "mapDescription": "A string of porch lights stretching across the map.",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "suns_out_gosper_guns_out",
+        "mapName": "Sun's Out Gosper Guns Out",
+        "mapDescription": "Gosper guns in the center, sending gliders toward more Gosper guns in the corners.",
+        "mapStartSeason": 0
+    },
+    {
         "patternName": "butterfly_crash",
         "mapName": "Butterfly Crash",
         "mapDescription": "Spaceships crashing into tiny methuselahs",
@@ -157,48 +247,6 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "tacoma_standoff",
-        "mapName": "Tacoma Standoff",
-        "mapDescription": "Gosper guns in the center, sending gliders toward tiny methuselahs in the corners.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "tombstone_standoff",
-        "mapName": "Tombstone Standoff",
-        "mapDescription": "Gosper guns in the center, sending gliders toward tiny methuselahs in opposite corners.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "red_rock_standoff",
-        "mapName": "Red Rock Standoff",
-        "mapDescription": "Gosper guns in the center, sending gliders toward small methuselahs.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "cheyenne_showdown",
-        "mapName": "Cheyenne Showdown",
-        "mapDescription": "Gosper guns in the center, sending gliders toward small methuselahs.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "beach_crash",
-        "mapName": "Beach Crash",
-        "mapDescription": "Flapper spaceships crashing into tiny methuselahs",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "cave_crash",
-        "mapName": "Cave Crash",
-        "mapDescription": "More flapper spaceships crashing into tiny methuselahs",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "flotilla_crash",
-        "mapName": "Flotilla Crash",
-        "mapDescription": "Flotilla spaceships crashing into tiny methuselahs",
-        "mapStartSeason": 0
-    },
-    {
         "patternName": "santa_fe_standoff",
         "mapName": "Santa Fe Standoff",
         "mapDescription": "Gosper guns in the center, sending gliders toward small methuselahs.",
@@ -208,54 +256,6 @@
         "patternName": "caliente_standoff",
         "mapName": "Caliente Standoff",
         "mapDescription": "Gosper guns in the center, sending gliders toward big methuselahs.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "spaceport_standoff",
-        "mapName": "Spaceport Standoff",
-        "mapDescription": "Gosper guns in the center, sending gliders toward mess-making spaceships.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "quad_beatty",
-        "mapName": "Quad Garden Beatty",
-        "mapDescription": "Plant-based methuselahs in each of the four corners.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "quad_barstow",
-        "mapName": "Quad Garden Barstow",
-        "mapDescription": "Non-plant-based methuselahs in each of the four corners.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "quad_bakersfield",
-        "mapName": "Quad Garden Bakersfield",
-        "mapDescription": "Large methuselahs in each of the four corners.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "spider_cave",
-        "mapName": "Spider Cave",
-        "mapDescription": "Wickstretchers vs wickstretchers.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "crab_cave",
-        "mapName": "Crab Cave",
-        "mapDescription": "Wickstretchers vs crabs.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "random",
-        "mapName": "East Hellmouth",
-        "mapDescription": "A completely random map layout, territory split 50/50.",
-        "mapStartSeason": 0
-    },
-    {
-        "patternName": "doublegaussian",
-        "mapName": "Double Rainbow",
-        "mapDescription": "A bimodal Gaussian of random points.",
         "mapStartSeason": 0
     }
 ]
