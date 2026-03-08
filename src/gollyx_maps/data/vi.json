@@ -253,9 +253,9 @@
         "mapStartSeason": 0
     },
     {
-        "patternName": "gaussian",
-        "mapName": "Double Gaussian",
-        "mapDescription": "Double serving of random points in a Gaussian distribution.",
+        "patternName": "doublegaussian",
+        "mapName": "Double Rainbow",
+        "mapDescription": "A bimodal Gaussian of random points.",
         "mapStartSeason": 0
     }
 ]
