@@ -38,7 +38,7 @@
     {
         "patternName": "cave_crash",
         "mapName": "Cave Crash",
-        "mapDescription": "More flapper spaceships crashing into tiny methuselahs",
+        "mapDescription": "More flapper spaceships crashing into tiny methuselahs.",
         "mapStartSeason": 0
     },
     {
@@ -74,49 +74,49 @@
     {
         "patternName": "beach_crash",
         "mapName": "Beach Crash",
-        "mapDescription": "Flapper spaceships crashing into tiny methuselahs",
+        "mapDescription": "Flapper spaceships crashing into tiny methuselahs.",
         "mapStartSeason": 0
     },
     {
         "patternName": "flotilla_crash",
         "mapName": "Flotilla Crash",
-        "mapDescription": "Flotilla spaceships crashing into tiny methuselahs",
+        "mapDescription": "Flotilla spaceships crashing into tiny methuselahs.",
         "mapStartSeason": 0
     },
     {
         "patternName": "crunchy_crash",
         "mapName": "Crunchy Crash",
-        "mapDescription": "Spaceships crashing into oscillators",
+        "mapDescription": "Spaceships crashing into oscillators.",
         "mapStartSeason": 0
     },
     {
         "patternName": "tasty_crash",
         "mapName": "Tasty Crash",
-        "mapDescription": "Spaceships crashing into large methuselahs",
+        "mapDescription": "Spaceships crashing into large methuselahs.",
         "mapStartSeason": 0
     },
     {
         "patternName": "detroit_carbomb",
         "mapName": "Detroit Carbomb",
-        "mapDescription": "Slow-burning wicks and large methuselahs",
+        "mapDescription": "Slow-burning wicks and large methuselahs.",
         "mapStartSeason": 0
     },
     {
         "patternName": "jersey_carbomb",
         "mapName": "Jersey Carbomb",
-        "mapDescription": "Slow-burning wicks and small methuselahs",
+        "mapDescription": "Slow-burning wicks and small methuselahs.",
         "mapStartSeason": 0
     },
     {
         "patternName": "northdakota_carbomb",
         "mapName": "North Dakota Carbomb",
-        "mapDescription": "Slow-burning wicks and spaceships",
+        "mapDescription": "Slow-burning wicks and spaceships.",
         "mapStartSeason": 0
     },
     {
         "patternName": "elko_carbomb",
         "mapName": "Elko Carbomb",
-        "mapDescription": "Slow-burning wicks and crabs",
+        "mapDescription": "Slow-burning wicks and crabs.",
         "mapStartSeason": 0
     },
     {
@@ -135,7 +135,6 @@
         "patternName": "bifurcating_spacetime_north",
         "mapName": "Bifurcating Spacetime North",
         "mapDescription": "Two mess-making spaceship clusters make messes that crash into still lifes. Vertical orientation.",
-        "mapDescription": "",
         "mapStartSeason": 0
     },
     {
@@ -183,7 +182,7 @@
     {
         "patternName": "hellmath",
         "mapName": "Hellmath",
-        "mapDescription": "Bitfield patterns.",
+        "mapDescription": "Random bitfield patterns.",
         "mapStartSeason": 0
     },
     {
@@ -201,19 +200,19 @@
     {
         "patternName": "sea_turtles",
         "mapName": "Sea Turtles",
-        "mapDescription": "Sea turtle spaceships crashing into tiny methuselahs",
+        "mapDescription": "Sea turtle spaceships crashing into tiny methuselahs.",
         "mapStartSeason": 0
     },
     {
         "patternName": "butterfly_crash",
         "mapName": "Butterfly Crash",
-        "mapDescription": "Spaceships crashing into tiny methuselahs",
+        "mapDescription": "Spaceships crashing into tiny methuselahs.",
         "mapStartSeason": 0
     },
     {
         "patternName": "elephant_crash",
         "mapName": "Elephant Crash",
-        "mapDescription": "More spaceships crashing into oscillators",
+        "mapDescription": "More spaceships crashing into oscillators.",
         "mapStartSeason": 0
     },
     {
