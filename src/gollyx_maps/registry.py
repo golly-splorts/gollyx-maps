@@ -204,7 +204,7 @@ def _build_numeric_cup_maps(cup_number, registry, defaults, append_all_prior):
     config = dict(defaults)
 
     matched = False
-    for entry_cup, entry_func, entry_config, entry_metadata in registry:
+    for entry_cup, entry_func, entry_config, entry_metadata in reversed(registry):
         if entry_cup <= cup_number:
             if append_all_prior:
                 pattern_funcs.append(entry_func)
