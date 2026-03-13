@@ -206,17 +206,12 @@ def _build_numeric_cup_maps(cup_number, registry, defaults, append_all_prior):
     matched = False
     for entry_cup, entry_func, entry_config, entry_metadata in reversed(registry):
         if entry_cup <= cup_number:
-            if append_all_prior:
-                pattern_funcs.append(entry_func)
-                metadata_files.append(entry_metadata)
-            else:
-                pattern_funcs = [entry_func]
-                metadata_files = [entry_metadata]
-                config.update(entry_config)
-                matched = True
-                break
+            pattern_funcs.append(entry_func)
+            metadata_files.append(entry_metadata)
             config.update(entry_config)
             matched = True
+            if not append_all_prior:
+                break
 
     if not matched:
         min_cup = registry[0][0] if registry else "?"
