@@ -47,7 +47,10 @@ def pattern2url_char(pattern, char, xoffset=0, yoffset=0):
     listLife = []
     for i in range(rows):
         listLifeRow = {}
-        current_row = pattern[i].strip()
+        if isinstance(pattern[i], list):
+            current_row = "".join(pattern[i]).strip()
+        else:
+            current_row = pattern[i].strip()
         for j in range(len(current_row)):
             if current_row[j] == char:
                 y = str(i + yoffset)
