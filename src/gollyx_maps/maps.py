@@ -16,32 +16,13 @@ from .patterns import (
 )
 from .utils import pattern2url, retry_on_failure
 from .error import GollyXMapsError
-from .hellmouth import get_hellmouth_pattern_function_map
-from .pseudo import get_pseudo_pattern_function_map
-from .toroidal import get_toroidal_pattern_function_map
 from .dragon import get_dragon_pattern_function_map, MAX_PARTS
-from .rainbow import get_rainbow_pattern_function_map
-from .star import get_star_pattern_function_map
-from .klein import get_klein_pattern_function_map
-from .ii import get_ii_pattern_function_map
-from .vi import get_vi_pattern_function_map
-from .star_vii import get_star_vii_pattern_function_map
+from . import registry
 
 
 def get_pattern_function_map(cup):
-    m = {
-        'hellmouth': get_hellmouth_pattern_function_map,
-        'pseudo': get_pseudo_pattern_function_map,
-        'toroidal': get_toroidal_pattern_function_map,
-        'dragon': get_dragon_pattern_function_map,
-        'rainbow': get_rainbow_pattern_function_map,
-        'star': get_star_pattern_function_map,
-        'klein': get_klein_pattern_function_map,
-        'ii': get_ii_pattern_function_map,
-        'vi': get_vi_pattern_function_map,
-        'star_vii': get_star_vii_pattern_function_map,
-    }
-    return m[cup]
+    cm = registry.get_cup_maps(cup)
+    return cm.pattern_function_map()
 
 
 ########################
@@ -50,8 +31,8 @@ def get_pattern_function_map(cup):
 
 def get_all_map_patterns(cup):
     """Get a list of all pattern names for this cup"""
-    f = get_pattern_function_map(cup)
-    pattern_map = f()
+    cm = registry.get_cup_maps(cup)
+    pattern_map = cm.pattern_function_map()
     return list(pattern_map.keys())
 
 
@@ -64,7 +45,7 @@ def remove_extra_map_keys(mapdat):
     return mapdat
 
 
-def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=None):
+def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=None, seed=None):
     """
     Return a JSON map with map names, zone names, and initial conditions.
 
@@ -94,108 +75,58 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
         "cellSize": ...,
     }
     """
+    cm = registry.get_cup_maps(cup)
 
     # Handle Dragon Cup differently
-    if cup == "dragon":
-        return get_dragon_realization(patternname, rows, columns, cell_size)
+    if cm.type == "dragon":
+        return get_dragon_realization(patternname, rows, columns, cell_size, seed=seed)
 
     # Handle Rainbow Cup differently too
-    if cup == "rainbow":
-        return get_rainbow_realization(patternname, rows, columns, cell_size)
+    if cm.type == "rainbow":
+        return get_rainbow_realization(patternname, rows, columns, cell_size, seed=seed)
 
-    # Handle Star Cup
-    if cup == "star":
-        return get_star_realization(cup, patternname, rows, columns, cell_size)
-    
-    # Handle Star VII Cup
-    if cup == "star_vii":
-        return get_star_realization(cup, patternname, rows, columns, cell_size)
+    # Handle Star Cups
+    if cm.type == "star":
+        return get_star_realization(cm, patternname, rows, columns, cell_size, seed=seed)
+
+    # Standard type
 
     # Set default sizes if none specified
     if rows is None and columns is None:
-        if cup=="hellmouth" or cup=="pseudo":
-            rows = 100
-            columns = 120
-        elif cup=="toroidal":
-            rows = 40
-            columns = 280
-        elif cup=="star":
-            rows = 160
-            columns = 240
-        elif cup=="klein":
-            rows = 100
-            columns = 200
-        elif cup=="ii":
-            rows = 100
-            columns = 200
-        elif cup=="vi":
-            rows = 150
-            columns = 240
-        elif cup=="star_vii":
-            rows = 180
-            columns = 280
+        rows = cm.default_rows
+        columns = cm.default_columns
 
     # Get map data (pattern, name, zone names)
-    zone_labels = False
-    if cup in ["hellmouth", "pseudo", "toroidal", "dragon", "rainbow"]:
-        zone_labels = True
-
-    mapdat = get_map_metadata(cup, patternname, zone_labels=zone_labels)
+    mapdat = get_map_metadata(cup, patternname, zone_labels=cm.zone_labels)
 
     # Get the initial conditions for this map
-    s1, s2 = render_map(cup, patternname, rows, columns)
+    s1, s2 = render_map(cm, patternname, rows, columns, seed=seed)
     url = f"?s1={s1}&s2={s2}"
     mapdat["initialConditions1"] = s1
     mapdat["initialConditions2"] = s2
     mapdat["url"] = url
 
     # Include geometry info
-    maxdim = max(rows, columns)
-
-    ###########################
-    # TODO: clean this up
-
-    # These feel a bit too big
     if cell_size is not None:
         cellSize = cell_size
-
+    elif cm.default_cell_size is not None:
+        cellSize = cm.default_cell_size
     elif columns < 70:
         cellSize = 9
-
     elif columns < 100:
         cellSize = 7
-
     elif columns < 150:
         cellSize = 6
-
     elif columns < 170:
         cellSize = 5
-
     elif columns < 200:
         cellSize = 4
-
     elif columns < 300:
         cellSize = 3
-
     elif columns < 375:
         cellSize = 2
-
     else:
         cellSize = 1
-
-    # Hard code
-    if cup=="star":
-        cellSize = 3
-    if cup=="klein":
-        cellSize = 4
-    if cup=="ii":
-        cellSize = 4
-    if cup=="starii":
-        cellSize = 3
-    if cup=="vi":
-        cellSize = 3
-
-    ###########################
 
     mapdat["rows"] = rows
     mapdat["columns"] = columns
@@ -204,27 +135,20 @@ def get_map_realization(cup, patternname, rows=None, columns=None, cell_size=Non
     return remove_extra_map_keys(mapdat)
 
 
-def get_star_realization(cup, patternname, rows=None, columns=None, cell_size=None):
+def get_star_realization(cm, patternname, rows=None, columns=None, cell_size=None, seed=None):
     """
     Assemble Star Map
     """
     # Set default sizes if none specified
     if rows is None and columns is None:
-        if cup=="star":
-            rows = 160
-            columns = 240
-        elif cup=="starii":
-            rows = 150
-            columns = 230
-        elif cup=="star_vii":
-            rows = 180
-            columns = 280
+        rows = cm.default_rows
+        columns = cm.default_columns
 
     # Get map data (pattern, name, zone names)
-    mapdat = get_map_metadata(cup, patternname, zone_labels=False)
+    mapdat = get_map_metadata_from_cup_maps(cm, patternname, zone_labels=False)
 
     # Get the initial condition strings
-    s1, b1, c1, s2, b2, c2 = render_map(cup, patternname, rows, columns)
+    s1, b1, c1, s2, b2, c2 = render_map(cm, patternname, rows, columns, seed=seed)
 
     # Always include s1 and s2
     mapdat['initialConditions1'] = s1
@@ -249,14 +173,10 @@ def get_star_realization(cup, patternname, rows=None, columns=None, cell_size=No
 
     if cell_size is not None:
         cellSize = cell_size
-    elif cup=="star":
-        cellSize = 3
-    elif cup=="starii":
-        cellSize = 3
-    elif cup=="star_vii":
-        cellSize = 3
+    elif cm.default_cell_size is not None:
+        cellSize = cm.default_cell_size
     else:
-        cellSize = 3 # Default for star-like
+        cellSize = 3  # Default for star-like
 
     mapdat["rows"] = rows
     mapdat["columns"] = columns
@@ -265,7 +185,7 @@ def get_star_realization(cup, patternname, rows=None, columns=None, cell_size=No
     return remove_extra_map_keys(mapdat)
 
 
-def get_rainbow_realization(patternname, rows=None, columns=None, cell_size=None):
+def get_rainbow_realization(patternname, rows=None, columns=None, cell_size=None, seed=None):
     """
     Assemble Rainbow Map
     """
@@ -278,7 +198,8 @@ def get_rainbow_realization(patternname, rows=None, columns=None, cell_size=None
     mapdat = get_map_metadata('rainbow', patternname, zone_labels=True)
 
     # Get the initial condition strings
-    s1, s2, s3, s4 = render_map('rainbow', patternname, rows, columns)
+    cm = registry.get_cup_maps('rainbow')
+    s1, s2, s3, s4 = render_map(cm, patternname, rows, columns, seed=seed)
     url = f"?s1={s1}&s2={s2}&s3={s3}&s4={s4}"
 
     mapdat['initialConditions1'] = s1
@@ -294,7 +215,7 @@ def get_rainbow_realization(patternname, rows=None, columns=None, cell_size=None
     return remove_extra_map_keys(mapdat)
 
 
-def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None):
+def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None, seed=None):
     """
     Dragon Cup maps are assembled differently
     from Hellmouth, Toroidal, and Pseudo Cup maps.
@@ -316,6 +237,8 @@ def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
     chooseParts = ['starfield', 'supercritical', 'vector', 'matrix', 'lake', 'lighthouse', 'isotropic']
     if patternname in chooseParts:
         # Select a number of partitions
+        if seed is not None:
+            random.seed(seed)
         nparts = random.randint(1, MAX_PARTS)
     else:
         nparts = 0
@@ -333,7 +256,7 @@ def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
     }
 
     # Get the strings containing the listlife states for each color
-    s1, s2 = render_dragon_map(patternname, rows, columns, nparts)
+    s1, s2 = render_dragon_map(patternname, rows, columns, nparts, seed=seed)
     url = f"?s1={s1}&s2={s2}"
     m['initialConditions1'] = s1
     m['initialConditions2'] = s2
@@ -361,11 +284,25 @@ def get_dragon_realization(patternname, rows=None, columns=None, cell_size=None)
 # Metadata methods
 
 
-def get_map_metadata(cup, patternname, zone_labels=True):
+def _load_metadata_file(filename):
+    """Load a single metadata JSON file from the data directory."""
+    map_data_file = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), "data", filename
+    )
+    if not os.path.exists(map_data_file):
+        raise Exception(f"Could not find map metadata file: {filename}")
+    with open(map_data_file, "r") as f:
+        return json.load(f)
+
+
+def get_map_metadata_from_cup_maps(cm, patternname, zone_labels=True):
     """
-    Get map metadata for the specified cup and pattern
+    Get map metadata using a CupMaps instance (merges cumulative metadata files).
     """
-    all_metadata = get_all_map_metadata(cup)
+    all_metadata = []
+    for filename in cm.metadata_files:
+        all_metadata.extend(_load_metadata_file(filename))
+
     for m in all_metadata:
         if m['patternName'] == patternname:
             if not zone_labels:
@@ -374,7 +311,8 @@ def get_map_metadata(cup, patternname, zone_labels=True):
                     if key in m:
                         del m[key]
             return m
-    # If we reach this point, we didn't find labels in data/<cupname>.json
+
+    # If we reach this point, we didn't find the pattern in metadata
     if zone_labels:
         m = {
             "patternName": patternname,
@@ -393,17 +331,22 @@ def get_map_metadata(cup, patternname, zone_labels=True):
     return m
 
 
+def get_map_metadata(cup, patternname, zone_labels=True):
+    """
+    Get map metadata for the specified cup and pattern.
+    """
+    cm = registry.get_cup_maps(cup)
+    return get_map_metadata_from_cup_maps(cm, patternname, zone_labels=zone_labels)
+
+
 def get_all_map_metadata(cup, season=None):
     """
     Get metadata for all maps for the specified cup and season.
     """
-    map_data_file = os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), "data", f"{cup}.json"
-    )
-    if not os.path.exists(map_data_file):
-        raise Exception(f"Could not find map metadata for specified cup: {cup}")
-    with open(map_data_file, "r") as f:
-        mapdat = json.load(f)
+    cm = registry.get_cup_maps(cup)
+    mapdat = []
+    for filename in cm.metadata_files:
+        mapdat.extend(_load_metadata_file(filename))
 
     # If the user does not specify a season, return every map's metadata
     if season is None:
@@ -428,14 +371,28 @@ def get_all_map_metadata(cup, season=None):
 # Render the map for the realization
 
 
-def render_map(cup, patternname, rows, columns, seed=None):
-    f = get_pattern_function_map(cup)
-    pattern_map = f()
+def render_map(cm_or_cup, patternname, rows, columns, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    if isinstance(cm_or_cup, str):
+        cm = registry.get_cup_maps(cm_or_cup)
+    else:
+        cm = cm_or_cup
+    pattern_map = cm.pattern_function_map()
+    g = pattern_map[patternname]
+    return g(rows, columns, seed=seed)
+    if isinstance(cm_or_cup, str):
+        cm = registry.get_cup_maps(cm_or_cup)
+    else:
+        cm = cm_or_cup
+    pattern_map = cm.pattern_function_map()
     g = pattern_map[patternname]
     return g(rows, columns, seed=seed)
 
 
 def render_dragon_map(patternname, rows, columns, nparts, seed=None):
+    if seed is not None:
+        random.seed(seed)
     dragon_map = get_dragon_pattern_function_map()
     g = dragon_map[patternname]
     return g(columns, nparts, seed=seed)
