@@ -212,6 +212,9 @@ def _build_numeric_cup_maps(cup_number, registry, defaults, append_all_prior):
             else:
                 pattern_funcs = [entry_func]
                 metadata_files = [entry_metadata]
+                config.update(entry_config)
+                matched = True
+                break
             config.update(entry_config)
             matched = True
 
