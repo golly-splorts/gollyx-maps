@@ -151,13 +151,29 @@ def chicago(rows, cols, seed=None):
 def precipitation(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    stamp_names = ["solarsail", "backedupsink", "squarevariation3"]
+    stamp_names = [
+        "solarsail",
+        "backedupsink",
+        "squarevariation3",
+        "simpleunstablestar",
+        "spaceship2platform",
+        "doublestar",
+        "drifter",
+        "finger",
+        "satellite",
+        "star",
+        "squarevariation2",
+    ]
+    inner_stamp = random.choice(stamp_names)
+    outer_stamp = random.choice(stamp_names)
     return _containment_lines(
         rows,
         cols,
         seed=seed,
-        stamp_name=random.choice(stamp_names),
+        stamp_name=inner_stamp,
         peel_off=False,
+        fill_outer=True,
+        outer_stamp_name=outer_stamp,
     )
 
 
@@ -712,6 +728,8 @@ def _containment_lines(
     thickness=2,
     stamps_per_team_lim=[3, 6],
     vertical_stamp_orientation=None,
+    fill_outer=False,
+    outer_stamp_name=None,
     seed=None,
 ):
     """
@@ -859,6 +877,88 @@ def _containment_lines(
                 team1_patterns.append(gridstamp)
             elif team_assignments[i] == 2:
                 team2_patterns.append(gridstamp)
+
+    # --------------------
+    # Outer compartment fill (same logic as inner stamps, applied to regions above/below lines):
+
+    if fill_outer:
+        outer_stamps_per_team = random.randint(stamps_per_team_lim[0], stamps_per_team_lim[1])
+
+        outer_vertical = random.random() < 0.50
+
+        outer_regions = [
+            (thickness, y1 - thickness // 2),
+            (y2 + (thickness - thickness // 2), rows - thickness),
+        ]
+
+        for region_ystart, region_yend in outer_regions:
+            dy = region_yend - region_ystart
+            if dy < 8:
+                continue
+
+            team_assignments = [1,] * outer_stamps_per_team + [
+                2,
+            ] * outer_stamps_per_team
+            random.shuffle(team_assignments)
+
+            if outer_vertical:
+                xlocs = [
+                    int(((j + 1) / (outer_stamps_per_team + 1)) * cols)
+                    for j in range(outer_stamps_per_team)
+                ]
+            else:
+                xlocs = [
+                    int(((j + 1) / (2 * outer_stamps_per_team + 1)) * cols)
+                    for j in range(2 * outer_stamps_per_team)
+                ]
+
+            for i, xloc in enumerate(xlocs):
+
+                if outer_vertical:
+                    yy1 = region_ystart + int((1 / 3) * dy) + random.randint(-jittery, jittery)
+                    yy2 = region_ystart + int((2 / 3) * dy) + random.randint(-jittery, jittery)
+
+                    yy1 = min(max(yy1, region_ystart + thickness // 2), region_yend - thickness // 2)
+                    yy2 = min(max(yy2, region_ystart + thickness // 2), region_yend - thickness // 2)
+
+                    stamp1 = get_pattern(
+                        outer_stamp_name,
+                        hflip=random.random() < 0.50,
+                        vflip=random.random() < 0.50,
+                    )
+
+                    xx = xloc + random.randint(-jitterx, jitterx)
+                    gridstamp = get_gridstamp(stamp1, rows, cols, yoffset=yy1, xoffset=xx)
+
+                    team1_patterns.append(gridstamp)
+
+                    stamp2 = get_pattern(
+                        outer_stamp_name,
+                        hflip=random.random() < 0.50,
+                        vflip=random.random() < 0.50,
+                    )
+
+                    xx = xloc + random.randint(-jitterx, jitterx)
+                    gridstamp = get_gridstamp(stamp2, rows, cols, yoffset=yy2, xoffset=xx)
+
+                    team2_patterns.append(gridstamp)
+
+                else:
+
+                    stamp = get_pattern(
+                        outer_stamp_name,
+                        hflip=random.random() < 0.50,
+                        vflip=random.random() < 0.50,
+                    )
+
+                    xx = xloc + random.randint(-jitterx, jitterx)
+                    yy = region_ystart + int(0.5 * dy) + random.randint(-jittery, jittery)
+                    gridstamp = get_gridstamp(stamp, rows, cols, yoffset=yy, xoffset=xx)
+
+                    if team_assignments[i] == 1:
+                        team1_patterns.append(gridstamp)
+                    elif team_assignments[i] == 2:
+                        team2_patterns.append(gridstamp)
 
     # --------------------
     # Final assembly:
