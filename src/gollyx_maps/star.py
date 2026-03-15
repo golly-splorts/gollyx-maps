@@ -161,7 +161,6 @@ def precipitation(rows, cols, seed=None):
         "drifter",
         "finger",
         "satellite",
-        "star",
         "squarevariation2",
     ]
     inner_stamp = random.choice(stamp_names)
