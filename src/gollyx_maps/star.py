@@ -114,7 +114,7 @@ def stlouis(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    if random.random() < 0.50:
+    if random.random() < 0.5:
         # chicago style
         return _bars(
             rows,
@@ -143,20 +143,58 @@ def stlouis(rows, cols, seed=None):
 def newyork(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    return _bars(rows, cols, seed=seed, thickness_lim=[2, 4])
+
+    if random.random() < 0.5:
+        # classic new york
+        return _bars(
+            rows,
+            cols,
+            seed=seed,
+            tmargin_lim=[1, 3],
+            bmargin_lim=[5, 8],
+            thickness_lim=[2, 4]
+        )
+
+    else:
+        # new new york
+        return _bars(
+            rows,
+            cols,
+            seed=seed,
+            gap_prob_lim=[5, 7],
+            tmargin_lim=[1, 2],
+            bmargin_lim=[7, 9],
+            thickness_lim=[4, 6],
+        )
 
 
 def chicago(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
-    return _bars(
-        rows,
-        cols,
-        seed=seed,
-        tmargin_lim=[3, 4],
-        bmargin_lim=[5, 6],
-        thickness_lim=[8, 10],
-    )
+
+    if random.random() < 0.5:
+        # classic chicago
+        return _bars(
+            rows,
+            cols,
+            seed=seed,
+            gap_prob_lim=[3, 6],
+            tmargin_lim=[2, 4],
+            bmargin_lim=[5, 7],
+            thickness_lim=[7, 14],
+        )
+
+    else:
+        # new chicago
+        return _bars(
+            rows,
+            cols,
+            seed=seed,
+            gap_prob_lim=[4, 6],
+            tmargin_lim=[1, 2],
+            bmargin_lim=[7, 9],
+            thickness_lim=[9, 14],
+        )
 
 
 def precipitation(rows, cols, seed=None):
@@ -484,7 +522,7 @@ def _bars(
     cols,
     tmargin_lim=[2, 3],
     bmargin_lim=[7, 8],
-    gap_prob_lim=[2, 4],
+    gap_prob_lim=[2, 6],
     thickness_lim=[3, 5],
     st_louis_style=False,
     st_louis_gap=5,
