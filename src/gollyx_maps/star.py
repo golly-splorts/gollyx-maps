@@ -113,6 +113,7 @@ def flyingv2(rows, cols, seed=None):
 def stlouis(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
+
     if random.random() < 0.50:
         # chicago style
         return _bars(
@@ -120,13 +121,23 @@ def stlouis(rows, cols, seed=None):
             cols,
             seed=seed,
             st_louis_style=True,
-            tmargin_lim=[3, 4],
-            bmargin_lim=[5, 6],
-            thickness_lim=[8, 10],
+            st_louis_gap=random.randint(5, 9),
+            tmargin_lim=[1, 3],
+            bmargin_lim=[5, 8],
+            thickness_lim=[7, 13],
         )
     else:
         # ny style
-        return _bars(rows, cols, seed=seed, st_louis_style=True, thickness_lim=[2, 4])
+        return _bars(
+            rows,
+            cols,
+            seed=seed,
+            st_louis_style=True,
+            st_louis_gap=random.randint(5, 9),
+            tmargin_lim=[1, 3],
+            bmargin_lim=[5, 8],
+            thickness_lim=[2, 4],
+        )
 
 
 def newyork(rows, cols, seed=None):
@@ -649,10 +660,13 @@ def combs(rows, cols, seed=None):
     for y in range(starty1, endy1 + 1):
         for x in range(startx, endx + 1):
             if y == starty1:
+                # Solid line
                 team1_pattern[y][x] = "o"
             elif y == endy1:
+                # Repeated lines form the comb
                 team1_pattern[y][x] = team1_pattern[y - 1][x]
             elif x % 2 == y % 2:
+                # Checkerboard pattern
                 team1_pattern[y][x] = "o"
 
     for x in range(startx, endx + 1):
@@ -671,10 +685,13 @@ def combs(rows, cols, seed=None):
     for y in range(endy2, starty2 - 1, -1):
         for x in range(startx, endx + 1):
             if y == starty2:
+                # Repeated lines form the comb
                 team2_pattern[y][x] = team2_pattern[y + 1][x]
             elif y == endy2:
+                # Solid line
                 team2_pattern[y][x] = "o"
             elif x % 2 == y % 2:
+                # Checkerboard pattern
                 team2_pattern[y][x] = "o"
 
     for x in range(startx, endx + 1):
