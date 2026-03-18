@@ -625,18 +625,20 @@ def combs(rows, cols, seed=None):
     # --------------
     # Parameters
 
-    jitterx = 8
+    jitterx = 12
     jittery = 8
 
-    thickness = random.randint(3, 5)
+    thickness = random.randint(4, 9)
 
-    ylocations = [random.randint(20, 45) / 100, random.randint(55, 80) / 100]
+    # color 1 and color 2 y location anchors
+    ylocations = [random.randint(15, 40) / 100, random.randint(60, 85) / 100]
     yloc_swap_prob = 0.3
 
-    xstart = random.randint(10, 25) / 100
-    xwidth = random.randint(45, 65) / 100
+    xstart = random.randint(10, 35) / 100
+    xwidth = random.randint(35, 75) / 100
 
     bumps_prob = random.randint(10, 50) / 100
+    double_bumps = random.getrandbits(0)
 
     # -----------------
     # Algorithm:
@@ -657,7 +659,7 @@ def combs(rows, cols, seed=None):
     startx = int(xstart * cols) + random.randint(-jitterx, jitterx)
     endx = startx + int(xwidth * cols)
 
-    for y in range(starty1, endy1 + 1):
+    for y in range(starty1, endy1 + 2):
         for x in range(startx, endx + 1):
             if y == starty1:
                 # Solid line
@@ -665,6 +667,9 @@ def combs(rows, cols, seed=None):
             elif y == endy1:
                 # Repeated lines form the comb
                 team1_pattern[y][x] = team1_pattern[y - 1][x]
+            elif y == endy1+1:
+                # Repeated lines form the comb
+                team1_pattern[y][x] = team1_pattern[y - 2][x]
             elif x % 2 == y % 2:
                 # Checkerboard pattern
                 team1_pattern[y][x] = "o"
@@ -672,6 +677,8 @@ def combs(rows, cols, seed=None):
     for x in range(startx, endx + 1):
         if random.random() < bumps_prob:
             team1_pattern[starty1 - 1][x] = "o"
+            if double_bumps:
+                team1_pattern[starty1 - 2][x] = "o"
 
     # -------------
     # color 2
@@ -682,11 +689,14 @@ def combs(rows, cols, seed=None):
     startx = int(xstart * cols) + random.randint(-jitterx, jitterx)
     endx = startx + int(xwidth * cols)
 
-    for y in range(endy2, starty2 - 1, -1):
+    for y in range(endy2, starty2 - 2, -1):
         for x in range(startx, endx + 1):
             if y == starty2:
                 # Repeated lines form the comb
                 team2_pattern[y][x] = team2_pattern[y + 1][x]
+            elif y == starty2-1:
+                # Repeated lines form the comb
+                team2_pattern[y][x] = team2_pattern[y + 2][x]
             elif y == endy2:
                 # Solid line
                 team2_pattern[y][x] = "o"
@@ -697,6 +707,8 @@ def combs(rows, cols, seed=None):
     for x in range(startx, endx + 1):
         if random.random() < bumps_prob:
             team2_pattern[endy2 + 1][x] = "o"
+            if double_bumps:
+                team2_pattern[endy2 + 2][x] = "o"
 
     team1_pattern = ["".join(pattrow) for pattrow in team1_pattern]
     team2_pattern = ["".join(pattrow) for pattrow in team2_pattern]
