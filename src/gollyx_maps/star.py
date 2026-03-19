@@ -255,17 +255,18 @@ def denaturation(rows, cols, seed=None):
 def gastank(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
+
     return _containment_rectangle(
         rows,
         cols,
         seed=seed,
-        ylocs_top_lim=[3, 4],
-        ylocs_bot_lim=[6, 7],
-        xlocs_left_lim=[3, 4],
-        xlocs_right_lim=[6, 7],
+        ylocs_top_lim=[2, 4],
+        ylocs_bot_lim=[6, 8],
+        xlocs_left_lim=[2, 4],
+        xlocs_right_lim=[6, 8],
         fill_style="random",
         thickness=2,
-        fill_density=random.randint(3, 10) / 100,
+        fill_density=random.randint(3, 25) / 100,
     )
 
 
