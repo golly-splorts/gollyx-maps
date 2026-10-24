@@ -74,7 +74,7 @@ def get_vi_pattern_function_map():
         "hellmath": donutmath_twocolor,
         "porchlights": porchlights_twocolor,
         "random": donutrandom_twocolor,
-        "gaussian": doublegaussian_twocolor,
+        "doublegaussian": doublegaussian_twocolor,
     }
 
 
