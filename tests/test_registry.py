@@ -7,7 +7,6 @@ from gollyx_maps.registry import (
     GOLLY_REGISTRY,
     PENINSULA_REGISTRY,
 )
-from gollyx_maps.ii import get_ii_pattern_function_map
 from gollyx_maps.vi import get_vi_pattern_function_map
 from gollyx_maps.star import get_star_pattern_function_map
 from gollyx_maps.star_vii import get_star_vii_new_pattern_function_map
@@ -31,20 +30,18 @@ def test_get_cup_maps_legacy():
 def test_golly_union_defined():
     """
     Verify that a defined Golly Union cup (e.g., "vi") returns a CupMaps
-    instance with the correct cumulative map functions and merged metadata files.
+    instance with only its own map functions and metadata file (not cumulative).
     """
     cm = get_cup_maps("vi")
     assert isinstance(cm, CupMaps)
     assert cm.type == "standard"
     assert cm.default_rows == 150
     assert cm.default_columns == 240
-    assert "ii.json" in cm.metadata_files
-    assert "vi.json" in cm.metadata_files
+    assert cm.metadata_files == ["vi.json"]
 
-    # Check for cumulative patterns
+    # Golly Union patterns are not cumulative
     pattern_map = cm.pattern_function_map()
-    assert set(get_ii_pattern_function_map().keys()).issubset(pattern_map.keys())
-    assert set(get_vi_pattern_function_map().keys()).issubset(pattern_map.keys())
+    assert pattern_map.keys() == get_vi_pattern_function_map().keys()
 
 
 def test_golly_union_interpolated():
@@ -81,7 +78,7 @@ def test_peninsula_union_defined():
     cm = get_cup_maps("star-vii")
     assert isinstance(cm, CupMaps)
     assert cm.type == "star"
-    assert cm.default_rows == 180
+    assert cm.default_rows == 160
     assert cm.default_columns == 280
     assert "star.json" in cm.metadata_files
     assert "star_vii.json" in cm.metadata_files

@@ -6,6 +6,7 @@ from gollyx_maps.maps import (
     get_all_map_metadata,
     get_all_map_patterns,
 )
+from gollyx_maps.vi import get_vi_pattern_function_map
 
 # Representative set of cups for testing
 # - "hellmouth": legacy
@@ -64,17 +65,14 @@ def test_get_map_realization(cup):
 def test_get_all_map_metadata_cumulative():
     """
     Check that metadata is correctly fetched and merged for cumulative cups.
-    For "vi", metadata from both "ii" and "vi" should be present.
+    Golly Union cups are not cumulative: "vi" has only its own metadata.
+    Peninsula Union cups are: "star-vii" has metadata from "star" and "star-vii".
     """
     metadata_vi = get_all_map_metadata("vi")
     patterns_vi = {m["patternName"] for m in metadata_vi}
 
-    metadata_ii = get_all_map_metadata("ii")
-    patterns_ii = {m["patternName"] for m in metadata_ii}
-
-    # "vi" patterns should be a superset of "ii" patterns
-    assert patterns_ii.issubset(patterns_vi)
-    assert len(patterns_vi) > len(patterns_ii)
+    # "vi" patterns should be exactly the "vi" pattern functions
+    assert patterns_vi == set(get_vi_pattern_function_map().keys())
 
     # Do the same for star-vii
     metadata_star_vii = get_all_map_metadata("star-vii")
