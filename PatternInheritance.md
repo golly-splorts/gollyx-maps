@@ -30,7 +30,7 @@ It also adds a few with new names (e.g., `timebomb_oscillators_twocolor` → `"c
 |---|---|
 | `donutmath` | `hellmath` |
 | `donutrandom` | `random` |
-| `doublegaussian` | `gaussian` |
+| `doublegaussian` | `doublegaussian` (same) |
 | `porchlights` | `porchlights` (same) |
 
 ## Star (legacy) → Star-VII (Peninsula)
