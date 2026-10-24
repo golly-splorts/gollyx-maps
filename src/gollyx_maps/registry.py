@@ -208,7 +208,9 @@ def _build_numeric_cup_maps(cup_number, registry, defaults, append_all_prior):
         if entry_cup <= cup_number:
             pattern_funcs.append(entry_func)
             metadata_files.append(entry_metadata)
-            config.update(entry_config)
+            # Only the newest matching entry sets the config
+            if not matched:
+                config.update(entry_config)
             matched = True
             if not append_all_prior:
                 break

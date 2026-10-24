@@ -78,8 +78,8 @@ def test_peninsula_union_defined():
     cm = get_cup_maps("star-vii")
     assert isinstance(cm, CupMaps)
     assert cm.type == "star"
-    assert cm.default_rows == 160
-    assert cm.default_columns == 240
+    assert cm.default_rows == 180
+    assert cm.default_columns == 280
     assert "star.json" in cm.metadata_files
     assert "star_vii.json" in cm.metadata_files
 
