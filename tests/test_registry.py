@@ -131,3 +131,24 @@ def test_error_handling():
         get_cup_maps("")
     with pytest.raises(GollyXMapsError):
         get_cup_maps(None)
+
+@pytest.mark.parametrize("cup, prior", [("ix", "viii"), ("star-ix", "star-viii")])
+def test_cup_ix_board_size(cup, prior):
+    """
+    Verify that cup ix in both unions defaults to a 240x360 board with cell size 2,
+    with the same patterns and metadata files as the cup before it.
+    """
+    cm = get_cup_maps(cup)
+    cm_prior = get_cup_maps(prior)
+    assert (cm.default_rows, cm.default_columns, cm.default_cell_size) == (240, 360, 2)
+    assert cm.pattern_function_map().keys() == cm_prior.pattern_function_map().keys()
+    assert cm.metadata_files == cm_prior.metadata_files
+
+
+@pytest.mark.parametrize("cup, size", [("viii", (150, 240, 3)), ("star-viii", (180, 280, 3))])
+def test_cup_viii_board_size(cup, size):
+    """
+    Verify that cup viii in both unions keeps its board size.
+    """
+    cm = get_cup_maps(cup)
+    assert (cm.default_rows, cm.default_columns, cm.default_cell_size) == size

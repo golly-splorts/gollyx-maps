@@ -1,5 +1,9 @@
 gollyx-maps:
 
+Version 812:
+
+* Cup ix and star-ix and later default to 240x360 boards at cell size 2
+
 Version 600:
 
 * Adding Hellmouth VI Cup maps

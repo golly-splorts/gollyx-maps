@@ -69,6 +69,9 @@ and default grid size. Three kinds of cup name are accepted:
 | Peninsula Union (`star-` + roman numeral) | `star-vii`, `star-xxi` | all registry entries at or below that number |
 
 So `xxi` uses the VI maps, and `star-vii` uses the Star maps plus the Star VII maps.
+The default grid size comes from the newest registry entry at or below the cup
+number, including size-only entries that add no maps: `ix` and `star-ix` and
+later cups default to 240 rows by 360 columns at cell size 2.
 See [PatternInheritance.md](PatternInheritance.md) for which patterns each cup
 reuses and renames.
 
