@@ -6,9 +6,11 @@ from .utils import pattern2url_chars
 # The plus sign ("star") is a still life under B2/S345/C4
 PLUS = [(0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)]
 
-# Distance between plus centers along a frame side; 5 leaves the sides, corners
-# and nested frames all still lifes
+# Distance between plus centers along a frame side
 FRAME_PITCH = 5
+
+# Rows between a horizontal line and the first or last plus of a side
+SIDE_GAP = 6
 
 
 def get_star_ix_new_pattern_function_map():
@@ -18,41 +20,43 @@ def get_star_ix_new_pattern_function_map():
     }
 
 
-def frame_centers(rows, cols, margin, pitch=FRAME_PITCH):
+def frame_cells(rows, cols, margin):
     """
-    Plus-sign centers of a rectangular frame, with shared corners.
+    Cells of a picture frame that is a still life under B2/S345/C4.
+
+    The top and bottom are 2-thick lines across the full width of the board; they wrap
+    around it, so they have no ends to burn. The left and right sides are columns of
+    plus signs, kept clear of the lines.
 
     Args:
         rows (int): board rows.
         cols (int): board columns.
-        margin (int): distance from the board edge to the frame's top and left centers.
-        pitch (int): distance between neighboring centers along each side.
+        margin (int): distance from the board edge to the frame.
 
     Returns:
-        dict: "top", "bottom", "left" and "right" lists of (x, y) centers. Corners
-            belong to top and bottom; left and right hold the centers between them.
+        dict: "top", "bottom", "left" and "right" sets of (x, y) cells.
+
+    Raises:
+        GollyXMapsError: if the board has no room for the frame.
     """
-    nx = (cols - 1 - 2 * margin) // pitch
-    ny = (rows - 1 - 2 * margin) // pitch
-    if nx < 2 or ny < 2:
+    first, last = margin + 1 + SIDE_GAP, rows - 1 - margin - 1 - SIDE_GAP
+    if last - first < 4 * FRAME_PITCH or cols < 2 * margin + 40:
         raise GollyXMapsError(f"Board {rows}x{cols} is too small for a frame with margin {margin}")
-    xs = [margin + pitch * i for i in range(nx + 1)]
-    ys = [margin + pitch * i for i in range(ny + 1)]
-    return {
-        "top": [(x, ys[0]) for x in xs],
-        "bottom": [(x, ys[-1]) for x in xs],
-        "left": [(xs[0], y) for y in ys[1:-1]],
-        "right": [(xs[-1], y) for y in ys[1:-1]],
-    }
+    lines = {"top": (margin, margin + 1), "bottom": (rows - 2 - margin, rows - 1 - margin)}
+    cells = {side: {(x, y) for x in range(cols) for y in ys} for side, ys in lines.items()}
+    ncenters = (last - first) // FRAME_PITCH
+    for side, cx in (("left", margin + 1), ("right", cols - 2 - margin)):
+        cells[side] = {(cx + dx, first + FRAME_PITCH * i + dy) for i in range(ncenters + 1) for dx, dy in PLUS}
+    return cells
 
 
 def pictureframe(rows, cols, seed=None):
     """
-    A picture frame of plus signs around a random two-color soup.
+    A picture frame around a random two-color soup.
 
-    Two nested frames of still lifes sit just inside the board edges, so spaceships
-    that leave the picture meet a wall before they wrap around the board. Team 1 owns
-    two sides of the frame and team 2 the other two; the picture is an even mix of both.
+    The frame is a still life, so spaceships that leave the picture meet a wall before
+    they wrap around the board. Team 1 owns one horizontal and one vertical side, team 2
+    the other two; the picture is an even mix of both.
 
     Args:
         rows (int): board rows.
@@ -65,11 +69,9 @@ def pictureframe(rows, cols, seed=None):
     if seed is not None:
         random.seed(seed)
 
-    # Distance from the board edge to the outer frame, and between the two frames
     margin = random.randint(3, 6)
-    inner_margin = margin + FRAME_PITCH
+    frame = frame_cells(rows, cols, margin)
 
-    # Which sides each team owns: horizontal and vertical sides are assigned separately
     hswap = random.random() < 0.5
     vswap = random.random() < 0.5
     side_team = {
@@ -80,14 +82,12 @@ def pictureframe(rows, cols, seed=None):
     }
 
     grids = {1: get_grid_empty(rows, cols, flat=False), 2: get_grid_empty(rows, cols, flat=False)}
-    for m in (margin, inner_margin):
-        for side, centers in frame_centers(rows, cols, m).items():
-            for cx, cy in centers:
-                for dx, dy in PLUS:
-                    grids[side_team[side]][(cy + dy) % rows][(cx + dx) % cols] = "o"
+    for side, cells in frame.items():
+        for x, y in cells:
+            grids[side_team[side]][y][x] = "o"
 
-    # Picture: a random soup inside the inner frame, with clear space next to it
-    clearance = inner_margin + random.randint(8, 20)
+    # Picture: a random soup inside the frame, with clear space next to it
+    clearance = margin + random.randint(12, 20)
     if rows - 2 * clearance < 10 or cols - 2 * clearance < 10:
         raise GollyXMapsError(f"Board {rows}x{cols} is too small for a pictureframe map")
     density = random.randint(5, 20) / 100

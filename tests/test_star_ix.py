@@ -2,7 +2,7 @@ import json
 import pytest
 from gollyx_maps import maps
 from gollyx_maps.error import GollyXMapsError
-from gollyx_maps.star_ix import FRAME_PITCH, PLUS, frame_centers, pictureframe
+from gollyx_maps.star_ix import frame_cells, pictureframe
 
 
 def _is_still_life(cells, rows, cols):
@@ -23,28 +23,20 @@ def _is_still_life(cells, rows, cols):
 
 @pytest.mark.parametrize("rows, cols", [(240, 360), (180, 280), (160, 240)])
 @pytest.mark.parametrize("margin", [3, 4, 5, 6])
-def test_nested_frames_are_still_lifes(rows, cols, margin):
+def test_frame_is_still_life(rows, cols, margin):
     """
-    The outer and inner frame together never change under the Star Wars rule.
+    The whole frame never changes under the Star Wars rule.
     """
-    cells = set()
-    for m in (margin, margin + FRAME_PITCH):
-        for centers in frame_centers(rows, cols, m).values():
-            for cx, cy in centers:
-                cells |= {(cx + dx, cy + dy) for dx, dy in PLUS}
+    cells = set().union(*frame_cells(rows, cols, margin).values())
     assert _is_still_life(cells, rows, cols)
 
 
-def test_frame_centers_share_corners():
+def test_frame_sides_do_not_overlap():
     """
-    Each corner belongs to exactly one side, and centers are evenly spaced.
+    Every frame cell belongs to exactly one side, so each has one owner.
     """
-    sides = frame_centers(240, 360, 4)
-    centers = [c for side in sides.values() for c in side]
-    assert len(centers) == len(set(centers))
-    assert {sides["top"][0], sides["top"][-1], sides["bottom"][0], sides["bottom"][-1]} <= set(centers)
-    xs = [x for x, _ in sides["top"]]
-    assert all(b - a == FRAME_PITCH for a, b in zip(xs, xs[1:]))
+    sides = frame_cells(240, 360, 4)
+    assert len(set().union(*sides.values())) == sum(len(cells) for cells in sides.values())
 
 
 def test_pictureframe_realization():
