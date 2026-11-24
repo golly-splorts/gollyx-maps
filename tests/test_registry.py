@@ -151,7 +151,7 @@ def test_cup_ix_patterns():
     assert ix.metadata_files == viii.metadata_files
 
     star_ix, star_viii = get_cup_maps("star-ix"), get_cup_maps("star-viii")
-    assert star_ix.pattern_function_map().keys() == star_viii.pattern_function_map().keys() | {"pictureframe"}
+    assert star_ix.pattern_function_map().keys() == star_viii.pattern_function_map().keys() | {"pictureframe", "poly1", "poly2"}
     assert star_ix.metadata_files == ["star_ix.json"] + star_viii.metadata_files
 
 

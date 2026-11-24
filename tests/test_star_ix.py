@@ -3,7 +3,7 @@ import pytest
 from gollyx_maps import maps
 from gollyx_maps.error import GollyXMapsError
 from gollyx_maps.patterns import get_pattern
-from gollyx_maps.star_ix import PORTRAIT_STAMPS, frame_cells, pictureframe
+from gollyx_maps.star_ix import PORTRAIT_STAMPS, frame_cells, load_polyominoes, pictureframe, poly1, poly2
 
 
 def _is_still_life(cells, rows, cols):
@@ -93,3 +93,44 @@ def test_portrait_stamps_exist():
     """
     for name in PORTRAIT_STAMPS:
         assert get_pattern(name)
+
+
+def test_polyominoes_are_connected_and_sized():
+    """
+    Every polyomino in the library has 7 to 10 edge-connected cells, with no duplicates.
+    """
+    shapes = load_polyominoes()
+    assert len({tuple(s) for s in shapes}) == len(shapes)
+    for shape in shapes:
+        cells = {(x, y) for y, row in enumerate(shape) for x, char in enumerate(row) if char == "o"}
+        assert 7 <= len(cells) <= 10
+        seen, todo = set(), [next(iter(cells))]
+        while todo:
+            x, y = todo.pop()
+            if (x, y) in cells and (x, y) not in seen:
+                seen.add((x, y))
+                todo += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+        assert seen == cells
+
+
+@pytest.mark.parametrize("func", [poly1, poly2])
+@pytest.mark.parametrize("seed", range(20))
+def test_poly_maps_are_even(func, seed):
+    """
+    The teams start with equal cells in range, share none, and the seed fixes the map.
+    """
+    result = func(240, 360, seed=seed)
+    cells = [{(x, int(y)) for row in json.loads(s) for y, xs in row.items() for x in xs} for s in (result[0], result[3])]
+    assert len(cells[0]) == len(cells[1]) >= 8 * 7
+    assert not cells[0] & cells[1]
+    assert all(0 <= x < 360 and 0 <= y < 240 for x, y in cells[0] | cells[1])
+    assert func(240, 360, seed=seed) == result
+
+
+@pytest.mark.parametrize("func", [poly1, poly2])
+def test_poly_maps_board_too_small(func):
+    """
+    A board with no room for the grid raises GollyXMapsError.
+    """
+    with pytest.raises(GollyXMapsError):
+        func(60, 60, seed=1)

@@ -4,5 +4,17 @@
         "mapName": "Picture Frame",
         "mapDescription": "Two teams of methuselahs inside a picture frame",
         "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly1",
+        "mapName": "Poly 1",
+        "mapDescription": "A 4x4 checkerboard of polyominoes",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly2",
+        "mapName": "Poly 2",
+        "mapDescription": "A 4x4 grid of polyominoes, one team on each side",
+        "mapStartSeason": 0
     }
 ]
