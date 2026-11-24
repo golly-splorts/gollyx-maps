@@ -42,21 +42,21 @@ def get_star_ix_new_pattern_function_map():
     return {
         "pictureframe": pictureframe,
         "poly1": poly1,
-        "poly1a": poly1a,
-        "poly1b": poly1b,
-        "poly1c": poly1c,
+        "switchyard": switchyard,
+        "gravelyard": gravelyard,
+        "scrapyard": scrapyard,
         "poly2": poly2,
-        "poly2a": poly2a,
-        "poly2b": poly2b,
-        "poly2c": poly2c,
+        "shootinggallery": shootinggallery,
+        "dunktank": dunktank,
+        "duckpond": duckpond,
         "poly3": poly3,
-        "poly3a": poly3a,
-        "poly3b": poly3b,
-        "poly3c": poly3c,
+        "fistfightcathedral": fistfightcathedral,
+        "fistfightcourthouse": fistfightcourthouse,
+        "fistfightfuneral": fistfightfuneral,
         "poly4": poly4,
-        "poly4a": poly4a,
-        "poly4b": poly4b,
-        "poly4c": poly4c,
+        "congashipyard": congashipyard,
+        "congadisco": congadisco,
+        "congadynamite": congadynamite,
     }
 
 
@@ -301,7 +301,7 @@ def poly1(rows, cols, seed=None):
     return _polyomino_grid(rows, cols, seed, ypitch=rows // 6, shuffle_teams=True)
 
 
-def poly1a(rows, cols, seed=None):
+def switchyard(rows, cols, seed=None):
     """
     A loose 4x4 grid of beam and scaffold shapes, the teams mixed: growing lines among solid spines.
 
@@ -321,7 +321,7 @@ def poly1a(rows, cols, seed=None):
                            families=[families["beam"], families["scaffold"]])
 
 
-def poly1b(rows, cols, seed=None):
+def gravelyard(rows, cols, seed=None):
     """
     A loose 4x4 grid of sprayer and scaffold shapes, the teams mixed: dotted streams of gliders among solid spines.
 
@@ -341,7 +341,7 @@ def poly1b(rows, cols, seed=None):
                            families=[families["sprayer"], families["scaffold"]])
 
 
-def poly1c(rows, cols, seed=None):
+def scrapyard(rows, cols, seed=None):
     """
     A loose 4x4 grid of burst and scaffold shapes, the teams mixed: full explosions, half of them building solid spines.
 
@@ -376,7 +376,7 @@ def poly2(rows, cols, seed=None):
     return _polyomino_grid(rows, cols, seed, ypitch=rows // 5, shuffle_teams=False)
 
 
-def poly2a(rows, cols, seed=None):
+def shootinggallery(rows, cols, seed=None):
     """
     A loose 4x4 grid, one team on each side: scaffold shapes in the middle, beam shapes at the edges.
 
@@ -396,7 +396,7 @@ def poly2a(rows, cols, seed=None):
                            families=[families["scaffold"], families["beam"]])
 
 
-def poly2b(rows, cols, seed=None):
+def dunktank(rows, cols, seed=None):
     """
     A loose 4x4 grid, one team on each side: burst shapes in the middle, scaffold shapes at the edges.
 
@@ -416,7 +416,7 @@ def poly2b(rows, cols, seed=None):
                            families=[families["burst"], families["scaffold"]])
 
 
-def poly2c(rows, cols, seed=None):
+def duckpond(rows, cols, seed=None):
     """
     A loose 4x4 grid, one team on each side: swarm shapes in the middle, burst shapes at the edges.
 
@@ -499,7 +499,7 @@ def poly3(rows, cols, seed=None):
     return _polyomino_quadrants(rows, cols, seed, shapes, shapes)
 
 
-def poly3a(rows, cols, seed=None):
+def fistfightcathedral(rows, cols, seed=None):
     """
     Polyominoes in quadrants, beam and scaffold shapes: growing lines against solid spines.
 
@@ -518,7 +518,7 @@ def poly3a(rows, cols, seed=None):
     return _polyomino_quadrants(rows, cols, seed, families["beam"], families["scaffold"])
 
 
-def poly3b(rows, cols, seed=None):
+def fistfightcourthouse(rows, cols, seed=None):
     """
     Polyominoes in quadrants, swarm and scaffold shapes: ship swarms against solid spines.
 
@@ -537,7 +537,7 @@ def poly3b(rows, cols, seed=None):
     return _polyomino_quadrants(rows, cols, seed, families["swarm"], families["scaffold"])
 
 
-def poly3c(rows, cols, seed=None):
+def fistfightfuneral(rows, cols, seed=None):
     """
     Polyominoes in quadrants, swarm and burst shapes: small swarms and full explosions of ships.
 
@@ -619,7 +619,7 @@ def poly4(rows, cols, seed=None):
     return _polyomino_row(rows, cols, seed, [load_polyominoes()])
 
 
-def poly4a(rows, cols, seed=None):
+def congashipyard(rows, cols, seed=None):
     """
     A staggered row of one scaffold shape.
 
@@ -638,7 +638,7 @@ def poly4a(rows, cols, seed=None):
     return _polyomino_row(rows, cols, seed, [families["scaffold"]])
 
 
-def poly4b(rows, cols, seed=None):
+def congadisco(rows, cols, seed=None):
     """
     A staggered row of one beam shape and one scaffold shape in turn.
 
@@ -657,7 +657,7 @@ def poly4b(rows, cols, seed=None):
     return _polyomino_row(rows, cols, seed, [families["beam"], families["scaffold"]])
 
 
-def poly4c(rows, cols, seed=None):
+def congadynamite(rows, cols, seed=None):
     """
     A staggered row of one burst shape.
 

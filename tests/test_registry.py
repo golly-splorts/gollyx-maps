@@ -151,7 +151,13 @@ def test_cup_ix_patterns():
     assert ix.metadata_files == viii.metadata_files
 
     star_ix, star_viii = get_cup_maps("star-ix"), get_cup_maps("star-viii")
-    assert star_ix.pattern_function_map().keys() == star_viii.pattern_function_map().keys() | {"pictureframe"} | {f"poly{n}{v}" for n in "1234" for v in ("", "a", "b", "c")}
+    assert star_ix.pattern_function_map().keys() == star_viii.pattern_function_map().keys() | {
+        "pictureframe", "poly1", "poly2", "poly3", "poly4",
+        "switchyard", "gravelyard", "scrapyard",
+        "shootinggallery", "dunktank", "duckpond",
+        "fistfightcathedral", "fistfightcourthouse", "fistfightfuneral",
+        "congashipyard", "congadisco", "congadynamite",
+    }
     assert star_ix.metadata_files == ["star_ix.json"] + star_viii.metadata_files
 
 

@@ -5,13 +5,13 @@ from gollyx_maps.error import GollyXMapsError
 from gollyx_maps.patterns import get_pattern
 from gollyx_maps.star_ix import (
     PORTRAIT_STAMPS, frame_cells, load_polyomino_families, load_polyominoes, pictureframe,
-    poly1, poly1a, poly1b, poly1c, poly2, poly2a, poly2b, poly2c,
-    poly3, poly3a, poly3b, poly3c, poly4, poly4a, poly4b, poly4c,
+    poly1, switchyard, gravelyard, scrapyard, poly2, shootinggallery, dunktank, duckpond,
+    poly3, fistfightcathedral, fistfightcourthouse, fistfightfuneral, poly4, congashipyard, congadisco, congadynamite,
 )
 
 POLY_MAPS = [
-    poly1, poly1a, poly1b, poly1c, poly2, poly2a, poly2b, poly2c,
-    poly3, poly3a, poly3b, poly3c, poly4, poly4a, poly4b, poly4c,
+    poly1, switchyard, gravelyard, scrapyard, poly2, shootinggallery, dunktank, duckpond,
+    poly3, fistfightcathedral, fistfightcourthouse, fistfightfuneral, poly4, congashipyard, congadisco, congadynamite,
 ]
 
 
@@ -203,10 +203,10 @@ def family_shapes():
 
 
 @pytest.mark.parametrize("func, middle, edge", [
-    (poly2a, "scaffold", "beam"), (poly2b, "burst", "scaffold"), (poly2c, "swarm", "burst"),
+    (shootinggallery, "scaffold", "beam"), (dunktank, "burst", "scaffold"), (duckpond, "swarm", "burst"),
 ])
 @pytest.mark.parametrize("seed", range(5))
-def test_poly2_fronts(func, middle, edge, seed, family_shapes):
+def test_carnival_fronts(func, middle, edge, seed, family_shapes):
     """
     One family fills the two middle columns, the other the two edge columns, one team per side.
     """
@@ -218,10 +218,10 @@ def test_poly2_fronts(func, middle, edge, seed, family_shapes):
 
 
 @pytest.mark.parametrize("func, names", [
-    (poly1a, ("beam", "scaffold")), (poly1b, ("sprayer", "scaffold")), (poly1c, ("burst", "scaffold")),
+    (switchyard, ("beam", "scaffold")), (gravelyard, ("sprayer", "scaffold")), (scrapyard, ("burst", "scaffold")),
 ])
 @pytest.mark.parametrize("seed", range(5))
-def test_poly1_families(func, names, seed, family_shapes):
+def test_yard_families(func, names, seed, family_shapes):
     """
     Each team gets four shapes from each of the map's two families.
     """
@@ -231,9 +231,9 @@ def test_poly1_families(func, names, seed, family_shapes):
             assert sum(t == team and shape in family_shapes[name] for t, _, shape in placed) == 4
 
 
-@pytest.mark.parametrize("func, names", [(poly4a, ("scaffold",)), (poly4b, ("beam", "scaffold")), (poly4c, ("burst",))])
+@pytest.mark.parametrize("func, names", [(congashipyard, ("scaffold",)), (congadisco, ("beam", "scaffold")), (congadynamite, ("burst",))])
 @pytest.mark.parametrize("seed", range(5))
-def test_poly4_families(func, names, seed, family_shapes):
+def test_conga_families(func, names, seed, family_shapes):
     """
     The row has one shape per family, and both teams get the same number of each.
     """
