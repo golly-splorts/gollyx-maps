@@ -5,7 +5,7 @@ Version 812:
 * Cup ix and star-ix and later default to 240x360 boards at cell size 2
 * Star IX adds the pictureframe map: two teams of methuselahs inside a picture frame
 * Star IX adds poly1 to poly4 (temporary names): grids, quadrants and rows of polyominoes
-* Star IX adds poly3a to poly3c (temporary names): poly3 with two families of polyominoes each
+* Star IX adds variations a, b and c of each poly map (temporary names), built from families of polyominoes
 
 Version 600:
 

@@ -42,12 +42,21 @@ def get_star_ix_new_pattern_function_map():
     return {
         "pictureframe": pictureframe,
         "poly1": poly1,
+        "poly1a": poly1a,
+        "poly1b": poly1b,
+        "poly1c": poly1c,
         "poly2": poly2,
+        "poly2a": poly2a,
+        "poly2b": poly2b,
+        "poly2c": poly2c,
         "poly3": poly3,
         "poly3a": poly3a,
         "poly3b": poly3b,
         "poly3c": poly3c,
         "poly4": poly4,
+        "poly4a": poly4a,
+        "poly4b": poly4b,
+        "poly4c": poly4c,
     }
 
 
@@ -222,10 +231,13 @@ def _finish(grids):
     return s1, b1, c1, s2, b2, c2
 
 
-def _polyomino_grid(rows, cols, seed, ypitch, shuffle_teams):
+def _polyomino_grid(rows, cols, seed, ypitch, shuffle_teams, families=None):
     """
     A loose 4x4 grid of polyominoes across the full width of the board. Both teams get
-    the same eight shapes, shuffled and turned independently.
+    the same eight shapes, shuffled and turned independently. With two families, four
+    shapes come from each; if the teams also have a side each, the first family fills the
+    two middle columns, where the teams meet, and the second the two edge columns, where
+    they meet around the wrap.
 
     Args:
         rows (int): board rows.
@@ -233,6 +245,7 @@ def _polyomino_grid(rows, cols, seed, ypitch, shuffle_teams):
         seed (int): random seed (optional).
         ypitch (int): rows between shape centers.
         shuffle_teams (bool): mix the teams at random, or give each team one side.
+        families (list): two lists of polyominoes to choose from, or None to choose from all.
 
     Returns:
         tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
@@ -249,9 +262,17 @@ def _polyomino_grid(rows, cols, seed, ypitch, shuffle_teams):
         raise GollyXMapsError(f"Board {rows}x{cols} is too small for a polyomino grid")
 
     half = n * n // 2
-    picks = random.sample(load_polyominoes(), half)
+    if families is None:
+        picks = random.sample(load_polyominoes(), half)
+    else:
+        picks = [shape for family in families for shape in random.sample(family, half // 2)]
     queues = {1: random.sample(picks, half), 2: random.sample(picks, half)}
     left, right = random.sample([1, 2], 2)
+    if families is not None and not shuffle_teams:
+        # Shapes are taken from the end of a queue, left column first
+        middle, edge = picks[:n], picks[n:]
+        queues[left] = random.sample(middle, n) + random.sample(edge, n)
+        queues[right] = random.sample(edge, n) + random.sample(middle, n)
     teams = [left] * half + [right] * half
     if shuffle_teams:
         random.shuffle(teams)
@@ -280,6 +301,66 @@ def poly1(rows, cols, seed=None):
     return _polyomino_grid(rows, cols, seed, ypitch=rows // 6, shuffle_teams=True)
 
 
+def poly1a(rows, cols, seed=None):
+    """
+    A loose 4x4 grid of beam and scaffold shapes, the teams mixed: growing lines among solid spines.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_grid(rows, cols, seed, ypitch=rows // 6, shuffle_teams=True,
+                           families=[families["beam"], families["scaffold"]])
+
+
+def poly1b(rows, cols, seed=None):
+    """
+    A loose 4x4 grid of sprayer and scaffold shapes, the teams mixed: dotted streams of gliders among solid spines.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_grid(rows, cols, seed, ypitch=rows // 6, shuffle_teams=True,
+                           families=[families["sprayer"], families["scaffold"]])
+
+
+def poly1c(rows, cols, seed=None):
+    """
+    A loose 4x4 grid of burst and scaffold shapes, the teams mixed: full explosions, half of them building solid spines.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_grid(rows, cols, seed, ypitch=rows // 6, shuffle_teams=True,
+                           families=[families["burst"], families["scaffold"]])
+
+
 def poly2(rows, cols, seed=None):
     """
     A loose 4x4 grid of polyominoes, one team on each side.
@@ -293,6 +374,66 @@ def poly2(rows, cols, seed=None):
         tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
     """
     return _polyomino_grid(rows, cols, seed, ypitch=rows // 5, shuffle_teams=False)
+
+
+def poly2a(rows, cols, seed=None):
+    """
+    A loose 4x4 grid, one team on each side: scaffold shapes in the middle, beam shapes at the edges.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_grid(rows, cols, seed, ypitch=rows // 5, shuffle_teams=False,
+                           families=[families["scaffold"], families["beam"]])
+
+
+def poly2b(rows, cols, seed=None):
+    """
+    A loose 4x4 grid, one team on each side: burst shapes in the middle, scaffold shapes at the edges.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_grid(rows, cols, seed, ypitch=rows // 5, shuffle_teams=False,
+                           families=[families["burst"], families["scaffold"]])
+
+
+def poly2c(rows, cols, seed=None):
+    """
+    A loose 4x4 grid, one team on each side: swarm shapes in the middle, burst shapes at the edges.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_grid(rows, cols, seed, ypitch=rows // 5, shuffle_teams=False,
+                           families=[families["swarm"], families["burst"]])
 
 
 def _polyomino_quadrants(rows, cols, seed, shapes1, shapes2):
@@ -415,6 +556,51 @@ def poly3c(rows, cols, seed=None):
     return _polyomino_quadrants(rows, cols, seed, families["swarm"], families["burst"])
 
 
+def _polyomino_row(rows, cols, seed, families):
+    """
+    A staggered row of polyominoes across the board, the teams mixed at random.
+
+    The row repeats one polyomino from each family in turn. Both teams get the same number
+    of each, so they start with equal cells.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+        families (list): one or two lists of polyominoes to choose from.
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the longest row does not fit on the board.
+    """
+    if seed is not None:
+        random.seed(seed)
+    kinds = len(families)
+    counts = [count for count in (8, 10, 12, 14, 16) if count % (2 * kinds) == 0]
+    _slot_jitter(cols // counts[-1])
+    count = random.choice(counts)
+    xpitch = cols // count
+    xjitter = _slot_jitter(xpitch)
+    stagger = random.randint(rows // 24, rows // 8)
+    yjitter = rows // 12
+
+    shapes = [random.choice(family) for family in families]
+    if kinds > 1:
+        random.shuffle(shapes)
+    teams = [[1, 2] * (count // kinds // 2) for _ in shapes]
+    for queue in teams:
+        random.shuffle(queue)
+    grids = {1: get_grid_empty(rows, cols, flat=False), 2: get_grid_empty(rows, cols, flat=False)}
+    for k in range(count):
+        team = teams[k % kinds][k // kinds]
+        cx = round((k + 0.5) * cols / count) + random.randint(-xjitter, xjitter)
+        cy = rows // 2 + (stagger if k % 2 else -stagger) + random.randint(-yjitter, yjitter)
+        _draw_polyomino(grids[team], shapes[k % kinds], cx, cy)
+    return _finish(grids)
+
+
 def poly4(rows, cols, seed=None):
     """
     A staggered row of one polyomino across the board, the teams mixed at random.
@@ -428,24 +614,63 @@ def poly4(rows, cols, seed=None):
         tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
 
     Raises:
-        GollyXMapsError: if the longest row does not fit on the board.
+        GollyXMapsError: if the layout does not fit on the board.
     """
-    if seed is not None:
-        random.seed(seed)
-    counts = [8, 10, 12, 14, 16]
-    _slot_jitter(cols // counts[-1])
-    count = random.choice(counts)
-    xpitch = cols // count
-    xjitter = _slot_jitter(xpitch)
-    stagger = random.randint(rows // 24, rows // 8)
-    yjitter = rows // 12
+    return _polyomino_row(rows, cols, seed, [load_polyominoes()])
 
-    shape = random.choice(load_polyominoes())
-    teams = [1, 2] * (count // 2)
-    random.shuffle(teams)
-    grids = {1: get_grid_empty(rows, cols, flat=False), 2: get_grid_empty(rows, cols, flat=False)}
-    for k, team in enumerate(teams):
-        cx = round((k + 0.5) * cols / count) + random.randint(-xjitter, xjitter)
-        cy = rows // 2 + (stagger if k % 2 else -stagger) + random.randint(-yjitter, yjitter)
-        _draw_polyomino(grids[team], shape, cx, cy)
-    return _finish(grids)
+
+def poly4a(rows, cols, seed=None):
+    """
+    A staggered row of one scaffold shape.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_row(rows, cols, seed, [families["scaffold"]])
+
+
+def poly4b(rows, cols, seed=None):
+    """
+    A staggered row of one beam shape and one scaffold shape in turn.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_row(rows, cols, seed, [families["beam"], families["scaffold"]])
+
+
+def poly4c(rows, cols, seed=None):
+    """
+    A staggered row of one burst shape.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the layout does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_row(rows, cols, seed, [families["burst"]])

@@ -5,8 +5,14 @@ from gollyx_maps.error import GollyXMapsError
 from gollyx_maps.patterns import get_pattern
 from gollyx_maps.star_ix import (
     PORTRAIT_STAMPS, frame_cells, load_polyomino_families, load_polyominoes, pictureframe,
-    poly1, poly2, poly3, poly3a, poly3b, poly3c, poly4,
+    poly1, poly1a, poly1b, poly1c, poly2, poly2a, poly2b, poly2c,
+    poly3, poly3a, poly3b, poly3c, poly4, poly4a, poly4b, poly4c,
 )
+
+POLY_MAPS = [
+    poly1, poly1a, poly1b, poly1c, poly2, poly2a, poly2b, poly2c,
+    poly3, poly3a, poly3b, poly3c, poly4, poly4a, poly4b, poly4c,
+]
 
 
 def _is_still_life(cells, rows, cols):
@@ -128,7 +134,7 @@ def test_polyomino_families():
     assert len(set(shapes)) == len(shapes) and set(shapes) <= library
 
 
-@pytest.mark.parametrize("func", [poly1, poly2, poly3, poly3a, poly3b, poly3c, poly4])
+@pytest.mark.parametrize("func", POLY_MAPS)
 @pytest.mark.parametrize("seed", range(20))
 def test_poly_maps_are_even(func, seed):
     """
@@ -142,10 +148,97 @@ def test_poly_maps_are_even(func, seed):
     assert func(240, 360, seed=seed) == result
 
 
-@pytest.mark.parametrize("func", [poly1, poly2, poly3, poly3a, poly3b, poly3c, poly4])
+@pytest.mark.parametrize("func", POLY_MAPS)
 def test_poly_maps_board_too_small(func):
     """
     A board with no room for the grid raises GollyXMapsError.
     """
     with pytest.raises(GollyXMapsError):
         func(60, 60, seed=1)
+
+
+def _placed_shapes(result):
+    """
+    Returns:
+        list of (int, int, frozenset): team, center column and shape of each placed
+            polyomino, the shape normalized for rotation and reflection.
+    """
+    placed = []
+    for team, text in ((1, result[0]), (2, result[3])):
+        todo = {(x, int(y)) for row in json.loads(text) for y, xs in row.items() for x in xs}
+        while todo:
+            group, stack = set(), [todo.pop()]
+            while stack:
+                x, y = stack.pop()
+                group.add((x, y))
+                for c in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                    if c in todo:
+                        todo.remove(c)
+                        stack.append(c)
+            placed.append((team, sum(x for x, _ in group) / len(group), _canonical(group)))
+    return placed
+
+
+def _canonical(cells):
+    """
+    Returns:
+        tuple: the same tuple for every rotation and reflection of a polyomino.
+    """
+    forms = []
+    for _ in range(4):
+        cells = [(y, -x) for x, y in cells]
+        for flip in (1, -1):
+            turned = [(flip * x, y) for x, y in cells]
+            mx, my = min(x for x, _ in turned), min(y for _, y in turned)
+            forms.append(tuple(sorted((x - mx, y - my) for x, y in turned)))
+    return min(forms)
+
+
+@pytest.fixture(scope="module")
+def family_shapes():
+    return {
+        name: {_canonical([(x, y) for y, row in enumerate(s) for x, char in enumerate(row) if char == "o"]) for s in shapes}
+        for name, shapes in load_polyomino_families().items()
+    }
+
+
+@pytest.mark.parametrize("func, middle, edge", [
+    (poly2a, "scaffold", "beam"), (poly2b, "burst", "scaffold"), (poly2c, "swarm", "burst"),
+])
+@pytest.mark.parametrize("seed", range(5))
+def test_poly2_fronts(func, middle, edge, seed, family_shapes):
+    """
+    One family fills the two middle columns, the other the two edge columns, one team per side.
+    """
+    placed = _placed_shapes(func(240, 360, seed=seed))
+    assert len(placed) == 16
+    for _, x, shape in placed:
+        assert shape in family_shapes[middle if 90 <= x < 270 else edge]
+    assert len({team for team, x, _ in placed if x < 180}) == 1
+
+
+@pytest.mark.parametrize("func, names", [
+    (poly1a, ("beam", "scaffold")), (poly1b, ("sprayer", "scaffold")), (poly1c, ("burst", "scaffold")),
+])
+@pytest.mark.parametrize("seed", range(5))
+def test_poly1_families(func, names, seed, family_shapes):
+    """
+    Each team gets four shapes from each of the map's two families.
+    """
+    placed = _placed_shapes(func(240, 360, seed=seed))
+    for team in (1, 2):
+        for name in names:
+            assert sum(t == team and shape in family_shapes[name] for t, _, shape in placed) == 4
+
+
+@pytest.mark.parametrize("func, names", [(poly4a, ("scaffold",)), (poly4b, ("beam", "scaffold")), (poly4c, ("burst",))])
+@pytest.mark.parametrize("seed", range(5))
+def test_poly4_families(func, names, seed, family_shapes):
+    """
+    The row has one shape per family, and both teams get the same number of each.
+    """
+    placed = _placed_shapes(func(240, 360, seed=seed))
+    assert len({shape for _, _, shape in placed}) == len(names)
+    for name in names:
+        counts = [sum(t == team and shape in family_shapes[name] for t, _, shape in placed) for team in (1, 2)]
+        assert counts[0] == counts[1] == len(placed) / len(names) / 2

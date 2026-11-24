@@ -12,9 +12,45 @@
         "mapStartSeason": 0
     },
     {
+        "patternName": "poly1a",
+        "mapName": "Poly 1A",
+        "mapDescription": "A loose 4x4 grid of beams and scaffolds, teams mixed",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly1b",
+        "mapName": "Poly 1B",
+        "mapDescription": "A loose 4x4 grid of sprayers and scaffolds, teams mixed",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly1c",
+        "mapName": "Poly 1C",
+        "mapDescription": "A loose 4x4 grid of bursts and scaffolds, teams mixed",
+        "mapStartSeason": 0
+    },
+    {
         "patternName": "poly2",
         "mapName": "Poly 2",
         "mapDescription": "A loose 4x4 grid of polyominoes, one team on each side",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly2a",
+        "mapName": "Poly 2A",
+        "mapDescription": "A loose 4x4 grid, one team on each side: scaffolds in the middle, beams at the edges",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly2b",
+        "mapName": "Poly 2B",
+        "mapDescription": "A loose 4x4 grid, one team on each side: bursts in the middle, scaffolds at the edges",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly2c",
+        "mapName": "Poly 2C",
+        "mapDescription": "A loose 4x4 grid, one team on each side: swarms in the middle, bursts at the edges",
         "mapStartSeason": 0
     },
     {
@@ -45,6 +81,24 @@
         "patternName": "poly4",
         "mapName": "Poly 4",
         "mapDescription": "A staggered row of one polyomino",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly4a",
+        "mapName": "Poly 4A",
+        "mapDescription": "A staggered row of one scaffold",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly4b",
+        "mapName": "Poly 4B",
+        "mapDescription": "A staggered row of beams and scaffolds",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly4c",
+        "mapName": "Poly 4C",
+        "mapDescription": "A staggered row of one burst",
         "mapStartSeason": 0
     }
 ]
