@@ -10,6 +10,7 @@ from .klein import get_klein_pattern_function_map
 from .ii import get_ii_pattern_function_map
 from .vi import get_vi_pattern_function_map
 from .star_vii import get_star_vii_new_pattern_function_map
+from .star_ix import get_star_ix_new_pattern_function_map
 
 
 # =============================================================================
@@ -100,7 +101,7 @@ GOLLY_REGISTRY = [
 PENINSULA_REGISTRY = [
     (1, get_star_pattern_function_map,        {"rows": 160, "columns": 240, "cell_size": 3}, "star.json"),
     (7, get_star_vii_new_pattern_function_map, {"rows": 180, "columns": 280, "cell_size": 3}, "star_vii.json"),
-    (9, None,                                  {"rows": 240, "columns": 360, "cell_size": 2}, None),
+    (9, get_star_ix_new_pattern_function_map,  {"rows": 240, "columns": 360, "cell_size": 2}, "star_ix.json"),
 ]
 
 # Defaults applied to numeric cups when no registry entry overrides them
