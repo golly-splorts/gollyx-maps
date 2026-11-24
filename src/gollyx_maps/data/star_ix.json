@@ -50,7 +50,7 @@
     {
         "patternName": "duckpond",
         "mapName": "Duck Pond",
-        "mapDescription": "A loose 4x4 grid, one team on each side: swarms in the middle, bursts at the edges",
+        "mapDescription": "A loose 4x4 grid, one team on each side: scaffolds in the middle, bursts at the edges",
         "mapStartSeason": 0
     },
     {

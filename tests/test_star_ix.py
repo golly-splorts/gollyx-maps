@@ -203,7 +203,7 @@ def family_shapes():
 
 
 @pytest.mark.parametrize("func, middle, edge", [
-    (shootinggallery, "scaffold", "beam"), (dunktank, "burst", "scaffold"), (duckpond, "swarm", "burst"),
+    (shootinggallery, "scaffold", "beam"), (dunktank, "burst", "scaffold"), (duckpond, "scaffold", "burst"),
 ])
 @pytest.mark.parametrize("seed", range(5))
 def test_carnival_fronts(func, middle, edge, seed, family_shapes):

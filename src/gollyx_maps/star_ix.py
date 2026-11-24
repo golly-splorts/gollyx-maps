@@ -418,7 +418,7 @@ def dunktank(rows, cols, seed=None):
 
 def duckpond(rows, cols, seed=None):
     """
-    A loose 4x4 grid, one team on each side: swarm shapes in the middle, burst shapes at the edges.
+    A loose 4x4 grid, one team on each side: scaffold shapes in the middle, burst shapes at the edges.
 
     Args:
         rows (int): board rows.
@@ -433,7 +433,7 @@ def duckpond(rows, cols, seed=None):
     """
     families = load_polyomino_families()
     return _polyomino_grid(rows, cols, seed, ypitch=rows // 5, shuffle_teams=False,
-                           families=[families["swarm"], families["burst"]])
+                           families=[families["scaffold"], families["burst"]])
 
 
 def _polyomino_quadrants(rows, cols, seed, shapes1, shapes2):
