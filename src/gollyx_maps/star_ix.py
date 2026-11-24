@@ -19,6 +19,9 @@ SIDE_GAP = 6
 # written by scripts/make_star_ix_polyominoes.py
 POLYOMINO_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "star_ix_polyominoes.json")
 
+# The strongest shapes of each behavior, chosen from the polyominoes above
+POLYOMINO_FAMILY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "star_ix_polyomino_families.json")
+
 # Stamps that make up a picture; each one sets off a long reaction when left alone
 PORTRAIT_STAMPS = [
     "simpleunstablestar",
@@ -41,6 +44,9 @@ def get_star_ix_new_pattern_function_map():
         "poly1": poly1,
         "poly2": poly2,
         "poly3": poly3,
+        "poly3a": poly3a,
+        "poly3b": poly3b,
+        "poly3c": poly3c,
         "poly4": poly4,
     }
 
@@ -154,6 +160,16 @@ def load_polyominoes():
     """
     with open(POLYOMINO_FILE) as f:
         return [text.split("/") for text in json.load(f)]
+
+
+def load_polyomino_families():
+    """
+    Returns:
+        dict: family name (gliders, beam, sprayer, swarm, burst, scaffold) to a list of
+            polyominoes that behave that way alone, each as rows of 'o' and '.'.
+    """
+    with open(POLYOMINO_FAMILY_FILE) as f:
+        return {name: [text.split("/") for text in texts] for name, texts in json.load(f).items()}
 
 
 def _slot_jitter(size):
@@ -279,17 +295,21 @@ def poly2(rows, cols, seed=None):
     return _polyomino_grid(rows, cols, seed, ypitch=rows // 5, shuffle_teams=False)
 
 
-def poly3(rows, cols, seed=None):
+def _polyomino_quadrants(rows, cols, seed, shapes1, shapes2):
     """
     Polyominoes in quadrants: each quadrant holds 1, 4 (2x2) or 9 (3x3) of them.
 
     The quadrants are paired at random. Both quadrants of a pair hold the same shapes in
     their own random order, with the teams swapped, so the teams start with equal cells.
+    The shapes alternate between the two lists; one pair starts with the first list and
+    the other pair with the second.
 
     Args:
         rows (int): board rows.
         cols (int): board columns.
         seed (int): random seed (optional).
+        shapes1 (list of list of str): polyominoes to choose from.
+        shapes2 (list of list of str): polyominoes to choose from.
 
     Returns:
         tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
@@ -302,13 +322,12 @@ def poly3(rows, cols, seed=None):
     qrows, qcols = rows // 2, cols // 2
     jitters = {n: (_slot_jitter(qcols // n), _slot_jitter(qrows // n)) for n in (1, 2, 3)}
 
-    shapes = load_polyominoes()
     grids = {1: get_grid_empty(rows, cols, flat=False), 2: get_grid_empty(rows, cols, flat=False)}
     quadrants = [(0, 0), (0, qrows), (qcols, 0), (qcols, qrows)]
     random.shuffle(quadrants)
-    for pair in (quadrants[:2], quadrants[2:]):
+    for first, pair in enumerate((quadrants[:2], quadrants[2:])):
         n = random.choice([1, 2, 3])
-        picks = [(random.choice(shapes), random.choice([1, 2])) for _ in range(n * n)]
+        picks = [(random.choice((shapes1, shapes2)[(first + i) % 2]), random.choice([1, 2])) for i in range(n * n)]
         for k, (qx, qy) in enumerate(pair):
             random.shuffle(picks)
             for slot, (shape, team) in enumerate(picks):
@@ -318,6 +337,82 @@ def poly3(rows, cols, seed=None):
                 cy = round(qy + (j + 0.5) * qrows / n) + random.randint(-yjitter, yjitter)
                 _draw_polyomino(grids[team if k == 0 else 3 - team], shape, cx, cy)
     return _finish(grids)
+
+
+def poly3(rows, cols, seed=None):
+    """
+    Polyominoes in quadrants, drawn from every shape.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if a 3x3 quadrant does not fit on the board.
+    """
+    shapes = load_polyominoes()
+    return _polyomino_quadrants(rows, cols, seed, shapes, shapes)
+
+
+def poly3a(rows, cols, seed=None):
+    """
+    Polyominoes in quadrants, beam and scaffold shapes: growing lines against solid spines.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if a 3x3 quadrant does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_quadrants(rows, cols, seed, families["beam"], families["scaffold"])
+
+
+def poly3b(rows, cols, seed=None):
+    """
+    Polyominoes in quadrants, swarm and scaffold shapes: ship swarms against solid spines.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if a 3x3 quadrant does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_quadrants(rows, cols, seed, families["swarm"], families["scaffold"])
+
+
+def poly3c(rows, cols, seed=None):
+    """
+    Polyominoes in quadrants, swarm and burst shapes: small swarms and full explosions of ships.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if a 3x3 quadrant does not fit on the board.
+    """
+    families = load_polyomino_families()
+    return _polyomino_quadrants(rows, cols, seed, families["swarm"], families["burst"])
 
 
 def poly4(rows, cols, seed=None):

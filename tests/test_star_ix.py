@@ -3,7 +3,10 @@ import pytest
 from gollyx_maps import maps
 from gollyx_maps.error import GollyXMapsError
 from gollyx_maps.patterns import get_pattern
-from gollyx_maps.star_ix import PORTRAIT_STAMPS, frame_cells, load_polyominoes, pictureframe, poly1, poly2, poly3, poly4
+from gollyx_maps.star_ix import (
+    PORTRAIT_STAMPS, frame_cells, load_polyomino_families, load_polyominoes, pictureframe,
+    poly1, poly2, poly3, poly3a, poly3b, poly3c, poly4,
+)
 
 
 def _is_still_life(cells, rows, cols):
@@ -113,7 +116,19 @@ def test_polyominoes_are_connected_and_sized():
         assert seen == cells
 
 
-@pytest.mark.parametrize("func", [poly1, poly2, poly3, poly4])
+def test_polyomino_families():
+    """
+    Every family has 40 shapes from the library, and no shape is in two families.
+    """
+    library = {tuple(s) for s in load_polyominoes()}
+    families = load_polyomino_families()
+    assert set(families) == {"gliders", "beam", "sprayer", "swarm", "burst", "scaffold"}
+    shapes = [tuple(s) for family in families.values() for s in family]
+    assert all(len(family) == 40 for family in families.values())
+    assert len(set(shapes)) == len(shapes) and set(shapes) <= library
+
+
+@pytest.mark.parametrize("func", [poly1, poly2, poly3, poly3a, poly3b, poly3c, poly4])
 @pytest.mark.parametrize("seed", range(20))
 def test_poly_maps_are_even(func, seed):
     """
@@ -127,7 +142,7 @@ def test_poly_maps_are_even(func, seed):
     assert func(240, 360, seed=seed) == result
 
 
-@pytest.mark.parametrize("func", [poly1, poly2, poly3, poly4])
+@pytest.mark.parametrize("func", [poly1, poly2, poly3, poly3a, poly3b, poly3c, poly4])
 def test_poly_maps_board_too_small(func):
     """
     A board with no room for the grid raises GollyXMapsError.

@@ -24,6 +24,24 @@
         "mapStartSeason": 0
     },
     {
+        "patternName": "poly3a",
+        "mapName": "Poly 3A",
+        "mapDescription": "One, four or nine polyominoes in each quadrant: beams and scaffolds",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly3b",
+        "mapName": "Poly 3B",
+        "mapDescription": "One, four or nine polyominoes in each quadrant: swarms and scaffolds",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly3c",
+        "mapName": "Poly 3C",
+        "mapDescription": "One, four or nine polyominoes in each quadrant: swarms and bursts",
+        "mapStartSeason": 0
+    },
+    {
         "patternName": "poly4",
         "mapName": "Poly 4",
         "mapDescription": "A staggered row of one polyomino",
