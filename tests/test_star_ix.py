@@ -3,7 +3,7 @@ import pytest
 from gollyx_maps import maps
 from gollyx_maps.error import GollyXMapsError
 from gollyx_maps.patterns import get_pattern
-from gollyx_maps.star_ix import PORTRAIT_STAMPS, frame_cells, load_polyominoes, pictureframe, poly1, poly2
+from gollyx_maps.star_ix import PORTRAIT_STAMPS, frame_cells, load_polyominoes, pictureframe, poly1, poly2, poly3, poly4
 
 
 def _is_still_life(cells, rows, cols):
@@ -113,7 +113,7 @@ def test_polyominoes_are_connected_and_sized():
         assert seen == cells
 
 
-@pytest.mark.parametrize("func", [poly1, poly2])
+@pytest.mark.parametrize("func", [poly1, poly2, poly3, poly4])
 @pytest.mark.parametrize("seed", range(20))
 def test_poly_maps_are_even(func, seed):
     """
@@ -121,13 +121,13 @@ def test_poly_maps_are_even(func, seed):
     """
     result = func(240, 360, seed=seed)
     cells = [{(x, int(y)) for row in json.loads(s) for y, xs in row.items() for x in xs} for s in (result[0], result[3])]
-    assert len(cells[0]) == len(cells[1]) >= 8 * 7
+    assert len(cells[0]) == len(cells[1]) >= 2 * 7
     assert not cells[0] & cells[1]
     assert all(0 <= x < 360 and 0 <= y < 240 for x, y in cells[0] | cells[1])
     assert func(240, 360, seed=seed) == result
 
 
-@pytest.mark.parametrize("func", [poly1, poly2])
+@pytest.mark.parametrize("func", [poly1, poly2, poly3, poly4])
 def test_poly_maps_board_too_small(func):
     """
     A board with no room for the grid raises GollyXMapsError.

@@ -72,7 +72,7 @@ So `xxi` uses the VI maps, and `star-vii` uses the Star maps plus the Star VII m
 The default grid size comes from the newest registry entry at or below the cup
 number, including size-only entries that add no maps: `ix` and `star-ix` and
 later cups default to 240 rows by 360 columns at cell size 2. `star-ix` also adds
-the `pictureframe`, `poly1` and `poly2` maps.
+the `pictureframe`, `poly1`, `poly2`, `poly3` and `poly4` maps.
 See [PatternInheritance.md](PatternInheritance.md) for which patterns each cup
 reuses and renames.
 

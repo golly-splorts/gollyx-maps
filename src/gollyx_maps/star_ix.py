@@ -40,6 +40,8 @@ def get_star_ix_new_pattern_function_map():
         "pictureframe": pictureframe,
         "poly1": poly1,
         "poly2": poly2,
+        "poly3": poly3,
+        "poly4": poly4,
     }
 
 
@@ -154,18 +156,67 @@ def load_polyominoes():
         return [text.split("/") for text in json.load(f)]
 
 
-def _polyomino_grid(rows, cols, seed=None, n=4, ownership="checker", pitch=None):
+def _slot_jitter(size):
     """
-    An n x n grid of polyominoes, half per team. Both teams get the same shapes, shuffled
-    and turned independently, so they start with equal cells but never as mirror images.
+    Args:
+        size (int): width or height of the slot a polyomino is placed in.
+
+    Returns:
+        int: how far the polyomino may move from the slot's center, staying inside it.
+
+    Raises:
+        GollyXMapsError: if the slot is too small; the largest polyomino is 10 cells long.
+    """
+    if size < 14:
+        raise GollyXMapsError("Board is too small for a polyomino map")
+    return int(0.6 * (size - 12) / 2)
+
+
+def _draw_polyomino(grid, shape, cx, cy):
+    """
+    Draw a polyomino, turned and flipped at random, centered at (cx, cy).
+
+    Args:
+        grid (list of list of str): board to draw on, changed in place.
+        shape (list of str): polyomino, as rows of 'o' and '.'.
+        cx (int): column of the center.
+        cy (int): row of the center.
+    """
+    for _ in range(random.randrange(4)):
+        shape = ["".join(row) for row in zip(*shape[::-1])]
+    if random.random() < 0.5:
+        shape = [row[::-1] for row in shape]
+    top, left = cy - len(shape) // 2, cx - len(shape[0]) // 2
+    for dy, row in enumerate(shape):
+        for dx, char in enumerate(row):
+            if char == "o":
+                grid[(top + dy) % len(grid)][(left + dx) % len(grid[0])] = "o"
+
+
+def _finish(grids):
+    """
+    Args:
+        grids (dict): board of each team, keyed 1 and 2.
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+    """
+    s1, b1, c1 = pattern2url_chars(grids[1])
+    s2, b2, c2 = pattern2url_chars(grids[2])
+    return s1, b1, c1, s2, b2, c2
+
+
+def _polyomino_grid(rows, cols, seed, ypitch, shuffle_teams):
+    """
+    A loose 4x4 grid of polyominoes across the full width of the board. Both teams get
+    the same eight shapes, shuffled and turned independently.
 
     Args:
         rows (int): board rows.
         cols (int): board columns.
         seed (int): random seed (optional).
-        n (int): shapes along each side of the grid (even).
-        ownership (str): "checker" alternates teams, "halves" gives each team a side.
-        pitch (int): cells between shape centers, or None to spread across the board.
+        ypitch (int): rows between shape centers.
+        shuffle_teams (bool): mix the teams at random, or give each team one side.
 
     Returns:
         tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
@@ -175,44 +226,32 @@ def _polyomino_grid(rows, cols, seed=None, n=4, ownership="checker", pitch=None)
     """
     if seed is not None:
         random.seed(seed)
-
-    jitter = 3
-    xpitch, ypitch = (pitch, pitch) if pitch else (cols // (n + 1), rows // (n + 1))
-    # The largest shape is 10 cells long
-    if min(xpitch, ypitch) < 10 + 2 * jitter + 1 or n * xpitch > cols or n * ypitch > rows:
-        raise GollyXMapsError(f"Board {rows}x{cols} is too small for a {n}x{n} polyomino grid")
+    n = 4
+    xpitch = cols // n
+    xjitter, yjitter = _slot_jitter(xpitch), _slot_jitter(ypitch)
+    if n * ypitch > rows:
+        raise GollyXMapsError(f"Board {rows}x{cols} is too small for a polyomino grid")
 
     half = n * n // 2
     picks = random.sample(load_polyominoes(), half)
     queues = {1: random.sample(picks, half), 2: random.sample(picks, half)}
-    swap = random.random() < 0.5
+    left, right = random.sample([1, 2], 2)
+    teams = [left] * half + [right] * half
+    if shuffle_teams:
+        random.shuffle(teams)
 
     grids = {1: get_grid_empty(rows, cols, flat=False), 2: get_grid_empty(rows, cols, flat=False)}
-    for i in range(n):
-        for j in range(n):
-            first = (i + j) % 2 == 0 if ownership == "checker" else i < n // 2
-            team = 1 if first != swap else 2
-            shape = queues[team].pop()
-            for _ in range(random.randrange(4)):
-                shape = ["".join(row) for row in zip(*shape[::-1])]
-            if random.random() < 0.5:
-                shape = [row[::-1] for row in shape]
-            cx = round(cols / 2 + (i - (n - 1) / 2) * xpitch) + random.randint(-jitter, jitter)
-            cy = round(rows / 2 + (j - (n - 1) / 2) * ypitch) + random.randint(-jitter, jitter)
-            top, left = cy - len(shape) // 2, cx - len(shape[0]) // 2
-            for dy, row in enumerate(shape):
-                for dx, char in enumerate(row):
-                    if char == "o":
-                        grids[team][top + dy][left + dx] = "o"
-
-    s1, b1, c1 = pattern2url_chars(grids[1])
-    s2, b2, c2 = pattern2url_chars(grids[2])
-    return s1, b1, c1, s2, b2, c2
+    for k, team in enumerate(teams):
+        i, j = divmod(k, n)
+        cx = round((i + 0.5) * xpitch) + random.randint(-xjitter, xjitter)
+        cy = round(rows / 2 + (j - (n - 1) / 2) * ypitch) + random.randint(-yjitter, yjitter)
+        _draw_polyomino(grids[team], queues[team].pop(), cx, cy)
+    return _finish(grids)
 
 
 def poly1(rows, cols, seed=None):
     """
-    A 4x4 checkerboard of polyominoes, 40 cells apart.
+    A loose 4x4 grid of polyominoes, the teams mixed at random.
 
     Args:
         rows (int): board rows.
@@ -222,12 +261,12 @@ def poly1(rows, cols, seed=None):
     Returns:
         tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
     """
-    return _polyomino_grid(rows, cols, seed=seed, ownership="checker", pitch=40)
+    return _polyomino_grid(rows, cols, seed, ypitch=rows // 6, shuffle_teams=True)
 
 
 def poly2(rows, cols, seed=None):
     """
-    A 4x4 grid of polyominoes spread across the board, one team on each side.
+    A loose 4x4 grid of polyominoes, one team on each side.
 
     Args:
         rows (int): board rows.
@@ -237,4 +276,81 @@ def poly2(rows, cols, seed=None):
     Returns:
         tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
     """
-    return _polyomino_grid(rows, cols, seed=seed, ownership="halves")
+    return _polyomino_grid(rows, cols, seed, ypitch=rows // 5, shuffle_teams=False)
+
+
+def poly3(rows, cols, seed=None):
+    """
+    Polyominoes in quadrants: each quadrant holds 1, 4 (2x2) or 9 (3x3) of them.
+
+    The quadrants are paired at random. Both quadrants of a pair hold the same shapes in
+    their own random order, with the teams swapped, so the teams start with equal cells.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if a 3x3 quadrant does not fit on the board.
+    """
+    if seed is not None:
+        random.seed(seed)
+    qrows, qcols = rows // 2, cols // 2
+    jitters = {n: (_slot_jitter(qcols // n), _slot_jitter(qrows // n)) for n in (1, 2, 3)}
+
+    shapes = load_polyominoes()
+    grids = {1: get_grid_empty(rows, cols, flat=False), 2: get_grid_empty(rows, cols, flat=False)}
+    quadrants = [(0, 0), (0, qrows), (qcols, 0), (qcols, qrows)]
+    random.shuffle(quadrants)
+    for pair in (quadrants[:2], quadrants[2:]):
+        n = random.choice([1, 2, 3])
+        picks = [(random.choice(shapes), random.choice([1, 2])) for _ in range(n * n)]
+        for k, (qx, qy) in enumerate(pair):
+            random.shuffle(picks)
+            for slot, (shape, team) in enumerate(picks):
+                i, j = divmod(slot, n)
+                xjitter, yjitter = jitters[n]
+                cx = round(qx + (i + 0.5) * qcols / n) + random.randint(-xjitter, xjitter)
+                cy = round(qy + (j + 0.5) * qrows / n) + random.randint(-yjitter, yjitter)
+                _draw_polyomino(grids[team if k == 0 else 3 - team], shape, cx, cy)
+    return _finish(grids)
+
+
+def poly4(rows, cols, seed=None):
+    """
+    A staggered row of one polyomino across the board, the teams mixed at random.
+
+    Args:
+        rows (int): board rows.
+        cols (int): board columns.
+        seed (int): random seed (optional).
+
+    Returns:
+        tuple: s1, b1, c1, s2, b2, c2 listlife strings (live and dead-wait cells per team).
+
+    Raises:
+        GollyXMapsError: if the longest row does not fit on the board.
+    """
+    if seed is not None:
+        random.seed(seed)
+    counts = [8, 10, 12, 14, 16]
+    _slot_jitter(cols // counts[-1])
+    count = random.choice(counts)
+    xpitch = cols // count
+    xjitter = _slot_jitter(xpitch)
+    stagger = random.randint(rows // 24, rows // 8)
+    yjitter = rows // 12
+
+    shape = random.choice(load_polyominoes())
+    teams = [1, 2] * (count // 2)
+    random.shuffle(teams)
+    grids = {1: get_grid_empty(rows, cols, flat=False), 2: get_grid_empty(rows, cols, flat=False)}
+    for k, team in enumerate(teams):
+        cx = round((k + 0.5) * cols / count) + random.randint(-xjitter, xjitter)
+        cy = rows // 2 + (stagger if k % 2 else -stagger) + random.randint(-yjitter, yjitter)
+        _draw_polyomino(grids[team], shape, cx, cy)
+    return _finish(grids)

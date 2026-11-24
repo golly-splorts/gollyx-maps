@@ -8,13 +8,25 @@
     {
         "patternName": "poly1",
         "mapName": "Poly 1",
-        "mapDescription": "A 4x4 checkerboard of polyominoes",
+        "mapDescription": "A loose 4x4 grid of polyominoes, teams mixed",
         "mapStartSeason": 0
     },
     {
         "patternName": "poly2",
         "mapName": "Poly 2",
-        "mapDescription": "A 4x4 grid of polyominoes, one team on each side",
+        "mapDescription": "A loose 4x4 grid of polyominoes, one team on each side",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly3",
+        "mapName": "Poly 3",
+        "mapDescription": "One, four or nine polyominoes in each quadrant",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly4",
+        "mapName": "Poly 4",
+        "mapDescription": "A staggered row of one polyomino",
         "mapStartSeason": 0
     }
 ]
