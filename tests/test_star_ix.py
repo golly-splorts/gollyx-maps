@@ -2,7 +2,8 @@ import json
 import pytest
 from gollyx_maps import maps
 from gollyx_maps.error import GollyXMapsError
-from gollyx_maps.star_ix import frame_cells, pictureframe
+from gollyx_maps.patterns import get_pattern
+from gollyx_maps.star_ix import PORTRAIT_STAMPS, frame_cells, pictureframe
 
 
 def _is_still_life(cells, rows, cols):
@@ -69,3 +70,26 @@ def test_pictureframe_board_too_small():
     """
     with pytest.raises(GollyXMapsError):
         pictureframe(20, 20, seed=1)
+
+
+@pytest.mark.parametrize("seed", range(30))
+def test_pictureframe_is_frame_plus_equal_stamps(seed):
+    """
+    Every map is the frame plus a few stamps: the teams start with the same number of
+    cells, no cell belongs to both, and few cells lie inside the frame.
+    """
+    s1, b1, c1, s2, b2, c2 = pictureframe(240, 360, seed=seed)
+    cells = [{(x, int(y)) for row in json.loads(s) for y, xs in row.items() for x in xs} for s in (s1, s2)]
+    assert len(cells[0]) == len(cells[1])
+    assert not cells[0] & cells[1]
+    frames = [set().union(*frame_cells(240, 360, m).values()) for m in range(3, 7)]
+    frame = next(f for f in frames if f <= cells[0] | cells[1])
+    assert 0 < len((cells[0] | cells[1]) - frame) <= 6 * 40
+
+
+def test_portrait_stamps_exist():
+    """
+    Every stamp a portrait can use is in the pattern library.
+    """
+    for name in PORTRAIT_STAMPS:
+        assert get_pattern(name)
