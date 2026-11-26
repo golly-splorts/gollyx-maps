@@ -10,6 +10,7 @@ from .klein import get_klein_pattern_function_map
 from .ii import get_ii_pattern_function_map
 from .vi import get_vi_pattern_function_map
 from .star_vii import get_star_vii_new_pattern_function_map
+from .star_ix import get_star_ix_new_pattern_function_map
 
 
 # =============================================================================
@@ -88,16 +89,19 @@ LEGACY_CUPS = {
 # Sorted by cup number. Maps accumulate: cup N gets all entries where
 # cup_number <= N.  Each entry is:
 #   (cup_number, pattern_func, config_dict, metadata_filename)
+# A size-only entry has pattern_func and metadata_filename set to None.
 # =============================================================================
 
 GOLLY_REGISTRY = [
     (2, get_ii_pattern_function_map, {"rows": 100, "columns": 200, "cell_size": 4}, "ii.json"),
     (6, get_vi_pattern_function_map, {"rows": 150, "columns": 240, "cell_size": 3}, "vi.json"),
+    (9, None, {"rows": 240, "columns": 360, "cell_size": 2}, None),
 ]
 
 PENINSULA_REGISTRY = [
     (1, get_star_pattern_function_map,        {"rows": 160, "columns": 240, "cell_size": 3}, "star.json"),
     (7, get_star_vii_new_pattern_function_map, {"rows": 180, "columns": 280, "cell_size": 3}, "star_vii.json"),
+    (9, get_star_ix_new_pattern_function_map,  {"rows": 240, "columns": 360, "cell_size": 2}, "star_ix.json"),
 ]
 
 # Defaults applied to numeric cups when no registry entry overrides them
@@ -197,20 +201,35 @@ def get_cup_maps(cup_name):
 def _build_numeric_cup_maps(cup_number, registry, defaults, append_all_prior):
     """
     Build a CupMaps for a numeric cup by accumulating all registry entries
-    with cup_number <= the requested number.
+    with cup_number <= the requested number. The newest matching entry sets
+    the board config; size-only entries add no patterns.
+
+    Args:
+        cup_number (int): cup number parsed from the roman numeral.
+        registry (list): GOLLY_REGISTRY or PENINSULA_REGISTRY.
+        defaults (dict): config used where the entries set nothing.
+        append_all_prior (bool): True to include the patterns of every older
+            pattern entry, False for only the newest one.
+
+    Returns:
+        CupMaps: patterns, metadata files and default board config for the cup.
     """
     pattern_funcs = []
     metadata_files = []
     config = dict(defaults)
 
     matched = False
+    config_set = False
     for entry_cup, entry_func, entry_config, entry_metadata in reversed(registry):
         if entry_cup <= cup_number:
+            # Only the newest matching entry sets the config
+            if not config_set:
+                config.update(entry_config)
+                config_set = True
+            if entry_func is None:
+                continue
             pattern_funcs.append(entry_func)
             metadata_files.append(entry_metadata)
-            # Only the newest matching entry sets the config
-            if not matched:
-                config.update(entry_config)
             matched = True
             if not append_all_prior:
                 break

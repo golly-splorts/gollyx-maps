@@ -131,3 +131,40 @@ def test_error_handling():
         get_cup_maps("")
     with pytest.raises(GollyXMapsError):
         get_cup_maps(None)
+
+@pytest.mark.parametrize("cup", ["ix", "star-ix"])
+def test_cup_ix_board_size(cup):
+    """
+    Verify that cup ix in both unions defaults to a 240x360 board with cell size 2.
+    """
+    cm = get_cup_maps(cup)
+    assert (cm.default_rows, cm.default_columns, cm.default_cell_size) == (240, 360, 2)
+
+
+def test_cup_ix_patterns():
+    """
+    Verify that ix keeps the viii maps, and star-ix adds its own new patterns and
+    metadata file to the star-viii maps.
+    """
+    ix, viii = get_cup_maps("ix"), get_cup_maps("viii")
+    assert ix.pattern_function_map().keys() == viii.pattern_function_map().keys()
+    assert ix.metadata_files == viii.metadata_files
+
+    star_ix, star_viii = get_cup_maps("star-ix"), get_cup_maps("star-viii")
+    assert star_ix.pattern_function_map().keys() == star_viii.pattern_function_map().keys() | {
+        "pictureframe", "poly1", "poly2", "poly3", "poly4",
+        "switchyard", "gravelyard", "scrapyard",
+        "shootinggallery", "dunktank", "duckpond",
+        "fistfightcathedral", "fistfightcourthouse", "fistfightfuneral",
+        "congashipyard", "congadisco", "congadynamite",
+    }
+    assert star_ix.metadata_files == ["star_ix.json"] + star_viii.metadata_files
+
+
+@pytest.mark.parametrize("cup, size", [("viii", (150, 240, 3)), ("star-viii", (180, 280, 3))])
+def test_cup_viii_board_size(cup, size):
+    """
+    Verify that cup viii in both unions keeps its board size.
+    """
+    cm = get_cup_maps(cup)
+    assert (cm.default_rows, cm.default_columns, cm.default_cell_size) == size

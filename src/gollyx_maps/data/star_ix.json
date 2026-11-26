@@ -1,0 +1,104 @@
+[
+    {
+        "patternName": "pictureframe",
+        "mapName": "Picture Frame",
+        "mapDescription": "Two teams of methuselahs inside a picture frame",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly1",
+        "mapName": "Poly 1",
+        "mapDescription": "A loose 4x4 grid of polyominoes, teams mixed",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "switchyard",
+        "mapName": "Switch Yard",
+        "mapDescription": "A loose 4x4 grid of beams and scaffolds, teams mixed",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "gravelyard",
+        "mapName": "Gravel Yard",
+        "mapDescription": "A loose 4x4 grid of sprayers and scaffolds, teams mixed",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "scrapyard",
+        "mapName": "Scrap Yard",
+        "mapDescription": "A loose 4x4 grid of bursts and scaffolds, teams mixed",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly2",
+        "mapName": "Poly 2",
+        "mapDescription": "A loose 4x4 grid of polyominoes, one team on each side",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "shootinggallery",
+        "mapName": "Shooting Gallery",
+        "mapDescription": "A loose 4x4 grid, one team on each side: scaffolds in the middle, beams at the edges",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "dunktank",
+        "mapName": "Dunk Tank",
+        "mapDescription": "A loose 4x4 grid, one team on each side: bursts in the middle, scaffolds at the edges",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "duckpond",
+        "mapName": "Duck Pond",
+        "mapDescription": "A loose 4x4 grid, one team on each side: scaffolds in the middle, bursts at the edges",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly3",
+        "mapName": "Poly 3",
+        "mapDescription": "One, four or nine polyominoes in each quadrant",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "fistfightcathedral",
+        "mapName": "Fistfight at the Cathedral",
+        "mapDescription": "One, four or nine polyominoes in each quadrant: beams and scaffolds",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "fistfightcourthouse",
+        "mapName": "Fistfight at the Courthouse",
+        "mapDescription": "One, four or nine polyominoes in each quadrant: swarms and scaffolds",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "fistfightfuneral",
+        "mapName": "Fistfight at a Funeral",
+        "mapDescription": "One, four or nine polyominoes in each quadrant: swarms and bursts",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "poly4",
+        "mapName": "Poly 4",
+        "mapDescription": "A staggered row of one polyomino",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "congashipyard",
+        "mapName": "Conga Line at the Shipyard",
+        "mapDescription": "A staggered row of one scaffold",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "congadisco",
+        "mapName": "Conga Line at the Disco",
+        "mapDescription": "A staggered row of beams and scaffolds",
+        "mapStartSeason": 0
+    },
+    {
+        "patternName": "congadynamite",
+        "mapName": "Conga Line at the Dynamite Factory",
+        "mapDescription": "A staggered row of one burst",
+        "mapStartSeason": 0
+    }
+]

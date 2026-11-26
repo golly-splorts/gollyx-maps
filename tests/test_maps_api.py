@@ -1,4 +1,6 @@
 
+import json
+
 import pytest
 from gollyx_maps.maps import (
     get_pattern_function_map,
@@ -94,3 +96,21 @@ def test_get_all_map_patterns_vs_metadata(cup):
     all_patterns = get_all_map_patterns(cup)
     metadata_patterns = {m["patternName"] for m in get_all_map_metadata(cup)}
     assert set(all_patterns) == metadata_patterns
+
+
+@pytest.mark.parametrize("cup", ["ix", "star-ix"])
+def test_cup_ix_realizations(cup):
+    """
+    Verify that every cup ix pattern realizes on the default 240x360 board,
+    with live cells for both teams and every cell in range.
+    """
+    for pattern in get_all_map_patterns(cup):
+        m = get_map_realization(cup, pattern, seed=1)
+        assert (m["rows"], m["columns"]) == (240, 360), pattern
+        for key in ("initialConditions1", "initialConditions2"):
+            cells = json.loads(m[key])
+            assert cells, f"{pattern} {key} is empty"
+            for row in cells:
+                for y, xs in row.items():
+                    assert 0 <= int(y) < 240, f"{pattern} {key} row {y}"
+                    assert all(0 <= x < 360 for x in xs), f"{pattern} {key} row {y}"

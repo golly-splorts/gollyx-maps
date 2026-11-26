@@ -1,5 +1,12 @@
 gollyx-maps:
 
+Version 812:
+
+* Cup ix and star-ix and later default to 240x360 boards at cell size 2
+* Star IX adds the pictureframe map: two teams of methuselahs inside a picture frame
+* Star IX adds poly1 to poly4 (temporary names): grids, quadrants and rows of polyominoes
+* Star IX adds twelve maps built from families of polyominoes: Switch Yard, Gravel Yard, Scrap Yard, Shooting Gallery, Dunk Tank, Duck Pond, Fistfight at the Cathedral, Fistfight at the Courthouse, Fistfight at a Funeral, Conga Line at the Shipyard, Conga Line at the Disco, Conga Line at the Dynamite Factory
+
 Version 600:
 
 * Adding Hellmouth VI Cup maps
